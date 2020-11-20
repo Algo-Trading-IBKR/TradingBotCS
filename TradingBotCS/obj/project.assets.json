@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\joren\\Desktop\\Trading-Bot-CS\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
+      "projectUniqueName": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
       "projectName": "TradingBotCS",
-      "projectPath": "C:\\Users\\joren\\Desktop\\Trading-Bot-CS\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
+      "projectPath": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
       "packagesPath": "C:\\Users\\joren\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\joren\\Desktop\\Trading-Bot-CS\\TradingBotCS\\TradingBotCS\\obj\\",
+      "outputPath": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "D:\\Microsoft\\Xamarin\\NuGet\\"

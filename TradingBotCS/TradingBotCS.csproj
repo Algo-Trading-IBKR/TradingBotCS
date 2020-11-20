@@ -5,10 +5,4 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Reference Include="CSharpAPICore">
-      <HintPath>..\..\net5.0Build\CSharpAPICore.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
