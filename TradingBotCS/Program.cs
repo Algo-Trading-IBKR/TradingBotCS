@@ -10,10 +10,12 @@ namespace TradingBotCS
 {
     class Program
     {
-        static void Main(string[] args)
+
+        static async Task Main(string[] args)
         {
             TestFunction();
         }
+
 
         static void TestFunction()
         {
@@ -24,14 +26,15 @@ namespace TradingBotCS
             // host       - Host name or IP address of the host running TWS
             // port       - The port TWS listens through for connections - 7496
             // clientId   - The identifier of the client application
-            ibClient.ClientSocket.eConnect("192.168.50.107", 4002, 0);
+            ibClient.ClientSocket.eConnect("127.0.0.1", 7497, 0);
 
             // For IB TWS API version 9.72 and higher, implement this
             // signal-handling code. Otherwise comment it out.
 
             var reader = new EReader(ibClient.ClientSocket, ibClient.Signal);
             reader.Start();
-            new Thread(() => {
+            new Thread(() =>
+            {
                 while (ibClient.ClientSocket.IsConnected())
                 {
                     ibClient.Signal.waitForSignal();
@@ -44,7 +47,7 @@ namespace TradingBotCS
             // Create a new contract to specify the security we are searching for
             Contract contract = new Contract();
             // Fill in the Contract properties
-            contract.Symbol = "LB";
+            contract.Symbol = "AMD";
             contract.SecType = "STK";
             contract.Exchange = "SMART";
             contract.Currency = "USD";
@@ -61,16 +64,18 @@ namespace TradingBotCS
             // regulatory snapshot - API version 9.72 and higher. Remove for earlier versions of API
             // mktDataOptions   - TagValueList of options 
             ibClient.ClientSocket.reqMktData(1, contract, "", false, false, mktDataOptions);
+            ibClient.ClientSocket.reqMarketDepth(2, contract, 5, false, mktDataOptions);
+            ibClient.ClientSocket.reqRealTimeBars(1, contract, 5, "TRADES", false, mktDataOptions);
 
             // Pause so we can view the output
             Console.ReadKey();
 
             // Cancel the subscription/request. Parameter is:
             // tickerId         - A unique id to represent the request 
-            ibClient.ClientSocket.cancelMktData(1);
+            //ibClient.ClientSocket.cancelMktData(1);
 
             // Disconnect from TWS
-            ibClient.ClientSocket.eDisconnect();
+            //ibClient.ClientSocket.eDisconnect();
         }
     }
 }
