@@ -8,23 +8,23 @@
     "net5.0": []
   },
   "packageFolders": {
-    "C:\\Users\\SKIKK\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Users\\joren\\.nuget\\packages\\": {},
+    "D:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\SKIKK\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
+      "projectUniqueName": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
       "projectName": "TradingBotCS",
-      "projectPath": "C:\\Users\\SKIKK\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
-      "packagesPath": "C:\\Users\\SKIKK\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\SKIKK\\Desktop\\TradingBotCS\\TradingBotCS\\obj\\",
+      "projectPath": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
+      "packagesPath": "C:\\Users\\joren\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
+        "D:\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\SKIKK\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\joren\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
