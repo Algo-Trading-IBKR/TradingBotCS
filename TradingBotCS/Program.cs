@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using IBApi;
+using TradingBotCS.Email;
 using TradingBotCS.Models_Indicators;
 
 namespace TradingBotCS
