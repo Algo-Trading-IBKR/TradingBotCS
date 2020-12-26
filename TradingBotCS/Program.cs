@@ -16,11 +16,11 @@ namespace TradingBotCS
         static string Ip = "192.168.1.165";
         static int Port = 4002;
         static int ApiId = 5;
-        static WrapperOverride IbClient = new WrapperOverride();
+        public static WrapperOverride IbClient = new WrapperOverride();
         static EReader IbReader;
         public static List<Symbol> SymbolObjects;
 
-        static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "NIO", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL", "UAA" };
+        static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
 
         static async Task Main(string[] args)
         {
@@ -30,18 +30,29 @@ namespace TradingBotCS
             Console.WriteLine("getting updates");
             await AccountUpdates();
             Console.WriteLine("got updates");
-            //Order Order = await CreateOrder()
 
             SymbolObjects = await CreateSymbolObjects(SymbolList);
 
-            //Contract Contract = await CreateContract("AMD");
-            
-            //IbClient.ClientSocket.reqContractDetails(0, Contract);
+            IbClient.ClientSocket.reqOpenOrders();
 
-            //GetMarketData(Contract);
+            while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
+        }
 
-            //GetTradingHours();
-            Console.ReadKey();
+        static async Task Connect()
+        {
+            IbClient.ClientSocket.eConnect(Ip, Port, ApiId);
+            IbReader = new EReader(IbClient.ClientSocket, IbClient.Signal);
+            IbReader.Start();
+
+            new Thread(() =>
+            {
+                while (IbClient.ClientSocket.IsConnected())
+                {
+                    IbClient.Signal.waitForSignal();
+                    IbReader.processMsgs();
+                }
+            })
+            { IsBackground = true }.Start();
         }
 
         static async Task<List<Symbol>> CreateSymbolObjects(List<string> symbolList)
@@ -56,24 +67,6 @@ namespace TradingBotCS
             return Result;
         }
 
-        static async Task Connect()
-        {
-            IbClient.ClientSocket.eConnect(Ip, Port, ApiId);
-            IbReader = new EReader(IbClient.ClientSocket, IbClient.Signal);
-            IbReader.Start();
-            Console.WriteLine(IbClient.NextOrderId);
-
-            new Thread(() =>
-            {
-                while (IbClient.ClientSocket.IsConnected())
-                {
-                    IbClient.Signal.waitForSignal();
-                    IbReader.processMsgs();
-                }
-            })
-            { IsBackground = true }.Start();
-        }
-
         static async Task AccountUpdates()
         {
             new Thread(() =>
@@ -84,11 +77,6 @@ namespace TradingBotCS
                 }
             })
             { IsBackground = false }.Start();
-        }
-
-        static async Task<Order> CreateOrder()
-        {
-            return new Order();
         }
 
         static async Task<Contract> CreateContract(string symbol, string secType = "STK", string exchange = "SMART", string currency = "USD")

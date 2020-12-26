@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using IBApi;
 using TradingBotCS;
 
@@ -193,7 +194,7 @@ namespace IBApi
         //! [orderstatus]
 
         //! [openorder]
-        public virtual void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
+        public virtual async void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
         {
             Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account + 
                 ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType + 
@@ -209,7 +210,7 @@ namespace IBApi
         //! [openorderend]
 
         //! [contractdetails]
-        public virtual void contractDetails(int reqId, ContractDetails contractDetails)
+        public virtual async void contractDetails(int reqId, ContractDetails contractDetails)
         {
             Console.WriteLine("ContractDetails begin. ReqId: " + reqId);
             printContractMsg(contractDetails.Contract);
