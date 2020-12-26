@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="IBApi_OverRide\" />
     <Folder Include="NewFolder\" />
   </ItemGroup>
 

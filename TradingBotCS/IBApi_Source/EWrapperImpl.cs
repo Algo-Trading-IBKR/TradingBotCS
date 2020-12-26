@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IBApi;
+using TradingBotCS;
 
 namespace IBApi
 {

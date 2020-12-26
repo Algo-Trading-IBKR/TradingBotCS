@@ -6,15 +6,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using IBApi;
 using TradingBotCS.Email;
+using TradingBotCS.IBApi_OverRide;
 using TradingBotCS.Models_Indicators;
 
 namespace TradingBotCS
 {
     class Program
     {
-        static EWrapperImpl IbClient = new EWrapperImpl();
+        static string Ip = "192.168.1.165";
+        static int Port = 4002;
+        static int ApiId = 5;
+        static WrapperOverride IbClient = new WrapperOverride();
         static EReader IbReader;
-        static List<Symbol> SymbolObjects;
+        public static List<Symbol> SymbolObjects;
 
         static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "NIO", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL", "UAA" };
 
@@ -30,11 +34,11 @@ namespace TradingBotCS
 
             SymbolObjects = await CreateSymbolObjects(SymbolList);
 
-            Contract Contract = await CreateContract("AMD", "STK", "SMART", "USD");
+            //Contract Contract = await CreateContract("AMD");
             
-            IbClient.ClientSocket.reqContractDetails(0, Contract);
+            //IbClient.ClientSocket.reqContractDetails(0, Contract);
 
-            GetMarketData(Contract);
+            //GetMarketData(Contract);
 
             //GetTradingHours();
             Console.ReadKey();
@@ -46,13 +50,15 @@ namespace TradingBotCS
             for(int i = 0; i < symbolList.Count; i++)
             {
                 Result.Add(new Symbol(symbolList[i], i));
+                Contract Contract = await CreateContract(symbolList[i]);
+                IbClient.ClientSocket.reqContractDetails(i, Contract);
             }
             return Result;
         }
 
         static async Task Connect()
         {
-            IbClient.ClientSocket.eConnect("127.0.0.1", 4002, 0);
+            IbClient.ClientSocket.eConnect(Ip, Port, ApiId);
             IbReader = new EReader(IbClient.ClientSocket, IbClient.Signal);
             IbReader.Start();
             Console.WriteLine(IbClient.NextOrderId);
@@ -67,12 +73,6 @@ namespace TradingBotCS
             })
             { IsBackground = true }.Start();
         }
-
-        static async Task GetTradingHours()
-        {
-
-        }
-
 
         static async Task AccountUpdates()
         {
@@ -91,14 +91,13 @@ namespace TradingBotCS
             return new Order();
         }
 
-        static async Task<Contract> CreateContract(string symbol, string secType, string exchange, string currency)
+        static async Task<Contract> CreateContract(string symbol, string secType = "STK", string exchange = "SMART", string currency = "USD")
         {
             Contract Contract =  new Contract();
             Contract.Symbol = symbol;
             Contract.SecType = secType;
             Contract.Exchange = exchange;
             Contract.Currency = currency;
-            Contract.Exchange = "ISLAND";
 
             return Contract;
         }
