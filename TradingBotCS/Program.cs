@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using IBApi;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using TradingBotCS.Email;
 using TradingBotCS.IBApi_OverRide;
 using TradingBotCS.Models_Indicators;
@@ -20,10 +22,16 @@ namespace TradingBotCS
         static EReader IbReader;
         public static List<Symbol> SymbolObjects;
 
+        public static MongoClient MongoDBClient = new MongoClient(); // automatically connects to localhost:27017
+        
+
         static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
 
         static async Task Main(string[] args)
         {
+            MongoDBtest();
+            
+
             test();
 
             await Connect();
@@ -63,6 +71,7 @@ namespace TradingBotCS
                 Result.Add(new Symbol(symbolList[i], i));
                 Contract Contract = await CreateContract(symbolList[i]);
                 IbClient.ClientSocket.reqContractDetails(i, Contract);
+                GetMarketData(Contract, i);
             }
             return Result;
         }
@@ -90,11 +99,32 @@ namespace TradingBotCS
             return Contract;
         }
 
-        static async Task GetMarketData(Contract contract)
+        static async Task GetMarketData(Contract contract, int id)
         {
             List<TagValue> MktDataOptions = new List<TagValue>();
 
-            IbClient.ClientSocket.reqMktData(1, contract, "", false, false, MktDataOptions);
+            IbClient.ClientSocket.reqMktData(id, contract, "", false, false, MktDataOptions);
+        }
+
+        public static async Task MongoDBtest()
+        {
+            var db = MongoDBClient.GetDatabase("TradingBot");
+            var collection = db.GetCollection<BsonDocument>("AccountInfo");
+            var count = await collection.CountDocumentsAsync(new BsonDocument("Type", "cashbalance")); // ALWAYS USE AWAIT
+            Console.WriteLine(count);
+            Console.ReadKey();
+            var filter = new BsonDocument();
+            using (var cursor = await collection.Find(filter).ToCursorAsync())
+            {
+                while (await cursor.MoveNextAsync())
+                {
+                    foreach (var doc in cursor.Current)
+                    {
+                        Console.WriteLine(doc);
+                    }
+                }
+            }
+            Console.ReadKey();
         }
 
 
