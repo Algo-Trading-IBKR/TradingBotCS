@@ -32,21 +32,21 @@ namespace TradingBotCS.Database
         public static async Task ReadAccountUpdate(string key, bool allItems = true)
         {
 
-            var filter = new BsonDocument() { { "Type", key } };
-            var sort = Builders<BsonDocument>.Sort.Descending("DateTime");
-            dynamic doc;
+            var Filter = new BsonDocument() { { "Type", key } };
+            var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
+            dynamic Doc;
             if (allItems == true)
             {
-                doc = await Collection.Find(filter).Sort(sort).ToListAsync();
-                foreach(var d in doc)
+                Doc = await Collection.Find(Filter).Sort(Sort).ToListAsync();
+                foreach(var d in Doc)
                 {
                     Console.WriteLine(d);
                 }
             }
             else
             {
-                doc = await Collection.Find(filter).Limit(1).Sort(sort).SingleAsync();
-                Console.WriteLine(doc);
+                Doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
+                Console.WriteLine(Doc);
             }
             
                

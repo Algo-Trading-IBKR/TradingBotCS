@@ -84,6 +84,7 @@ namespace TradingBotCS
                 if (IbClient.ClientSocket.IsConnected())
                 {
                     IbClient.ClientSocket.reqAccountUpdates(true, "DU2361307");
+                    IbClient.ClientSocket.reqPositions();
                 }
             })
             { IsBackground = false }.Start();
