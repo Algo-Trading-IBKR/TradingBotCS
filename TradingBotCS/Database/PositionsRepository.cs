@@ -39,13 +39,11 @@ namespace TradingBotCS.Database
                 doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
             }
 
-            var Filter2 = Builders<BsonDocument>.Filter.Eq("_id", (ObjectId)doc.GetElement("_id").Value);
+            var IdFilter = Builders<BsonDocument>.Filter.Eq("_id", (ObjectId)doc.GetElement("_id").Value);
             var Update = Builders<BsonDocument>.Update.Set("DateTime", DateTime.Now).Set("AverageCost", avgCost).Set("Position", pos);
-           // Update = Update.Set("AverageCost", avgCost);
-           // Update = Update.Set("Position", 1);
             var Options = new UpdateOptions { IsUpsert = true };
 
-            await Collection.UpdateOneAsync(Filter2, Update, Options);
+            await Collection.UpdateOneAsync(IdFilter, Update, Options);
 
         }
     }
