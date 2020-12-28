@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradingBotCS.Database;
 
 namespace TradingBotCS.IBApi_OverRide
 {
@@ -45,5 +46,22 @@ namespace TradingBotCS.IBApi_OverRide
             Console.WriteLine("opentest");
         }
         //! [openorder]
+
+        //! [updateaccountvalue]
+        public override async void updateAccountValue(string key, string value, string currency, string accountName)
+        {
+            List<string> WantedValues = new List<string>() { "test", "cashbalance" };
+            Console.WriteLine("UpdateAccountValue. Key: " + key + ", Value: " + value + ", Currency: " + currency + ", AccountName: " + accountName);
+            if(WantedValues.Contains(key, StringComparer.OrdinalIgnoreCase) && currency.ToLower() == "usd"){
+                AccountRepository.InsertAccountUpdate(key, value, currency, accountName);
+            }
+            if (key.ToLower().Equals("cashbalance"))
+            {
+                Symbol.CashBalance = float.Parse(value, System.Globalization.CultureInfo.InvariantCulture); ;
+            }
+
+            
+        }
+        //! [updateaccountvalue]
     }
 }

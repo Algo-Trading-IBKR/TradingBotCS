@@ -38,6 +38,7 @@ namespace TradingBotCS
             Console.WriteLine("getting updates");
             await AccountUpdates();
             Console.WriteLine("got updates");
+            Console.ReadKey();
 
             SymbolObjects = await CreateSymbolObjects(SymbolList);
 
