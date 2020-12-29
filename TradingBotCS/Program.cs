@@ -29,7 +29,6 @@ namespace TradingBotCS
 
         private static string Name = "Program";
 
-
         static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
 
         static async Task Main(string[] args)
@@ -117,13 +116,6 @@ namespace TradingBotCS
             return Contract;
         }
 
-        static async Task GetMarketData(Contract contract, int id)
-        {
-            List<TagValue> MktDataOptions = new List<TagValue>();
-
-            IbClient.ClientSocket.reqMktData(id, contract, "", false, false, MktDataOptions);
-        }
-
         public static async Task MongoDBtest()
         {
             Logger.Verbose(Name, "Started MongoDB Test");
@@ -183,7 +175,7 @@ namespace TradingBotCS
             //    Console.WriteLine(x);
             //}
 
-            //declist = await MovingAverage.RSI(intList, 14);
+            //declist = await IndicatorRSI.RSI(intList, 14);
             //foreach (decimal x in declist)
             //{
             //    Console.WriteLine(x);

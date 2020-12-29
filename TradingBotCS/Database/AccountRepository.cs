@@ -17,7 +17,9 @@ namespace TradingBotCS.Database
 
         public static async Task InsertAccountUpdate(string key, string value, string currency, string accountName)
         {
-            AccountInfo Data = new AccountInfo(accountName, DateTime.Now, key, float.Parse(value, System.Globalization.CultureInfo.InvariantCulture));
+            ObjectId id = new ObjectId();
+            AccountInfo Data = new AccountInfo(id, accountName, DateTime.Now, key, float.Parse(value, System.Globalization.CultureInfo.InvariantCulture));
+
             BsonDocument Doc = Data.ToBsonDocument();
             await Collection.InsertOneAsync(Doc);
             ReadAccountUpdate(key);
@@ -33,7 +35,8 @@ namespace TradingBotCS.Database
                 Doc = await Collection.Find(Filter).Sort(Sort).ToListAsync();
                 foreach(var d in Doc)
                 {
-                    Console.WriteLine(d);
+                    AccountInfo doc = BsonSerializer.Deserialize<AccountInfo>(d);
+                    Console.WriteLine(doc.Value);
                 }
             }
             else

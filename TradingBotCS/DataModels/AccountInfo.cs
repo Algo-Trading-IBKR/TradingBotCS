@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace TradingBotCS.DataModels
     public class AccountInfo
     {
         [BsonId]
-        public string _id { get; set; }
+        public ObjectId _id { get; set; }
 
         [BsonElement("AccountId")]
         public string AccountId { get; set; }
@@ -25,8 +26,9 @@ namespace TradingBotCS.DataModels
         [BsonElement("Value")]
         public float Value { get; set; }
 
-        public AccountInfo(string accountId, DateTime datetime, string type, float value)
+        public AccountInfo(ObjectId id, string accountId, DateTime datetime, string type, float value)
         {
+            this._id = id;
             this.AccountId = accountId;
             this.DateTime = datetime;
             this.Type = type;

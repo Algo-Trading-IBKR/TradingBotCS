@@ -11,12 +11,9 @@ namespace TradingBotCS.Models_Indicators
         public static async Task<List<decimal>> RSI(List<decimal> data, int period)
         {
             List<decimal> Result = new List<decimal>();
-            List<decimal> GainList = new List<decimal>();
-            List<decimal> LossList = new List<decimal>();
             decimal AvgGain = new decimal();
             decimal AvgLoss = new decimal();
 
-            decimal rsi1 = new decimal();
             decimal PrevValue = data[0];
 
             for (int x = 0; x < data.Count - period; x++)
@@ -51,14 +48,6 @@ namespace TradingBotCS.Models_Indicators
                 {
                     Result.Add(100 - (100 / (1 + (AvgGain / AvgLoss))));
                 }
-                else if (AvgGain == 0)
-                {
-                    rsi1 = -100m;
-                }
-                else
-                {
-                    rsi1 = 100m;
-                }
             }
             return Result;
         }
@@ -84,5 +73,27 @@ namespace TradingBotCS.Models_Indicators
             List<decimal> Result = await RSI(DecList, period);
             return Result;
         }
+
+
+        public static async Task<List<decimal>> stochRSI(List<decimal> data, int Kperiod, int Dperiod)
+        {
+            //Fast %K =  ( ( Close - rsi(Low) ) / (rsi( High) - rsi(Low )) )
+
+            List<decimal> ResultK = new List<decimal>();
+            List<decimal> ResultD = new List<decimal>();
+
+            for (int i = 0; i <= data.Count-14; i++)
+            {
+                List<decimal> ShortList = data.GetRange(i, Kperiod);
+                decimal Low = ShortList.Min(); //laagste van de lijst :p
+                decimal High = ShortList.Max(); //hoogste van de lijst >:(
+                decimal fastk = (ShortList[0] - Low) / (High - Low);
+
+                ResultK.Add(fastk);
+            }
+
+            return ResultK;
+        }
+
     }
 }

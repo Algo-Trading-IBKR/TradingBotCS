@@ -22,15 +22,19 @@ namespace TradingBotCS.Database
         {
             Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == tickerId);
             DateTime Time = Converter.UnixTimeStampToDateTime(time);
-            BsonDocument Doc = new BsonDocument
-            {
-                {"DateTime", Time},
-                {"Symbol", SymbolObject.Ticker},
-                {"Open", open},
-                {"High", high},
-                {"Low", low},
-                {"Close", close},
-            };
+            ObjectId id = new ObjectId();
+            RawData Data = new RawData(id, SymbolObject.Ticker, Time, open, high, low, close);
+            BsonDocument Doc = Data.ToBsonDocument();
+
+            //BsonDocument Doc = new BsonDocument
+            //{
+            //    {"DateTime", Time},
+            //    {"Symbol", SymbolObject.Ticker},
+            //    {"Open", open},
+            //    {"High", high},
+            //    {"Low", low},
+            //    {"Close", close},
+            //};
 
             await Collection.InsertOneAsync(Doc);
         }
@@ -45,13 +49,16 @@ namespace TradingBotCS.Database
             Doc = await Collection.Find(Filter).Limit(amount).Sort(Sort).ToListAsync();
             foreach (BsonDocument d in Doc)
             {
-                RawData Datapoint = new RawData();
-                Datapoint.Symbol = d["Symbol"].AsString;
-                Datapoint.DateTime = d["DateTime"].ToUniversalTime();
-                Datapoint.Open = d["Open"].AsDouble;
-                Datapoint.High = d["High"].AsDouble;
-                Datapoint.Low = d["Low"].AsDouble;
-                Datapoint.Close = d["Close"].AsDouble;
+                //RawData Datapoint = new RawData();
+                //Datapoint.Symbol = d["Symbol"].AsString;
+                //Datapoint.DateTime = d["DateTime"].ToUniversalTime();
+                //Datapoint.Open = d["Open"].AsDouble;
+                //Datapoint.High = d["High"].AsDouble;
+                //Datapoint.Low = d["Low"].AsDouble;
+                //Datapoint.Close = d["Close"].AsDouble;
+
+                RawData Datapoint = BsonSerializer.Deserialize<RawData>(d);
+                
                 Data.Add(Datapoint);
                     
             }
