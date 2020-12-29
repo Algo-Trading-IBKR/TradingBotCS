@@ -72,7 +72,8 @@ namespace TradingBotCS
                 Result.Add(new Symbol(symbolList[i], i));
                 Contract Contract = await CreateContract(symbolList[i]);
                 IbClient.ClientSocket.reqContractDetails(i, Contract);
-                GetMarketData(Contract, i);
+                IbClient.ClientSocket.reqRealTimeBars(i, Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
+                //GetMarketData(Contract, i);
             }
             return Result;
         }

@@ -25,13 +25,12 @@ namespace TradingBotCS.Database
             };
 
             await Collection.InsertOneAsync(Doc);
-            ReadAccountUpdate(key);
+            //ReadAccountUpdate(key);
 
         }
 
         public static async Task ReadAccountUpdate(string key, bool allItems = true)
         {
-
             var Filter = new BsonDocument() { { "Type", key } };
             var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
             dynamic Doc;
@@ -48,8 +47,6 @@ namespace TradingBotCS.Database
                 Doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
                 Console.WriteLine(Doc);
             }
-            
-               
         }
 
     }

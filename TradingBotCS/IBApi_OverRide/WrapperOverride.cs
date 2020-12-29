@@ -55,11 +55,28 @@ namespace TradingBotCS.IBApi_OverRide
         }
         //! [position]
 
+        //! [realtimebar]
+        public override void realtimeBar(int reqId, long time, double open, double high, double low, double close, long volume, double WAP, int count)
+        {
+            Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP);
+            RawDataRepository.InsertRawData(reqId, time, close);
+        }
+        //! [realtimebar]
+
+        //! [tickprice]
+        public override async void tickPrice(int tickerId, int field, double price, TickAttrib attribs)
+        {
+            Console.WriteLine("Tick Price. Ticker Id:" + tickerId + ", Field: " + field + ", Price: " + price + ", CanAutoExecute: " + attribs.CanAutoExecute +
+                ", PastLimit: " + attribs.PastLimit + ", PreOpen: " + attribs.PreOpen);
+            //RawDataRepository.InsertRawData(tickerId, field, price, attribs);
+        }
+        //! [tickprice]
+
         //! [updateaccountvalue]
         public override async void updateAccountValue(string key, string value, string currency, string accountName)
         {
-            List<string> WantedValues = new List<string>() { "test", "cashbalance" };
-            Console.WriteLine("UpdateAccountValue. Key: " + key + ", Value: " + value + ", Currency: " + currency + ", AccountName: " + accountName);
+            List<string> WantedValues = new List<string>() { "cashbalance","unrealizedpnl","netliquidationbycurrency","pasharesvalue" };
+            //Console.WriteLine("UpdateAccountValue. Key: " + key + ", Value: " + value + ", Currency: " + currency + ", AccountName: " + accountName);
             if(WantedValues.Contains(key, StringComparer.OrdinalIgnoreCase) && currency.ToLower() == "usd"){
                 AccountRepository.InsertAccountUpdate(key, value, currency, accountName);
             }
