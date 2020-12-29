@@ -8,7 +8,6 @@ namespace TradingBotCS.HelperClasses
 {
     public static class Converter
     {
-
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch

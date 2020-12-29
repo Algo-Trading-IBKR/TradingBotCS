@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradingBotCS.Database;
+using TradingBotCS.DataModels;
 
 namespace TradingBotCS
 {
@@ -11,9 +13,6 @@ namespace TradingBotCS
     {
         //Class Variables
         public static float CashBalance { get; set; }
-
-
-
         private string ticker { get; set; }
         private int id { get; set; }
         private Contract contract { get; set; }
@@ -21,6 +20,7 @@ namespace TradingBotCS
         private Order latestOrder { get; set; }
         private float orderPrice { get; set; }
         private float latestPrice { get; set; }
+        private List<RawData> rawDatalist { get; set; }
 
 
         public string Ticker{
@@ -60,6 +60,23 @@ namespace TradingBotCS
         {
             get { return latestPrice; }
             set { latestPrice = value; }
+        }
+
+        public List<RawData> RawDatalist
+        {
+            get { return rawDatalist; }
+            set { rawDatalist = value; }
+        }
+
+        public async Task AddToRawData(Symbol symbol, DateTime time, double open, double high, double low, double close)
+        {
+            RawData newData = new RawData();
+            newData.DateTime = time;
+            newData.Open = open;
+            newData.High = high;
+            newData.Low = low;
+            newData.Close = close;
+            symbol.rawDatalist.Add(newData);
         }
 
         public Symbol(string ticker, int id)

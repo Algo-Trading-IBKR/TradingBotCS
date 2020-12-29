@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -7,7 +8,9 @@ using System.Threading.Tasks;
 using IBApi;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using TradingBotCS.Database;
 using TradingBotCS.Email;
+using TradingBotCS.HelperClasses;
 using TradingBotCS.IBApi_OverRide;
 using TradingBotCS.Models_Indicators;
 
@@ -23,24 +26,29 @@ namespace TradingBotCS
         public static List<Symbol> SymbolObjects;
 
         public static MongoClient MongoDBClient = new MongoClient(); // automatically connects to localhost:27017
-        
+
+        private static string Name = "Program";
+
 
         static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
 
         static async Task Main(string[] args)
         {
+            Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
+            Logger.Verbose(Name, "Started Tests");
+
             MongoDBtest();
             
-
             test();
 
             await Connect();
-            Console.WriteLine("getting updates");
             await AccountUpdates();
-            Console.WriteLine("got updates");
-            Console.ReadKey();
 
             SymbolObjects = await CreateSymbolObjects(SymbolList);
+            foreach (Symbol S in SymbolObjects)
+            {
+                S.RawDatalist = await RawDataRepository.ReadRawData(S.Ticker);
+            }
 
             IbClient.ClientSocket.reqOpenOrders();
 
@@ -49,6 +57,8 @@ namespace TradingBotCS
 
         static async Task Connect()
         {
+            Logger.Verbose(Name, "Connecting To API");
+
             IbClient.ClientSocket.eConnect(Ip, Port, ApiId);
             IbReader = new EReader(IbClient.ClientSocket, IbClient.Signal);
             IbReader.Start();
@@ -66,6 +76,8 @@ namespace TradingBotCS
 
         static async Task<List<Symbol>> CreateSymbolObjects(List<string> symbolList)
         {
+            Logger.Verbose(Name, "Creating Symbol Objects");
+
             List<Symbol> Result = new List<Symbol>();
             for(int i = 0; i < symbolList.Count; i++)
             {
@@ -75,11 +87,13 @@ namespace TradingBotCS
                 IbClient.ClientSocket.reqRealTimeBars(i, Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
                 //GetMarketData(Contract, i);
             }
+            
             return Result;
         }
 
         static async Task AccountUpdates()
         {
+            Logger.Verbose(Name, "Requesting Account Updates");
             new Thread(() =>
             {
                 if (IbClient.ClientSocket.IsConnected())
@@ -93,6 +107,7 @@ namespace TradingBotCS
 
         static async Task<Contract> CreateContract(string symbol, string secType = "STK", string exchange = "SMART", string currency = "USD")
         {
+            Logger.Verbose(Name, "Creating Contract");
             Contract Contract =  new Contract();
             Contract.Symbol = symbol;
             Contract.SecType = secType;
@@ -111,11 +126,11 @@ namespace TradingBotCS
 
         public static async Task MongoDBtest()
         {
+            Logger.Verbose(Name, "Started MongoDB Test");
+
             var db = MongoDBClient.GetDatabase("TradingBot");
             var collection = db.GetCollection<BsonDocument>("AccountInfo");
             var count = await collection.CountDocumentsAsync(new BsonDocument("Type", "cashbalance")); // ALWAYS USE AWAIT
-            Console.WriteLine(count);
-            Console.ReadKey();
             var filter = new BsonDocument();
             using (var cursor = await collection.Find(filter).ToCursorAsync())
             {
@@ -123,11 +138,10 @@ namespace TradingBotCS
                 {
                     foreach (var doc in cursor.Current)
                     {
-                        Console.WriteLine(doc);
+                        //Console.WriteLine(doc);
                     }
                 }
             }
-            Console.ReadKey();
         }
 
 
