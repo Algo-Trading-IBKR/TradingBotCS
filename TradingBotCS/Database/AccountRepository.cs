@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -16,20 +17,13 @@ namespace TradingBotCS.Database
 
         public static async Task InsertAccountUpdate(string key, string value, string currency, string accountName)
         {
-            BsonDocument Doc = new BsonDocument
-            {
-                {"AccountId", accountName},
-                {"DateTime", DateTime.Now},
-                {"Type", key },
-                {"Value", value }
-            };
-
+            AccountInfo Data = new AccountInfo(accountName, DateTime.Now, key, float.Parse(value, System.Globalization.CultureInfo.InvariantCulture));
+            BsonDocument Doc = Data.ToBsonDocument();
             await Collection.InsertOneAsync(Doc);
-            //ReadAccountUpdate(key);
-
+            ReadAccountUpdate(key);
         }
 
-        public static async Task ReadAccountUpdate(string key, bool allItems = true)
+        public static async Task ReadAccountUpdate(string key, bool allItems = false)
         {
             var Filter = new BsonDocument() { { "Type", key } };
             var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
@@ -45,7 +39,10 @@ namespace TradingBotCS.Database
             else
             {
                 Doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
-                Console.WriteLine(Doc);
+                
+                AccountInfo doc = BsonSerializer.Deserialize<AccountInfo>(Doc);
+                Console.WriteLine(doc.Value);
+
             }
         }
 
