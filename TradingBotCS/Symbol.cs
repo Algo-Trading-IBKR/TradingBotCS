@@ -68,17 +68,6 @@ namespace TradingBotCS
             set { rawDatalist = value; }
         }
 
-        public async Task AddToRawData(Symbol symbol, DateTime time, double open, double high, double low, double close)
-        {
-            RawData newData = new RawData();
-            newData.DateTime = time;
-            newData.Open = open;
-            newData.High = high;
-            newData.Low = low;
-            newData.Close = close;
-            symbol.rawDatalist.Add(newData);
-        }
-
         public Symbol(string ticker, int id)
         {
             this.Ticker = ticker;

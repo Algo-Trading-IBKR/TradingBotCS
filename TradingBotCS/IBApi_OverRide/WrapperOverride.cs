@@ -83,7 +83,7 @@ namespace TradingBotCS.IBApi_OverRide
         {
             
             //Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP);
-            RawDataRepository.InsertRawData(reqId, time, open, high, low, close);
+            RawDataRepository.InsertRawData(reqId, time, open, high, low, close);// data moet ook toegevoegd worden aan symbol raw data list
         }
         //! [realtimebar]
 
