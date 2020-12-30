@@ -11,25 +11,25 @@ namespace TradingBotCS.DataModels
     [BsonIgnoreExtraElements]
     public class RawData
     {
-        [BsonId]
+        //[BsonId]
         public ObjectId _id { get; set; }
 
-        [BsonElement("Symbol")]
+        //[BsonElement("Symbol")]
         public string Symbol { get; set; }
 
-        [BsonElement("DateTime")]
+        //[BsonElement("DateTime")]
         public DateTime DateTime { get; set; }
 
-        [BsonElement("Open")]
+        //[BsonElement("Open")]
         public double Open { get; set; }
 
-        [BsonElement("High")]
+        //[BsonElement("High")]
         public double High { get; set; }
 
-        [BsonElement("Low")]
+        //[BsonElement("Low")]
         public double Low { get; set; }
 
-        [BsonElement("Close")]
+        //[BsonElement("Close")]
         public double Close { get; set; }
 
         public RawData(ObjectId id, string symbol, DateTime time, double open, double high, double low, double close)

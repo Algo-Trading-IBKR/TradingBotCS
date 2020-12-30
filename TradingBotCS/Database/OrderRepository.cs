@@ -1,16 +1,38 @@
-﻿using MongoDB.Bson;
+﻿using IBApi;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradingBotCS.IBApi_OverRide;
 
 namespace TradingBotCS.Database
 {
     class OrderRepository
     {
-        private static IMongoDatabase db = Program.MongoDBClient.GetDatabase("TradingBot");
-        private static IMongoCollection<BsonDocument> collection = db.GetCollection<BsonDocument>("OrderLog");
+        private static string Name = "OrderRepository";
+        private static IMongoDatabase Db = Program.MongoDBClient.GetDatabase("TradingBot");
+        private static IMongoCollection<BsonDocument> Collection = Db.GetCollection<BsonDocument>("OrderLog");
+
+        public static async Task InsertReport(OrderOverride order)
+        {
+
+            BsonDocument Doc = order.ToBsonDocument();
+            await Collection.InsertOneAsync(Doc);
+        }
+
+        public static async Task<Order> GetOrderById(string symbol, int orderId)
+        {
+            var Filter = new BsonDocument() { { "Symbol", symbol }, { "OrderId", orderId } };
+            var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
+
+            BsonDocument Doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
+            Order order = BsonSerializer.Deserialize<Order>(Doc);
+
+            return order;
+        }
     }
 }

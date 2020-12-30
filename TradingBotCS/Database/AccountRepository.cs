@@ -22,12 +22,12 @@ namespace TradingBotCS.Database
 
             BsonDocument Doc = Data.ToBsonDocument();
             await Collection.InsertOneAsync(Doc);
-            ReadAccountUpdate(key);
+            //ReadAccountUpdate("cashbalance");
         }
 
         public static async Task ReadAccountUpdate(string key, bool allItems = false)
         {
-            var Filter = new BsonDocument() { { "Type", key } };
+            var Filter = new BsonDocument() { { "Type", key.ToLower() } };
             var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
             dynamic Doc;
             if (allItems == true)

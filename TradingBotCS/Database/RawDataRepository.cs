@@ -26,17 +26,8 @@ namespace TradingBotCS.Database
             RawData Data = new RawData(id, SymbolObject.Ticker, Time, open, high, low, close);
             BsonDocument Doc = Data.ToBsonDocument();
 
-            //BsonDocument Doc = new BsonDocument
-            //{
-            //    {"DateTime", Time},
-            //    {"Symbol", SymbolObject.Ticker},
-            //    {"Open", open},
-            //    {"High", high},
-            //    {"Low", low},
-            //    {"Close", close},
-            //};
-
             await Collection.InsertOneAsync(Doc);
+            //List<RawData> test =  await ReadRawData("AMD");
         }
 
         public static async Task<List<RawData>> ReadRawData(string symbol, int amount=5000)
@@ -49,16 +40,8 @@ namespace TradingBotCS.Database
             Doc = await Collection.Find(Filter).Limit(amount).Sort(Sort).ToListAsync();
             foreach (BsonDocument d in Doc)
             {
-                //RawData Datapoint = new RawData();
-                //Datapoint.Symbol = d["Symbol"].AsString;
-                //Datapoint.DateTime = d["DateTime"].ToUniversalTime();
-                //Datapoint.Open = d["Open"].AsDouble;
-                //Datapoint.High = d["High"].AsDouble;
-                //Datapoint.Low = d["Low"].AsDouble;
-                //Datapoint.Close = d["Close"].AsDouble;
-
                 RawData Datapoint = BsonSerializer.Deserialize<RawData>(d);
-                
+                //Console.WriteLine(Datapoint);
                 Data.Add(Datapoint);
                     
             }

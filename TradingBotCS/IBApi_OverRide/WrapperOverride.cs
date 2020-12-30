@@ -45,6 +45,24 @@ namespace TradingBotCS.IBApi_OverRide
         }
         //! [contractdetailsend]
 
+        //! [commissionreport]
+        public virtual void commissionReport(CommissionReport commissionReport)
+        {
+            CommissionReportOverride commissionReportOverride = new CommissionReportOverride(commissionReport);
+            CommissionRepository.InsertReport(commissionReportOverride);
+            //Console.WriteLine("CommissionReport. " + commissionReport.ExecId + " - " + commissionReport.Commission + " " + commissionReport.Currency + " RPNL " + commissionReport.RealizedPNL);
+        }
+        //! [commissionreport]
+
+        //! [execdetails]
+        public virtual void execDetails(int reqId, Contract contract, Execution execution)
+        {
+            ExecutionOverride executionOverride = new ExecutionOverride(execution);
+            ExecutionRepository.InsertReport(contract, executionOverride);
+            //Console.WriteLine("ExecDetails. " + reqId + " - " + contract.Symbol + ", " + contract.SecType + ", " + contract.Currency + " - " + execution.ExecId + ", " + execution.OrderId + ", " + execution.Shares + ", " + execution.LastLiquidity);
+        }
+        //! [execdetails]
+
         //! [openorder]
         public override async void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
         {
@@ -92,7 +110,7 @@ namespace TradingBotCS.IBApi_OverRide
             List<string> WantedValues = new List<string>() { "cashbalance","unrealizedpnl","netliquidationbycurrency","pasharesvalue" };
             //Console.WriteLine("UpdateAccountValue. Key: " + key + ", Value: " + value + ", Currency: " + currency + ", AccountName: " + accountName);
             if (WantedValues.Contains(key, StringComparer.OrdinalIgnoreCase) && currency.ToLower() == "usd"){
-                AccountRepository.InsertAccountUpdate(key, value, currency, accountName);
+                AccountRepository.InsertAccountUpdate(key.ToLower(), value, currency.ToLower(), accountName);
             }
             if (key.ToLower().Equals("cashbalance") && currency.ToLower() == "usd")
             {

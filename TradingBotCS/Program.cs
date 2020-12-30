@@ -181,6 +181,20 @@ namespace TradingBotCS
             //    Console.WriteLine(x);
             //}
             //Console.ReadKey();
+
+            //Tuple<List<decimal>, List<decimal>> Results = await IndicatorRSI.stochRSI(declist, 14, 3);
+            //declist = Results.Item1;
+            //declist2 = Results.Item2;
+            //foreach (decimal x in declist)
+            //{
+            //    Console.WriteLine(x);
+            //}
+            //Console.ReadKey();
+            //foreach (decimal x in declist2)
+            //{
+            //    Console.WriteLine(x);
+            //}
+            //Console.ReadKey();
         }
     }
 }

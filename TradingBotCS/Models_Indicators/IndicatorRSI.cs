@@ -75,24 +75,33 @@ namespace TradingBotCS.Models_Indicators
         }
 
 
-        public static async Task<List<decimal>> stochRSI(List<decimal> data, int Kperiod, int Dperiod)
+        public static async Task<Tuple<List<decimal>,List<decimal>>> stochRSI(List<decimal> data, int Kperiod, int Dperiod)
         {
             //Fast %K =  ( ( Close - rsi(Low) ) / (rsi( High) - rsi(Low )) )
 
             List<decimal> ResultK = new List<decimal>();
             List<decimal> ResultD = new List<decimal>();
 
-            for (int i = 0; i <= data.Count-14; i++)
+            for (int i = 0; i < data.Count-Kperiod; i++)
             {
                 List<decimal> ShortList = data.GetRange(i, Kperiod);
                 decimal Low = ShortList.Min(); //laagste van de lijst :p
                 decimal High = ShortList.Max(); //hoogste van de lijst >:(
                 decimal fastk = (ShortList[0] - Low) / (High - Low);
 
-                ResultK.Add(fastk);
+                ResultK.Add(fastk*100);
             }
 
-            return ResultK;
+            ResultD = await IndicatorMA.SMA(ResultK, Dperiod);
+
+
+            //for (int i = 0; i < ResultK.Count; i++)
+            //{
+            //    Console.WriteLine(ResultK[i]);
+            //    Console.WriteLine(ResultD[i]);
+            //}
+
+            return Tuple.Create(ResultK, ResultD);
         }
 
     }

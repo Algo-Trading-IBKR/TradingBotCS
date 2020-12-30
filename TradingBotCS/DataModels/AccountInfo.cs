@@ -11,19 +11,19 @@ namespace TradingBotCS.DataModels
     [BsonIgnoreExtraElements]
     public class AccountInfo
     {
-        [BsonId]
+        //[BsonId]
         public ObjectId _id { get; set; }
 
-        [BsonElement("AccountId")]
+        //[BsonElement("AccountId")]
         public string AccountId { get; set; }
 
-        [BsonElement("DateTime")]
+        //[BsonElement("DateTime")]
         public DateTime DateTime { get; set; }
 
-        [BsonElement("Type")]
+        //[BsonElement("Type")]
         public string Type { get; set; }
 
-        [BsonElement("Value")]
+        //[BsonElement("Value")]
         public float Value { get; set; }
 
         public AccountInfo(ObjectId id, string accountId, DateTime datetime, string type, float value)
