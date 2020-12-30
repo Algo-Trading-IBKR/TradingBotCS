@@ -13,6 +13,8 @@ namespace TradingBotCS
     {
         //Class Variables
         public static float CashBalance { get; set; }
+
+
         private string ticker { get; set; }
         private int id { get; set; }
         private Contract contract { get; set; }

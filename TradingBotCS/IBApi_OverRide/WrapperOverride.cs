@@ -51,6 +51,7 @@ namespace TradingBotCS.IBApi_OverRide
             CommissionReportOverride commissionReportOverride = new CommissionReportOverride(commissionReport);
             CommissionRepository.InsertReport(commissionReportOverride);
             //Console.WriteLine("CommissionReport. " + commissionReport.ExecId + " - " + commissionReport.Commission + " " + commissionReport.Currency + " RPNL " + commissionReport.RealizedPNL);
+            Logger.Info(Name, $"Profit: {commissionReportOverride.RealizedPNL}");
         }
         //! [commissionreport]
 
@@ -66,9 +67,9 @@ namespace TradingBotCS.IBApi_OverRide
         //! [openorder]
         public override async void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
         {
-            Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account +
-                ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
-                ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
+            //Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account +
+            //    ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
+            //    ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
             await OrderManager.CheckOrder(order);
             Console.WriteLine("opentest");
         }
@@ -112,10 +113,14 @@ namespace TradingBotCS.IBApi_OverRide
             if (WantedValues.Contains(key, StringComparer.OrdinalIgnoreCase) && currency.ToLower() == "usd"){
                 AccountRepository.InsertAccountUpdate(key.ToLower(), value, currency.ToLower(), accountName);
             }
+
             if (key.ToLower().Equals("cashbalance") && currency.ToLower() == "usd")
             {
                 Symbol.CashBalance = float.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
                 Logger.Info(Name, $"Cash: ${value}");
+            }else if (key.ToLower().Equals("unrealizedpnl") && currency.ToLower() == "usd")
+            {
+                Logger.Info(Name, $"Unrealized P&L: ${value}");
             }
         }
         //! [updateaccountvalue]

@@ -12,6 +12,7 @@ using TradingBotCS.Database;
 using TradingBotCS.Email;
 using TradingBotCS.HelperClasses;
 using TradingBotCS.IBApi_OverRide;
+using TradingBotCS.Messaging;
 using TradingBotCS.Models_Indicators;
 
 namespace TradingBotCS
@@ -34,7 +35,8 @@ namespace TradingBotCS
         static async Task Main(string[] args)
         {
             Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
-            Logger.Verbose(Name, "Started Tests");
+            Logger.Verbose(Name, "Start");
+            await MobileService.SendTextMsg("test", false, false);
 
             MongoDBtest();
             

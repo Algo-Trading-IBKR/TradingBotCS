@@ -19,18 +19,17 @@ namespace TradingBotCS.Database
 
         public static async Task InsertReport(OrderOverride order)
         {
-
             BsonDocument Doc = order.ToBsonDocument();
             await Collection.InsertOneAsync(Doc);
         }
 
-        public static async Task<Order> GetOrderById(string symbol, int orderId)
+        public static async Task<OrderOverride> GetOrderById(string symbol, int orderId)
         {
             var Filter = new BsonDocument() { { "Symbol", symbol }, { "OrderId", orderId } };
             var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
 
             BsonDocument Doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
-            Order order = BsonSerializer.Deserialize<Order>(Doc);
+            OrderOverride order = BsonSerializer.Deserialize<OrderOverride>(Doc);
 
             return order;
         }

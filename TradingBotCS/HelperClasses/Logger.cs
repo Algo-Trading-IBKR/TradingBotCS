@@ -31,7 +31,7 @@ namespace TradingBotCS.HelperClasses
                     sLogLevel = "VERBOSE";
                     break;
                 case LogLevel.LogLevelInfo:
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     sLogLevel = "INFO";
                     break;
                 case LogLevel.LogLevelWarn:
@@ -49,7 +49,7 @@ namespace TradingBotCS.HelperClasses
             }
             if (Logger.logLevel <= logLevel)
                 //Console.WriteLine($"[{group}/{sLogLevel}] {message}");
-                Console.WriteLine($"[{group}/{DateTime.Now.ToString("HH:mm:ss")}] {message}");
+                Console.WriteLine($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}");
             Console.ResetColor();
         }
 
