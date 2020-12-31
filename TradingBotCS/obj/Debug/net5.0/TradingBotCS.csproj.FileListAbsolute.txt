@@ -40,3 +40,4 @@ C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.d
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\ref\TradingBotCS.dll
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.pdb
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.genruntimeconfig.cache
+C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.csprojAssemblyReference.cache

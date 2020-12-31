@@ -14,11 +14,15 @@ using TradingBotCS.HelperClasses;
 using TradingBotCS.IBApi_OverRide;
 using TradingBotCS.Messaging;
 using TradingBotCS.Models_Indicators;
+using TradingBotCS.Strategies;
 
 namespace TradingBotCS
 {
     class Program
     {
+        public static string DevNumber = "32476067619";
+
+        public static float MinimumCash = 100;
         static string Ip = "192.168.1.165";
         static int Port = 4002;
         static int ApiId = 5;
@@ -36,7 +40,11 @@ namespace TradingBotCS
         {
             Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
             Logger.Verbose(Name, "Start");
-            await MobileService.SendTextMsg("test", false, false);
+
+
+            //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
+            //List<string> Numbers = new List<string>() { "32476067619", "32470579542" };
+            //await MobileService.SendTextMsg(Messages, Numbers);
 
             MongoDBtest();
             
