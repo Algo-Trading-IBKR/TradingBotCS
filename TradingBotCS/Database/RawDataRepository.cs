@@ -42,7 +42,7 @@ namespace TradingBotCS.Database
             {
                 RawData Datapoint = BsonSerializer.Deserialize<RawData>(d);
                 //Console.WriteLine(Datapoint);
-                Data.Add(Datapoint);
+                Data.Insert(0, Datapoint); // omdraaien van list omdat het anders in foute volgorde staat, zie sort
                     
             }
             return Data;

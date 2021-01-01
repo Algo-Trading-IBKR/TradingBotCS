@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TradingBotCS.Database;
 using TradingBotCS.DataModels;
 using TradingBotCS.HelperClasses;
+using TradingBotCS.Models_Indicators;
 using TradingBotCS.Strategies;
 
 namespace TradingBotCS
@@ -16,7 +17,13 @@ namespace TradingBotCS
         //Class Variables
         public static float CashBalance { get; set; }
         private static string Name = "Symbol";
-
+        // buy parameters
+        private int RsiPeriod = 14;
+        private int FastKperiod = 3;
+        private int FastDPeriod = 3;
+        private int MacdSlowPeriod = 28;
+        private int MacdFastPeriod = 12;
+        private int MacdSignalPeriod = 9;
 
         public string Ticker { get; set; }
         public int Id { get; set; }
@@ -24,9 +31,9 @@ namespace TradingBotCS
         public ContractDetails ContractDetails { get; set; }
         public Order LatestOrder { get; set; }
         public float AvgPrice { get; set; }
-        public float LatestPrice { get; set; }
-        public List<RawData> RawDatalist { get; set; }
-        public List<StrategyData> StrategyDatalist { get; set; }
+        public List<RawData> RawDataList { get; set; }
+        public RawData LastRawData { get; set; }
+        public StrategyData StrategyData { get; set; }
         public int Position { get; set; }
         public B_StochFRSI_MACD_S_TrailingPercent Strategy { get; set; }
 
@@ -36,8 +43,7 @@ namespace TradingBotCS
             {
                 if (Position > 0)
                 {
-                    // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
-                    bool Result = await Strategy.SellStrategy(Position, AvgPrice, LatestPrice, StrategyDatalist, Ticker);
+                    bool Result = await Strategy.SellStrategy(AvgPrice, LastRawData, Ticker);
                     if (Result)
                     {
                         // sell order
@@ -45,7 +51,9 @@ namespace TradingBotCS
                 } else if (CashBalance >= Program.MinimumCash)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
-                    bool Result = await Strategy.BuyStrategy(LatestPrice, StrategyDatalist);
+
+
+                    bool Result = await Strategy.BuyStrategy(StrategyData);
                     if (Result)
                     {
                         // Buy order
@@ -58,6 +66,31 @@ namespace TradingBotCS
             }
         }
 
+        public async Task<bool> CalculateData()
+        {
+            List<decimal> RawPriceList = new List<decimal>();
+            foreach (RawData R in RawDataList) RawPriceList.Add((decimal)R.Close);
+
+            List<decimal> Rsi = await IndicatorRSI.RSI(RawPriceList, RsiPeriod);
+
+            var StochRsi = await IndicatorRSI.stochRSI(Rsi, FastKperiod, FastDPeriod);
+            List<decimal> K = StochRsi.Item1;
+            List<decimal> D = StochRsi.Item2;
+
+            List<decimal> Macd = await IndicatorMACD.MACD(RawPriceList, MacdSlowPeriod, MacdFastPeriod);
+            List<decimal> MacdSignal = await IndicatorMACD.MACDsignal(RawPriceList, MacdSignalPeriod);
+            List<decimal> MacdHist = await IndicatorMACD.MACDhist(Macd, MacdSignal);
+
+            Console.WriteLine(Rsi.Count);
+            Console.WriteLine(K.Count);
+            Console.WriteLine(D.Count);
+            Console.WriteLine(Macd.Count);
+            Console.WriteLine(MacdSignal.Count);
+            Console.WriteLine(MacdHist.Count);
+
+            StrategyData = new StrategyData((float)LastRawData.Close, K.Last(), D.Last(), Macd.Last(), MacdHist.Last(), MacdSignal.Last(), LastRawData.DateTime);
+            return true;
+        }
 
 
         public Symbol(string ticker, int id)

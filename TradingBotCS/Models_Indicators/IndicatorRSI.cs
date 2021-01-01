@@ -75,24 +75,33 @@ namespace TradingBotCS.Models_Indicators
         }
 
 
-        public static async Task<Tuple<List<decimal>,List<decimal>>> stochRSI(List<decimal> data, int Kperiod, int Dperiod)
+        public static async Task<(List<decimal>,List<decimal>)> stochRSI(List<decimal> data, int Kperiod, int Dperiod)
         {
             //Fast %K =  ( ( Close - rsi(Low) ) / (rsi( High) - rsi(Low )) )
 
-            List<decimal> ResultK = new List<decimal>();
-            List<decimal> ResultD = new List<decimal>();
+            List<decimal> K = new List<decimal>();
+            List<decimal> D = new List<decimal>();
 
             for (int i = 0; i < data.Count-Kperiod; i++)
             {
                 List<decimal> ShortList = data.GetRange(i, Kperiod);
                 decimal Low = ShortList.Min(); //laagste van de lijst :p
                 decimal High = ShortList.Max(); //hoogste van de lijst >:(
-                decimal fastk = (ShortList[0] - Low) / (High - Low);
-
-                ResultK.Add(fastk*100);
+                //Console.WriteLine($"Low: {Low}");
+                //Console.WriteLine($"high: {High}");
+                if (High - Low == 0) // geen idee of dees een goe idee is
+                {
+                    decimal fastk = K.Last();
+                    K.Add(fastk);
+                    //Console.WriteLine($"FastK: {fastk}");
+                }
+                else {
+                    decimal fastk = (ShortList[0] - Low) / (High - Low);
+                    K.Add(fastk * 100);
+                    //Console.WriteLine($"FastK: {fastk*100}");
+                }                
             }
-
-            ResultD = await IndicatorMA.SMA(ResultK, Dperiod);
+            D = await IndicatorMA.SMA(K, Dperiod);
 
 
             //for (int i = 0; i < ResultK.Count; i++)
@@ -101,7 +110,7 @@ namespace TradingBotCS.Models_Indicators
             //    Console.WriteLine(ResultD[i]);
             //}
 
-            return Tuple.Create(ResultK, ResultD);
+            return (K, D);
         }
 
     }

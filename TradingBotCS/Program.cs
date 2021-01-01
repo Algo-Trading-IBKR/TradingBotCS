@@ -41,14 +41,13 @@ namespace TradingBotCS
             Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
             Logger.Verbose(Name, "Start");
 
-
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
             //List<string> Numbers = new List<string>() { "32476067619", "32470579542" };
             //await MobileService.SendTextMsg(Messages, Numbers);
 
-            MongoDBtest();
+            //MongoDBtest();
             
-            test();
+            //test();
 
             await Connect();
             await AccountUpdates();
@@ -56,7 +55,9 @@ namespace TradingBotCS
             SymbolObjects = await CreateSymbolObjects(SymbolList);
             foreach (Symbol S in SymbolObjects)
             {
-                S.RawDatalist = await RawDataRepository.ReadRawData(S.Ticker);
+                S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
+                bool test = await S.CalculateData();
+                Console.WriteLine(S.Ticker);
             }
 
             IbClient.ClientSocket.reqOpenOrders();
@@ -177,9 +178,9 @@ namespace TradingBotCS
             //    Console.WriteLine(x);
             //}
 
-            //declist = await MovingAverage.MACD(intList, 26, 12);
-            //declist2 = await MovingAverage.MACDsignal(declist, 9);
-            //declist3 = await MovingAverage.MACDhist(declist, declist2);
+            //declist = await IndicatorMACD.MACD(intList, 28, 12);
+            //declist2 = await IndicatorMACD.MACDsignal(declist, 10);
+            //declist3 = await IndicatorMACD.MACDhist(declist, declist2);
             //foreach (decimal x in declist3)
             //{
             //    Console.WriteLine(x);
@@ -192,7 +193,7 @@ namespace TradingBotCS
             //}
             //Console.ReadKey();
 
-            //Tuple<List<decimal>, List<decimal>> Results = await IndicatorRSI.stochRSI(declist, 14, 3);
+            //var Results = await IndicatorRSI.stochRSI(declist, 14, 3);
             //declist = Results.Item1;
             //declist2 = Results.Item2;
             //foreach (decimal x in declist)
@@ -204,6 +205,7 @@ namespace TradingBotCS
             //{
             //    Console.WriteLine(x);
             //}
+
             //Console.ReadKey();
         }
     }

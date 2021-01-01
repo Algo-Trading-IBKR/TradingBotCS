@@ -18,14 +18,14 @@ namespace TradingBotCS
                 {
                     if(S.LatestOrder.Action == "BUY" && order.Action == "BUY")
                     {
-                        if(S.LatestPrice > (S.OrderPrice*1.005))
+                        if((float)S.LastRawData.Close > (S.AvgPrice*1.005))
                         {
                             Program.IbClient.ClientSocket.cancelOrder(order.OrderId);
                         }
                     }
                     else if(S.LatestOrder.Action == "SELL" && order.Action == "SELL")
                     {
-                        if (S.LatestPrice < (S.OrderPrice * 0.995))
+                        if ((float)S.LastRawData.Close < (S.AvgPrice * 0.995))
                         {
                             Program.IbClient.ClientSocket.cancelOrder(order.OrderId);
                         }

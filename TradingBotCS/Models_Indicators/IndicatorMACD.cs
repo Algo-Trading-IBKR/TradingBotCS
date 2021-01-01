@@ -15,10 +15,11 @@ namespace TradingBotCS.Models_Indicators
             List<decimal> Result = new List<decimal>();
             List<decimal> SlowEma = await IndicatorMA.EMA(data, slowPeriod, slowWeight);
             List<decimal> FastEma = await IndicatorMA.EMA(data, fastPeriod, fastWeight);
+            int periodDifference = slowPeriod - fastPeriod;
 
-            for (int i = fastPeriod; i < (data.Count - fastPeriod - 1); i++)
+            for (int i = 0; i < (data.Count - slowPeriod + 1); i++)
             {
-                Result.Add(FastEma[i + 2] - SlowEma[i - fastPeriod]);
+                Result.Add(FastEma[i+periodDifference] - SlowEma[i]);
             }
             return Result;
         }
