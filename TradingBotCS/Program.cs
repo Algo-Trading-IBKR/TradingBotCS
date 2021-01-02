@@ -53,11 +53,15 @@ namespace TradingBotCS
             await AccountUpdates();
 
             SymbolObjects = await CreateSymbolObjects(SymbolList);
+
+            
             foreach (Symbol S in SymbolObjects)
             {
                 S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
-                bool test = await S.CalculateData();
-                Console.WriteLine(S.Ticker);
+                Thread.Sleep(10); // waiting for contract data to be returned
+                IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
+                S.CalculateData();
+                //Console.WriteLine(S.Ticker);
             }
 
             IbClient.ClientSocket.reqOpenOrders();
@@ -94,7 +98,6 @@ namespace TradingBotCS
                 Result.Add(new Symbol(symbolList[i], i));
                 Contract Contract = await CreateContract(symbolList[i]);
                 IbClient.ClientSocket.reqContractDetails(i, Contract);
-                IbClient.ClientSocket.reqRealTimeBars(i, Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
                 //GetMarketData(Contract, i);
             }
             
@@ -178,9 +181,9 @@ namespace TradingBotCS
             //    Console.WriteLine(x);
             //}
 
-            //declist = await IndicatorMACD.MACD(intList, 28, 12);
-            //declist2 = await IndicatorMACD.MACDsignal(declist, 10);
-            //declist3 = await IndicatorMACD.MACDhist(declist, declist2);
+            declist = await IndicatorMACD.MACD(intList, 28, 12);
+            declist2 = await IndicatorMACD.MACDsignal(declist, 10);
+            declist3 = await IndicatorMACD.MACDhist(declist, declist2);
             //foreach (decimal x in declist3)
             //{
             //    Console.WriteLine(x);

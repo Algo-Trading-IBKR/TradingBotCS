@@ -24,10 +24,12 @@ namespace TradingBotCS.Database
             DateTime Time = Converter.UnixTimeStampToDateTime(time);
             ObjectId id = new ObjectId();
             RawData Data = new RawData(id, SymbolObject.Ticker, Time, open, high, low, close);
+
+            SymbolObject.RawDataList.Add(Data);
             BsonDocument Doc = Data.ToBsonDocument();
 
             await Collection.InsertOneAsync(Doc);
-            //List<RawData> test =  await ReadRawData("AMD");
+            List<RawData> test =  await ReadRawData(SymbolObject.Ticker);
         }
 
         public static async Task<List<RawData>> ReadRawData(string symbol, int amount=5000)

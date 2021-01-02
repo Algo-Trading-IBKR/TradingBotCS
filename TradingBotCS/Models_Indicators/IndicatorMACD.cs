@@ -69,33 +69,40 @@ namespace TradingBotCS.Models_Indicators
         {
             List<decimal> Result = new List<decimal>();
             int signalOffset = macdData.Count - macdSignalData.Count;
+
+            Console.WriteLine(macdData.Count);
+            Console.WriteLine(macdSignalData.Count);
+            Console.WriteLine(signalOffset);
+
             for (int i = 0; i < macdSignalData.Count; i++)
             {
+                Console.WriteLine($"{i}");
                 Result.Add(macdData[i + signalOffset] - macdSignalData[i]);
             }
+            Console.ReadKey();
             return Result;
         }
 
-        public static async Task<List<decimal>> MACDhist(List<int> macdData, List<decimal> macdSignalData)
-        {
-            List<decimal> DecList = new List<decimal>();
-            macdData.ForEach(item => DecList.Add((decimal)item));
-            List<decimal> Result = await MACDhist(DecList, macdSignalData);
-            return Result;
-        }
-        public static async Task<List<decimal>> MACDhist(List<float> macdData, List<decimal> macdSignalData)
-        {
-            List<decimal> DecList = new List<decimal>();
-            macdData.ForEach(item => DecList.Add((decimal)item));
-            List<decimal> Result = await MACDhist(DecList, macdSignalData);
-            return Result;
-        }
-        public static async Task<List<decimal>> MACDhist(List<double> macdData, List<decimal> macdSignalData)
-        {
-            List<decimal> DecList = new List<decimal>();
-            macdData.ForEach(item => DecList.Add((decimal)item));
-            List<decimal> Result = await MACDhist(DecList, macdSignalData);
-            return Result;
-        }
+        //public static async Task<List<decimal>> MACDhist(List<int> macdData, List<decimal> macdSignalData)
+        //{
+        //    List<decimal> DecList = new List<decimal>();
+        //    macdData.ForEach(item => DecList.Add((decimal)item));
+        //    List<decimal> Result = await MACDhist(DecList, macdSignalData);
+        //    return Result;
+        //}
+        //public static async Task<List<decimal>> MACDhist(List<float> macdData, List<decimal> macdSignalData)
+        //{
+        //    List<decimal> DecList = new List<decimal>();
+        //    macdData.ForEach(item => DecList.Add((decimal)item));
+        //    List<decimal> Result = await MACDhist(DecList, macdSignalData);
+        //    return Result;
+        //}
+        //public static async Task<List<decimal>> MACDhist(List<double> macdData, List<decimal> macdSignalData)
+        //{
+        //    List<decimal> DecList = new List<decimal>();
+        //    macdData.ForEach(item => DecList.Add((decimal)item));
+        //    List<decimal> Result = await MACDhist(DecList, macdSignalData);
+        //    return Result;
+        //}
     }
 }

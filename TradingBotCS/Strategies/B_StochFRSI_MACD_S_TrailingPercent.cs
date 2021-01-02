@@ -21,7 +21,7 @@ namespace TradingBotCS.Strategies
         {
             try
             {
-
+                Console.WriteLine("test");
             //n = 14
             //Local_dataframe = pd.DataFrame(columns =['Time', 'Price'])
             //Local_dataframe.set_index('Time', inplace = True)
@@ -73,6 +73,7 @@ namespace TradingBotCS.Strategies
         {
             try
             {
+                Console.WriteLine("test");
                 if ((((float)lastRawData.Close - avgPrice)/avgPrice) > TakeProfit)
                 {
                     PassedBottom = true;

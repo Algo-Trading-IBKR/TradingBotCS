@@ -51,7 +51,7 @@ namespace TradingBotCS
                 } else if (CashBalance >= Program.MinimumCash)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
-
+                    await CalculateData();
 
                     bool Result = await Strategy.BuyStrategy(StrategyData);
                     if (Result)
@@ -66,30 +66,38 @@ namespace TradingBotCS
             }
         }
 
-        public async Task<bool> CalculateData()
+        public async Task CalculateData()
         {
-            List<decimal> RawPriceList = new List<decimal>();
-            foreach (RawData R in RawDataList) RawPriceList.Add((decimal)R.Close);
+            try
+            {           
+                List<decimal> RawPriceList = new List<decimal>();
+                foreach (RawData R in RawDataList) RawPriceList.Add((decimal)R.Close);
+            
+                List<decimal> Rsi = await IndicatorRSI.RSI(RawPriceList, RsiPeriod);
 
-            List<decimal> Rsi = await IndicatorRSI.RSI(RawPriceList, RsiPeriod);
+                var StochRsi = await IndicatorRSI.stochRSI(Rsi, FastKperiod, FastDPeriod);
+                List<decimal> K = StochRsi.Item1;
+                List<decimal> D = StochRsi.Item2;
+            
+                List<decimal> Macd = await IndicatorMACD.MACD(RawPriceList, MacdSlowPeriod, MacdFastPeriod);
+                List<decimal> MacdSignal = await IndicatorMACD.MACDsignal(RawPriceList, MacdSignalPeriod);
+                List<decimal> MacdHist = await IndicatorMACD.MACDhist(Macd, MacdSignal);
+                Console.WriteLine("test");
 
-            var StochRsi = await IndicatorRSI.stochRSI(Rsi, FastKperiod, FastDPeriod);
-            List<decimal> K = StochRsi.Item1;
-            List<decimal> D = StochRsi.Item2;
+                Console.WriteLine(Rsi.Count);
+                Console.WriteLine(K.Count);
+                Console.WriteLine(D.Count);
+                Console.WriteLine(Macd.Count);
+                Console.WriteLine(MacdSignal.Count);
+                Console.WriteLine(MacdHist.Count);
 
-            List<decimal> Macd = await IndicatorMACD.MACD(RawPriceList, MacdSlowPeriod, MacdFastPeriod);
-            List<decimal> MacdSignal = await IndicatorMACD.MACDsignal(RawPriceList, MacdSignalPeriod);
-            List<decimal> MacdHist = await IndicatorMACD.MACDhist(Macd, MacdSignal);
+                StrategyData = new StrategyData((float)LastRawData.Close, K.Last(), D.Last(), Macd.Last(), MacdHist.Last(), MacdSignal.Last(), LastRawData.DateTime);
 
-            Console.WriteLine(Rsi.Count);
-            Console.WriteLine(K.Count);
-            Console.WriteLine(D.Count);
-            Console.WriteLine(Macd.Count);
-            Console.WriteLine(MacdSignal.Count);
-            Console.WriteLine(MacdHist.Count);
-
-            StrategyData = new StrategyData((float)LastRawData.Close, K.Last(), D.Last(), Macd.Last(), MacdHist.Last(), MacdSignal.Last(), LastRawData.DateTime);
-            return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(Name, $"{ex}");
+            }
         }
 
 

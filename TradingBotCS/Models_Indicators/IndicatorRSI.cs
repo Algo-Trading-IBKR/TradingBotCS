@@ -87,28 +87,27 @@ namespace TradingBotCS.Models_Indicators
                 List<decimal> ShortList = data.GetRange(i, Kperiod);
                 decimal Low = ShortList.Min(); //laagste van de lijst :p
                 decimal High = ShortList.Max(); //hoogste van de lijst >:(
-                //Console.WriteLine($"Low: {Low}");
-                //Console.WriteLine($"high: {High}");
+
                 if (High - Low == 0) // geen idee of dees een goe idee is
                 {
-                    decimal fastk = K.Last();
+                    decimal fastk;
+                    if (K.Count == 0)
+                    {
+                        fastk = (ShortList[0] - Low);
+                    }
+                    else
+                    {
+                        fastk = K.Last();
+                    }
                     K.Add(fastk);
-                    //Console.WriteLine($"FastK: {fastk}");
                 }
                 else {
                     decimal fastk = (ShortList[0] - Low) / (High - Low);
                     K.Add(fastk * 100);
-                    //Console.WriteLine($"FastK: {fastk*100}");
                 }                
             }
             D = await IndicatorMA.SMA(K, Dperiod);
 
-
-            //for (int i = 0; i < ResultK.Count; i++)
-            //{
-            //    Console.WriteLine(ResultK[i]);
-            //    Console.WriteLine(ResultD[i]);
-            //}
 
             return (K, D);
         }
