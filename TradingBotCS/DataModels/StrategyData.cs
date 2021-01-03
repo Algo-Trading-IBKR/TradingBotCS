@@ -8,14 +8,14 @@ namespace TradingBotCS.DataModels
 {
     public class StrategyData
     {
-        public float Price { get; set; }
+        public double Price { get; set; }
         public decimal StochFRSIK { get; set; }
         public decimal StochFRSID { get; set; }
         public decimal Macd { get; set; }
         public decimal MacdHist { get; set; }
         public decimal MacdSignal { get; set; }
         public DateTime DateTime { get; set; }
-        public StrategyData(float price, decimal stochFRSIK, decimal stochFRSID, decimal macd, decimal  macdHist, decimal macdSignal, DateTime dateTime )
+        public StrategyData(double price, decimal stochFRSIK, decimal stochFRSID, decimal macd, decimal  macdHist, decimal macdSignal, DateTime dateTime )
         {
             Price = price;
             StochFRSIK = stochFRSIK;

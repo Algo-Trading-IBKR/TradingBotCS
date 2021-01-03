@@ -22,7 +22,7 @@ namespace TradingBotCS
     {
         public static string DevNumber = "32476067619";
 
-        public static float MinimumCash = 100;
+        public static float TradeCash = 100;
         static string Ip = "192.168.1.165";
         static int Port = 4002;
         static int ApiId = 5;
@@ -54,14 +54,20 @@ namespace TradingBotCS
 
             SymbolObjects = await CreateSymbolObjects(SymbolList);
 
-            
             foreach (Symbol S in SymbolObjects)
             {
-                S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
-                Thread.Sleep(10); // waiting for contract data to be returned
-                IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
-                S.CalculateData();
-                //Console.WriteLine(S.Ticker);
+                try
+                {
+                    S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
+                    //Thread.Sleep(100); // waiting for contract data to be returned
+                    IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
+                    S.ExecuteStrategy();
+                    //Console.WriteLine(S.Ticker);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
+                }
             }
 
             IbClient.ClientSocket.reqOpenOrders();
@@ -95,9 +101,11 @@ namespace TradingBotCS
             List<Symbol> Result = new List<Symbol>();
             for(int i = 0; i < symbolList.Count; i++)
             {
-                Result.Add(new Symbol(symbolList[i], i));
-                Contract Contract = await CreateContract(symbolList[i]);
-                IbClient.ClientSocket.reqContractDetails(i, Contract);
+                Symbol s = new Symbol(symbolList[i], i);
+                Result.Add(s);
+                Contract Contract = await CreateContract(s.Ticker);
+                s.Contract = Contract;
+                IbClient.ClientSocket.reqContractDetails(s.Id, Contract);
                 //GetMarketData(Contract, i);
             }
             
@@ -181,9 +189,9 @@ namespace TradingBotCS
             //    Console.WriteLine(x);
             //}
 
-            declist = await IndicatorMACD.MACD(intList, 28, 12);
-            declist2 = await IndicatorMACD.MACDsignal(declist, 10);
-            declist3 = await IndicatorMACD.MACDhist(declist, declist2);
+            //declist = await IndicatorMACD.MACD(intList, 28, 12);
+            //declist2 = await IndicatorMACD.MACDsignal(declist, 10);
+            //declist3 = await IndicatorMACD.MACDhist(declist, declist2);
             //foreach (decimal x in declist3)
             //{
             //    Console.WriteLine(x);

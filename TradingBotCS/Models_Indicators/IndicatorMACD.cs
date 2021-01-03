@@ -70,18 +70,10 @@ namespace TradingBotCS.Models_Indicators
             List<decimal> Result = new List<decimal>();
             int signalOffset = macdData.Count - macdSignalData.Count;
 
-            // SIGNAl data zou korter moeten zijn dan MacdData, specifiek 9 korter omdat dit onze signal periode is die word meegegeven bij het berekenen van signal data
-
-            Console.WriteLine(macdData.Count);
-            Console.WriteLine(macdSignalData.Count);
-            Console.WriteLine(signalOffset);
-
             for (int i = 0; i < macdSignalData.Count; i++)
             {
-                Console.WriteLine($"{i}");
                 Result.Add(macdData[i + signalOffset] - macdSignalData[i]);
             }
-            Console.ReadKey();
             return Result;
         }
 

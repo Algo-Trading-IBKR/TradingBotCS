@@ -21,15 +21,19 @@ namespace TradingBotCS.Database
         public static async Task InsertRawData(int tickerId, long time, double open, double high, double low, double close)
         {
             Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == tickerId);
+
             DateTime Time = Converter.UnixTimeStampToDateTime(time);
             ObjectId id = new ObjectId();
             RawData Data = new RawData(id, SymbolObject.Ticker, Time, open, high, low, close);
 
             SymbolObject.RawDataList.Add(Data);
+            SymbolObject.LastRawData = Data;
+
             BsonDocument Doc = Data.ToBsonDocument();
 
             await Collection.InsertOneAsync(Doc);
-            List<RawData> test =  await ReadRawData(SymbolObject.Ticker);
+
+            SymbolObject.ExecuteStrategy();
         }
 
         public static async Task<List<RawData>> ReadRawData(string symbol, int amount=5000)
@@ -45,7 +49,6 @@ namespace TradingBotCS.Database
                 RawData Datapoint = BsonSerializer.Deserialize<RawData>(d);
                 //Console.WriteLine(Datapoint);
                 Data.Insert(0, Datapoint); // omdraaien van list omdat het anders in foute volgorde staat, zie sort
-                    
             }
             return Data;
         }

@@ -48,6 +48,9 @@ namespace TradingBotCS.Models_Indicators
                 {
                     Result.Add(100 - (100 / (1 + (AvgGain / AvgLoss))));
                 }
+                else { // geen idee of dit goed is of niet
+                    Result.Add(50m);
+                }
             }
             return Result;
         }

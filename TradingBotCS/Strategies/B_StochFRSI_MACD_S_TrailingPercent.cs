@@ -11,6 +11,12 @@ namespace TradingBotCS.Strategies
     public class B_StochFRSI_MACD_S_TrailingPercent
     {
         private static string Name = "B_StochFRSI_MACD_S_TrailingPercent";
+        private static int Counter = 3;
+
+        // buy parameters
+        private int MacdCounter { get; set; }
+        private double FirstCounterprice { get; set; }
+        private decimal LastMacdHist { get; set; }
 
         // sell parameters
         private float TakeProfit { get; set; }
@@ -21,45 +27,38 @@ namespace TradingBotCS.Strategies
         {
             try
             {
-                Console.WriteLine("test");
-            //n = 14
-            //Local_dataframe = pd.DataFrame(columns =['Time', 'Price'])
-            //Local_dataframe.set_index('Time', inplace = True)
+                if ((data.StochFRSIK <= 15 || data.StochFRSID <= 15) && data.MacdHist < 0)
+                {
+                    if (MacdCounter == 0)
+                    {
+                        FirstCounterprice = data.Price;
+                        LastMacdHist = data.MacdHist;
+                        MacdCounter += 1;
+                    }else if (MacdCounter > 0 && MacdCounter < 3)
+                    {
+                        if (data.MacdHist < LastMacdHist)
+                        {
+                            LastMacdHist = data.MacdHist;
+                            MacdCounter += 1;
+                        }
+                    }else if (MacdCounter == 3 && FirstCounterprice*1.02 > data.Price)
+                    {
+                        MacdCounter = 0;
+                        decimal Shares = Math.Floor((decimal)Program.TradeCash / (decimal)data.Price);
+                        if (Shares > 0)
+                        {
+                            PassedBottom = false;
+                            TakeProfit = 0.055f;
+                            BottomProfit = 0.05f;
+                            return true;
+                        }
+                    }
+                }
 
-            //local_dataframe = self._dataframe.append(self._df[-1:])
-
-            //local_dataframe['fastk'], local_dataframe['fastd'] = talib.STOCHRSI(local_dataframe['Price'], timeperiod = n, fastk_period = 3, fastd_period = 3, fastd_matype = 0)
-            //local_dataframe['macd'], local_dataframe['macdsignal'], local_dataframe['macdhist'] = talib.MACD(local_dataframe['Price'], fastperiod = 12, slowperiod = 28, signalperiod = 9)
-            //i = len(self._dataframe) - 1
-
-            //if self._hasstock == False and self._AccountMoney > self._minimumcash:
-            //    if (local_dataframe.at[local_dataframe.index[i], 'fastk'] <= 15 or local_dataframe.at[local_dataframe.index[i], 'fastd'] <= 15) and(local_dataframe.at[local_dataframe.index[i], 'macdhist'] < 0):
-            //        if self._fallingcounter == 0:
-            //            self._counterprice = local_dataframe.at[local_dataframe.index[i], 'Price']
-            //            self._first2 = local_dataframe.at[local_dataframe.index[i], 'macdhist']
-            //            self._fallingcounter += 1
-
-            //        if self._fallingcounter > 0 and self._fallingcounter <= 2:
-            //            if local_dataframe.at[local_dataframe.index[i], 'macdhist'] < self._first2:
-            //                self._first2 = local_dataframe.at[local_dataframe.index[i], 'macdhist']
-            //                self._fallingcounter += 1
-
-            //        if local_dataframe.at[local_dataframe.index[i], 'macdhist'] > 0:
-            //            self._fallingcounter = 0
-
-            //        if self._fallingcounter == 3 and self._counterprice * 1.02 > local_dataframe.at[local_dataframe.index[i], 'Price']:
-            //            self._fallingcounter = 0
-            //            currentPrice = local_dataframe.at[local_dataframe.index[i], 'Price']
-            //            print(f'{self._symbol}: bought')
-            //            sharecount = math.floor(self._trademinimum / currentPrice)
-            //            if sharecount > 0:
-            //                self.Order('BUY', sharecount, currentPrice)
-            //                self._passed_bottom = False
-            //                self._bottom_TakeProfit = 0.055
-            //                self._previous_TakeProfit = 0.05
-            //                # self._hasstock = True    
-
-
+                if (data.MacdHist > 0)
+                {
+                    MacdCounter = 0;
+                }
                 return false;
             }
             catch (Exception ex)
@@ -109,6 +108,9 @@ namespace TradingBotCS.Strategies
 
         public B_StochFRSI_MACD_S_TrailingPercent()
         {
+
+            MacdCounter = 0;
+
             PassedBottom = false;
             TakeProfit = 0.055f;
             BottomProfit = 0.05f;
