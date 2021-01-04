@@ -23,7 +23,7 @@ namespace TradingBotCS
         public static string DevNumber = "32476067619";
 
         public static float TradeCash = 100;
-        static string Ip = "192.168.1.165";
+        static string Ip = "192.168.50.107";
         static int Port = 4002;
         static int ApiId = 5;
         public static WrapperOverride IbClient = new WrapperOverride();
@@ -52,16 +52,38 @@ namespace TradingBotCS
             await Connect();
             await AccountUpdates();
 
+            ScannerSubscription temp = new ScannerSubscription();
+            temp.NumberOfRows = 1000;
+            temp.ScanCode = "HIGH_OPEN_GAP";
+            temp.Instrument = "STK";
+            temp.LocationCode = "STK.NASDAQ";
+            temp.AbovePrice = 0d;
+            temp.BelowPrice = 25d;
+            temp.StockTypeFilter = "CORP";
+
+            List<TagValue> test = new List<TagValue>();
+            TagValue belowPrice = new TagValue("usdPriceBelow", "25");
+            List<TagValue> test2 = new List<TagValue>() { belowPrice };
+
+            IbClient.ClientSocket.reqScannerSubscription(123 ,temp, test, test2);
+
+            //Console.ReadKey();
+
             SymbolObjects = await CreateSymbolObjects(SymbolList);
+
+            String queryTime = DateTime.Now.AddDays(-1).ToString("yyyyMMdd HH:mm:ss");
 
             foreach (Symbol S in SymbolObjects)
             {
                 try
                 {
-                    S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
-                    //Thread.Sleep(100); // waiting for contract data to be returned
-                    IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
-                    S.ExecuteStrategy();
+                    //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
+
+                    
+                    IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
+
+                    //IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
+                    //S.ExecuteStrategy();
                     //Console.WriteLine(S.Ticker);
                 }
                 catch (Exception ex)

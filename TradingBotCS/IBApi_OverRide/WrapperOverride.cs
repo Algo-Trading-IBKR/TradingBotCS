@@ -140,5 +140,13 @@ namespace TradingBotCS.IBApi_OverRide
             // + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
         }
         //! [updateportfolio]
+
+        //! [scannerparameters]
+        public override void scannerParameters(string xml)
+        {
+            Console.WriteLine("ScannerParameters. " + xml + "\n");
+            System.IO.File.WriteAllText(@"C:\Users\Public\WriteLines.txt", xml);
+        }
+        //! [scannerparameters]
     }
 }

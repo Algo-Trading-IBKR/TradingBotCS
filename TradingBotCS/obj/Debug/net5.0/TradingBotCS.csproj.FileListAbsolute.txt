@@ -41,3 +41,14 @@ C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\ref\TradingBot
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.pdb
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.genruntimeconfig.cache
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.csprojAssemblyReference.cache
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\DnsClient.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\MongoDB.Bson.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\MongoDB.Driver.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\MongoDB.Driver.Core.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\MongoDB.Libmongocrypt.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Newtonsoft.Json.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\SharpCompress.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\runtimes\win\native\libzstd.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\runtimes\win\native\snappy32.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\runtimes\win\native\snappy64.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.csproj.CopyComplete
