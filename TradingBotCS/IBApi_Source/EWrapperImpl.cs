@@ -678,9 +678,9 @@ namespace IBApi
             data.ToList().ForEach(i => Console.WriteLine("\tPrice: {0}, Size: {1}", i.Price, i.Size));
         }
         //! [histogramData]
-
+        
         //! [historicalDataUpdate]
-        public void historicalDataUpdate(int reqId, Bar bar)
+        public virtual void historicalDataUpdate(int reqId, Bar bar)
         {
             Console.WriteLine("HistoricalDataUpdate. " + reqId + " - Time: " + bar.Time + ", Open: " + bar.Open + ", High: " + bar.High + ", Low: " + bar.Low + ", Close: " + bar.Close + ", Volume: " + bar.Volume + ", Count: " + bar.Count + ", WAP: " + bar.WAP);
         }

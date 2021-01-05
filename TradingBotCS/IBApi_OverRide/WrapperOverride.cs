@@ -141,6 +141,20 @@ namespace TradingBotCS.IBApi_OverRide
         }
         //! [updateportfolio]
 
+        //! [historicalDataUpdate] !!!was not marked as virtual!!!
+        public override void historicalDataUpdate(int reqId, Bar bar)
+        {
+            Console.WriteLine("HistoricalDataUpdate. " + reqId + " - Time: " + bar.Time + ", Open: " + bar.Open + ", High: " + bar.High + ", Low: " + bar.Low + ", Close: " + bar.Close + ", Volume: " + bar.Volume + ", Count: " + bar.Count + ", WAP: " + bar.WAP);
+        }
+        //! [historicalDataUpdate]
+
+        //! [historicaldataend]
+        public override void historicalDataEnd(int reqId, string startDate, string endDate)
+        {
+            Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
+        }
+        //! [historicaldataend]
+
         //! [scannerparameters]
         public override void scannerParameters(string xml)
         {
@@ -148,5 +162,23 @@ namespace TradingBotCS.IBApi_OverRide
             System.IO.File.WriteAllText(@"C:\Users\Public\WriteLines.txt", xml);
         }
         //! [scannerparameters]
+
+        //! [scannerdata]
+        public override void scannerData(int reqId, int rank, ContractDetails contractDetails, string distance, string benchmark, string projection, string legsStr)
+        {
+            Console.WriteLine("ScannerData. " + reqId + " - Rank: " + rank + ", Symbol: " + contractDetails.Contract.Symbol + ", SecType: " + contractDetails.Contract.SecType + ", Currency: " + contractDetails.Contract.Currency
+                + ", Distance: " + distance + ", Benchmark: " + benchmark + ", Projection: " + projection + ", Legs String: " + legsStr);
+
+            Program.SymbolList = 
+
+        }
+        //! [scannerdata]
+
+        //! [scannerdataend]
+        public override void scannerDataEnd(int reqId)
+        {
+            Console.WriteLine("ScannerDataEnd. " + reqId);
+        }
+        //! [scannerdataend]
     }
 }

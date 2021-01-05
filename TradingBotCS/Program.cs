@@ -22,10 +22,11 @@ namespace TradingBotCS
     {
         public static string DevNumber = "32476067619";
 
+
         public static float TradeCash = 100;
-        static string Ip = "192.168.50.107";
+        static string Ip = "jorenvangoethem.duckdns.org";
         static int Port = 4002;
-        static int ApiId = 5;
+        static int ApiId = 1;
         public static WrapperOverride IbClient = new WrapperOverride();
         static EReader IbReader;
         public static List<Symbol> SymbolObjects;
@@ -34,7 +35,8 @@ namespace TradingBotCS
 
         private static string Name = "Program";
 
-        static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
+        public static List<string> SymbolList = new List<string>();
+        //static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
 
         static async Task Main(string[] args)
         {
@@ -52,20 +54,9 @@ namespace TradingBotCS
             await Connect();
             await AccountUpdates();
 
-            ScannerSubscription temp = new ScannerSubscription();
-            temp.NumberOfRows = 1000;
-            temp.ScanCode = "HIGH_OPEN_GAP";
-            temp.Instrument = "STK";
-            temp.LocationCode = "STK.NASDAQ";
-            temp.AbovePrice = 0d;
-            temp.BelowPrice = 25d;
-            temp.StockTypeFilter = "CORP";
 
-            List<TagValue> test = new List<TagValue>();
-            TagValue belowPrice = new TagValue("usdPriceBelow", "25");
-            List<TagValue> test2 = new List<TagValue>() { belowPrice };
+            await MarketScanner();
 
-            IbClient.ClientSocket.reqScannerSubscription(123 ,temp, test, test2);
 
             //Console.ReadKey();
 
@@ -133,6 +124,32 @@ namespace TradingBotCS
             
             return Result;
         }
+
+
+        static async Task  MarketScanner()
+        {
+            ScannerSubscription temp = new ScannerSubscription();
+            temp.NumberOfRows = 50;
+            temp.ScanCode = "HIGH_OPEN_GAP";
+            temp.Instrument = "STK";
+            temp.LocationCode = "STK.NASDAQ";
+            
+            temp.StockTypeFilter = "CORP";
+            for (double i = 0; i < 25; i++)
+            {
+                temp.AbovePrice = i;
+                temp.BelowPrice = i+1;
+                List<TagValue> test = new List<TagValue>();
+                List<TagValue> test2 = new List<TagValue>();
+
+                IbClient.ClientSocket.reqScannerSubscription((int)i, temp, test, test2);
+
+
+
+
+            }
+        }
+
 
         static async Task AccountUpdates()
         {
