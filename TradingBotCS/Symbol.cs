@@ -36,6 +36,7 @@ namespace TradingBotCS
         public StrategyData StrategyData { get; set; }
         public int Position { get; set; }
         public B_StochFRSI_MACD_S_TrailingPercent Strategy { get; set; }
+        public List<RawData> HistoricalData { get; set; }
 
         public async Task ExecuteStrategy()
         {
@@ -130,6 +131,7 @@ namespace TradingBotCS
             this.Ticker = ticker;
             this.Id = id;
             this.Strategy = new B_StochFRSI_MACD_S_TrailingPercent();
+            this.HistoricalData = new List<RawData>();
         }
 
         public override string ToString()

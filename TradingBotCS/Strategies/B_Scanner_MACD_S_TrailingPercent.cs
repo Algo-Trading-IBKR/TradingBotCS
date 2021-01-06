@@ -24,7 +24,7 @@ namespace TradingBotCS.Strategies
         {
             try
             {
-                if()
+                if(true)
                 {
                     
                 }

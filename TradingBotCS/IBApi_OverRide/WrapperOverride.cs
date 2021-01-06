@@ -1,10 +1,12 @@
 ﻿using IBApi;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TradingBotCS.Database;
+using TradingBotCS.DataModels;
 using TradingBotCS.HelperClasses;
 
 namespace TradingBotCS.IBApi_OverRide
@@ -141,17 +143,37 @@ namespace TradingBotCS.IBApi_OverRide
         }
         //! [updateportfolio]
 
-        //! [historicalDataUpdate] !!!was not marked as virtual!!!
-        public override void historicalDataUpdate(int reqId, Bar bar)
+        //! [historicaldata]
+        public override void historicalData(int reqId, Bar bar)
         {
-            Console.WriteLine("HistoricalDataUpdate. " + reqId + " - Time: " + bar.Time + ", Open: " + bar.Open + ", High: " + bar.High + ", Low: " + bar.Low + ", Close: " + bar.Close + ", Volume: " + bar.Volume + ", Count: " + bar.Count + ", WAP: " + bar.WAP);
+            //Console.WriteLine("HistoricalData. " + reqId + " - Time: " + bar.Time + ", Open: " + bar.Open + ", High: " + bar.High + ", Low: " + bar.Low + ", Close: " + bar.Close + ", Volume: " + bar.Volume + ", Count: " + bar.Count + ", WAP: " + bar.WAP);
+
+            Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
+
+
+            string sTime = bar.Time.Insert( 4, "-");
+            sTime = sTime.Insert(7, "-");
+            
+            string[] words = sTime.Split('-');
+            string[] morewords = words[2].Split(' ');
+
+            sTime = morewords[0] + "-" + words[1] + "-" + words[0] + " " + morewords[1]; // 04  15:30:00-01-2021
+
+            //DateTime Time = DateTime.ParseExact(sTime, "yyyy-MM-dd HH:mm:ss",null);    // 20210104  15:30:00 2021-01-04  15:30:00
+            DateTime Time = Convert.ToDateTime(sTime);
+            
+            ObjectId id = new ObjectId();
+            RawData data = new RawData(id, SymbolObject.Ticker, Time, bar.Open, bar.High, bar.Low, bar.Close);
+            SymbolObject.HistoricalData.Add(data);
         }
-        //! [historicalDataUpdate]
+        //! [historicaldata]
+
 
         //! [historicaldataend]
         public override void historicalDataEnd(int reqId, string startDate, string endDate)
         {
-            Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
+            //Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
+            Program.GettingData -= 1;
         }
         //! [historicaldataend]
 
@@ -166,10 +188,10 @@ namespace TradingBotCS.IBApi_OverRide
         //! [scannerdata]
         public override void scannerData(int reqId, int rank, ContractDetails contractDetails, string distance, string benchmark, string projection, string legsStr)
         {
-            Console.WriteLine("ScannerData. " + reqId + " - Rank: " + rank + ", Symbol: " + contractDetails.Contract.Symbol + ", SecType: " + contractDetails.Contract.SecType + ", Currency: " + contractDetails.Contract.Currency
-                + ", Distance: " + distance + ", Benchmark: " + benchmark + ", Projection: " + projection + ", Legs String: " + legsStr);
+            //Console.WriteLine("ScannerData. " + reqId + " - Rank: " + rank + ", Symbol: " + contractDetails.Contract.Symbol + ", SecType: " + contractDetails.Contract.SecType + ", Currency: " + contractDetails.Contract.Currency
+            //+ ", Distance: " + distance + ", Benchmark: " + benchmark + ", Projection: " + projection + ", Legs String: " + legsStr);
 
-            Program.SymbolList = 
+            Program.SymbolList.Add(contractDetails.Contract.Symbol);
 
         }
         //! [scannerdata]
@@ -177,7 +199,9 @@ namespace TradingBotCS.IBApi_OverRide
         //! [scannerdataend]
         public override void scannerDataEnd(int reqId)
         {
-            Console.WriteLine("ScannerDataEnd. " + reqId);
+            //Console.WriteLine("ScannerDataEnd. " + reqId);
+            Program.IbClient.ClientSocket.cancelScannerSubscription(reqId);
+            Program.ScannerReady = true;
         }
         //! [scannerdataend]
     }

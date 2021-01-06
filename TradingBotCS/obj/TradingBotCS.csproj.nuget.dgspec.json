@@ -1,21 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\AAA_personal_projects\\tradingbot\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj": {}
+    "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj": {}
   },
   "projects": {
-    "D:\\AAA_personal_projects\\tradingbot\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj": {
+    "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\AAA_personal_projects\\tradingbot\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
+        "projectUniqueName": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
         "projectName": "TradingBotCS",
-        "projectPath": "D:\\AAA_personal_projects\\tradingbot\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
-        "packagesPath": "C:\\Users\\Gebruiker\\.nuget\\packages\\",
-        "outputPath": "D:\\AAA_personal_projects\\tradingbot\\TradingBotCS\\TradingBotCS\\obj\\",
+        "projectPath": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
+        "packagesPath": "C:\\Users\\joren\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Gebruiker\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\joren\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
@@ -64,7 +68,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

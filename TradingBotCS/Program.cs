@@ -35,6 +35,9 @@ namespace TradingBotCS
 
         private static string Name = "Program";
 
+        public static bool ScannerReady = true;
+        public static int GettingData = 0;
+
         public static List<string> SymbolList = new List<string>();
         //static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
 
@@ -54,37 +57,37 @@ namespace TradingBotCS
             await Connect();
             await AccountUpdates();
 
-
             await MarketScanner();
 
-
-            //Console.ReadKey();
-
             SymbolObjects = await CreateSymbolObjects(SymbolList);
+            await RequestSymbolContracts();
 
-            String queryTime = DateTime.Now.AddDays(-1).ToString("yyyyMMdd HH:mm:ss");
+            await GetData();
 
-            foreach (Symbol S in SymbolObjects)
-            {
-                try
-                {
-                    //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
+            //String queryTime = DateTime.Now.AddDays(-1).ToString("yyyyMMdd HH:mm:ss");
+
+            //foreach (Symbol S in SymbolObjects)
+            //{
+            //    try
+            //    {
+            //        //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
 
                     
-                    IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
+            //        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
 
-                    //IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
-                    //S.ExecuteStrategy();
-                    //Console.WriteLine(S.Ticker);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
-                }
-            }
+            //        //IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
+            //        //S.ExecuteStrategy();
+            //        //Console.WriteLine(S.Ticker);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
+            //    }
+            //}
 
             IbClient.ClientSocket.reqOpenOrders();
 
+            Logger.Info(Name, "KLAAR");
             while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
         }
 
@@ -109,24 +112,32 @@ namespace TradingBotCS
 
         static async Task<List<Symbol>> CreateSymbolObjects(List<string> symbolList)
         {
-            Logger.Verbose(Name, "Creating Symbol Objects");
+            Logger.Info(Name, "Creating Symbol Objects");
 
             List<Symbol> Result = new List<Symbol>();
             for(int i = 0; i < symbolList.Count; i++)
             {
                 Symbol s = new Symbol(symbolList[i], i);
                 Result.Add(s);
-                Contract Contract = await CreateContract(s.Ticker);
-                s.Contract = Contract;
-                IbClient.ClientSocket.reqContractDetails(s.Id, Contract);
-                //GetMarketData(Contract, i);
             }
-            
             return Result;
         }
 
+        static async Task RequestSymbolContracts()
+        {
+            Logger.Info(Name, "Creating Symbol Contracts");
 
-        static async Task  MarketScanner()
+            foreach(Symbol S in SymbolObjects)
+            {
+                Contract Contract = await CreateContract(S.Ticker);
+                S.Contract = Contract;
+                IbClient.ClientSocket.reqContractDetails(S.Id, Contract);
+                Thread.Sleep(20);
+                //GetMarketData(Contract, i);
+            }
+        }
+
+        static async Task MarketScanner()
         {
             ScannerSubscription temp = new ScannerSubscription();
             temp.NumberOfRows = 50;
@@ -141,14 +152,47 @@ namespace TradingBotCS
                 temp.BelowPrice = i+1;
                 List<TagValue> test = new List<TagValue>();
                 List<TagValue> test2 = new List<TagValue>();
-
-                IbClient.ClientSocket.reqScannerSubscription((int)i, temp, test, test2);
-
-
-
-
+                while (ScannerReady == false)
+                {
+                    Thread.Sleep(10);
+                }
+                if (ScannerReady) IbClient.ClientSocket.reqScannerSubscription((int)i, temp, test, test2);
+                if (i == 24) Thread.Sleep(1000);
+                ScannerReady = false;
             }
         }
+
+       static async Task GetData()
+       {
+            String queryTime = DateTime.Now.AddDays(-1).ToString("yyyyMMdd HH:mm:ss");
+
+            foreach (Symbol S in SymbolObjects)
+            {
+                try
+                {
+                    //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
+                    if (GettingData < 50)
+                    {
+                        while (GettingData >= 50)
+                        {
+                            Thread.Sleep(10);
+                            if (S == SymbolObjects.Last()) break;
+                        };
+                        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
+                        GettingData += 1;
+                        Thread.Sleep(20);
+                    }
+                    //IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
+                    //S.ExecuteStrategy();
+                    //Console.WriteLine(S.Ticker);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
+                }
+            }
+
+       }
 
 
         static async Task AccountUpdates()
