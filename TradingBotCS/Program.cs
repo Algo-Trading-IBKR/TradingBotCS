@@ -41,6 +41,9 @@ namespace TradingBotCS
         public static List<string> SymbolList = new List<string>();
         //static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
 
+        public static List<Symbol> CorrectGapList = new List<Symbol>();
+
+
         static async Task Main(string[] args)
         {
             Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
@@ -53,13 +56,16 @@ namespace TradingBotCS
             //MongoDBtest();
             
             //test();
-
+            
             await Connect();
             await AccountUpdates();
 
             await MarketScanner();
 
+            SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
+            
             SymbolObjects = await CreateSymbolObjects(SymbolList);
+            
             await RequestSymbolContracts();
 
             await GetData();
@@ -164,7 +170,7 @@ namespace TradingBotCS
 
        static async Task GetData()
        {
-            String queryTime = DateTime.Now.AddDays(-1).ToString("yyyyMMdd HH:mm:ss");
+            String queryTime = DateTime.Now.ToString("yyyyMMdd HH:mm:ss");
 
             foreach (Symbol S in SymbolObjects)
             {
@@ -173,12 +179,12 @@ namespace TradingBotCS
                     //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
                     if (GettingData < 50)
                     {
-                        while (GettingData >= 50)
+                        while (GettingData >= 49)
                         {
-                            Thread.Sleep(10);
+                            Thread.Sleep(1);
                             if (S == SymbolObjects.Last()) break;
                         };
-                        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
+                        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1 D", "15 mins", "MIDPOINT", 0, 1, false, null); // maar 50 tegelijk
                         GettingData += 1;
                         Thread.Sleep(20);
                     }

@@ -17,6 +17,11 @@ namespace TradingBotCS
         //Class Variables
         public static float CashBalance { get; set; }
         private static string Name = "Symbol";
+
+        // Market Gap Parameters
+        private float MinimumGap = 3;
+        private float MaximumGap = 12;
+
         // buy parameters
         private int RsiPeriod = 14;
         private int FastKperiod = 3;
@@ -67,6 +72,54 @@ namespace TradingBotCS
             {
                 Logger.Error(Name, ex.ToString());
             }
+        }
+
+
+        public async Task CalculateGap()
+        {
+            List<RawData> CloseList = new List<RawData>();
+            List<RawData> OpenList = new List<RawData>();
+            //HistoricalData
+
+            String queryTime = DateTime.Now.AddDays(-1).ToString("ddMMyyyy HH:mm:ss");
+            string[] words = queryTime.Split(' ');
+            queryTime = words[0] + " " +"21:45:00";
+            queryTime = queryTime.Insert(2, "-");
+            queryTime = queryTime.Insert(5, "-");
+            DateTime CloseTime = Convert.ToDateTime(queryTime);
+
+            queryTime = DateTime.Now.ToString("ddMMyyyy HH:mm:ss");
+            words = queryTime.Split(' ');
+            queryTime = words[0] +" "+ "15:30:00";
+            queryTime = queryTime.Insert(2, "-");
+            queryTime = queryTime.Insert(5, "-");
+            DateTime OpenTime = Convert.ToDateTime(queryTime);
+            // if priceRange < 0.97 and priceRange > 0.88:
+            foreach (RawData item in HistoricalData)
+            {
+                if (item.DateTime == CloseTime)
+                {
+                    CloseList.Add(item);
+                }
+                else if (item.DateTime == OpenTime)
+                {
+                    OpenList.Add(item);
+                }    
+            }
+            if(OpenList.Count == 1 && CloseList.Count == 1)
+            {
+                double gap = (OpenList[0].Close - CloseList[0].Close) / CloseList[0].Close * 100;
+                if(gap > MinimumGap && gap <= MaximumGap)
+                {
+                    Program.CorrectGapList.Add(this);
+                    Logger.Info(Name, $"Correct Gap: {this.Ticker} {gap}%");
+                }
+            }
+            else
+            {
+                Logger.Error(Name, "Gap Calculation Failed");
+            }
+
         }
 
         public async Task CalculateData()

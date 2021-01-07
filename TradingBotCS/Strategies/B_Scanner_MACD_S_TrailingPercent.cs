@@ -24,15 +24,12 @@ namespace TradingBotCS.Strategies
         {
             try
             {
-                if(true)
+                // if priceRange < 0.97 and priceRange > 0.88:
+                //if (data.MacdHist > 0 && /data.Price )
+                if (data.MacdHist > 0 )
                 {
-                    
-                }
-
-                if (data.MacdHist > 0)
-                {
-                    
-                }
+                    return true;
+                } 
                 return false; //niet kopen, true is wel kopen
             }
             catch (Exception ex)

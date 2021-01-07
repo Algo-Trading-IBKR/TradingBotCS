@@ -147,9 +147,9 @@ namespace TradingBotCS.IBApi_OverRide
         public override void historicalData(int reqId, Bar bar)
         {
             //Console.WriteLine("HistoricalData. " + reqId + " - Time: " + bar.Time + ", Open: " + bar.Open + ", High: " + bar.High + ", Low: " + bar.Low + ", Close: " + bar.Close + ", Volume: " + bar.Volume + ", Count: " + bar.Count + ", WAP: " + bar.WAP);
-
+            
+            //Logger.Info("barTime: " , bar.Time);
             Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
-
 
             string sTime = bar.Time.Insert( 4, "-");
             sTime = sTime.Insert(7, "-");
@@ -157,9 +157,8 @@ namespace TradingBotCS.IBApi_OverRide
             string[] words = sTime.Split('-');
             string[] morewords = words[2].Split(' ');
 
-            sTime = morewords[0] + "-" + words[1] + "-" + words[0] + " " + morewords[1]; // 04  15:30:00-01-2021
+            sTime = morewords[0] + "-" + words[1] + "-" + words[0] + " " + morewords[2];
 
-            //DateTime Time = DateTime.ParseExact(sTime, "yyyy-MM-dd HH:mm:ss",null);    // 20210104  15:30:00 2021-01-04  15:30:00
             DateTime Time = Convert.ToDateTime(sTime);
             
             ObjectId id = new ObjectId();
@@ -168,12 +167,13 @@ namespace TradingBotCS.IBApi_OverRide
         }
         //! [historicaldata]
 
-
         //! [historicaldataend]
         public override void historicalDataEnd(int reqId, string startDate, string endDate)
         {
             //Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
+            Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
             Program.GettingData -= 1;
+            SymbolObject.CalculateGap();
         }
         //! [historicaldataend]
 
