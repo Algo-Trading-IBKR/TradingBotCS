@@ -152,7 +152,7 @@ namespace TradingBotCS
             temp.LocationCode = "STK.NASDAQ";
             
             temp.StockTypeFilter = "CORP";
-            for (double i = 0; i < 25; i++)
+            for (double i = 1; i < 25; i++)
             {
                 temp.AbovePrice = i;
                 temp.BelowPrice = i+1;
@@ -184,7 +184,7 @@ namespace TradingBotCS
                             Thread.Sleep(1);
                             if (S == SymbolObjects.Last()) break;
                         };
-                        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1 D", "15 mins", "MIDPOINT", 0, 1, false, null); // maar 50 tegelijk
+                        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "2 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
                         GettingData += 1;
                         Thread.Sleep(20);
                     }

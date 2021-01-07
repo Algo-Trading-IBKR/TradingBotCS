@@ -51,3 +51,4 @@ D:\AAA_personal_projects\tradingbot\TradingBotCS\TradingBotCS\obj\Debug\net5.0\T
 D:\AAA_personal_projects\tradingbot\TradingBotCS\TradingBotCS\obj\Debug\net5.0\ref\TradingBotCS.dll
 D:\AAA_personal_projects\tradingbot\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.pdb
 D:\AAA_personal_projects\tradingbot\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.genruntimeconfig.cache
+D:\AAA_personal_projects\tradingbot\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.csprojAssemblyReference.cache
