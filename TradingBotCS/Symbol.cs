@@ -57,14 +57,14 @@ namespace TradingBotCS
                         // sell order
                         //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, /*this moet een order worden. moeten we nog aanmaken. komt in orderManager*/);
                     }
-                } else if (CashBalance >= Program.TradeCash && buyEnabled == true && Program.ActiveSymbolList.Count() < 99)
+                } else if (CashBalance >= Program.TradeCash && buyEnabled == true)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
                     await CalculateData(HistoricalData);
 
                     bool Result = await Strategy.BuyStrategy(this.StrategyData);
                     //Logger.Info(Name, $"{Result}");
-                    if (Result && Program.ActiveSymbolList.Count() < 99)
+                    if (Result)
                     {
                         Logger.Info(Name, "I try to buy stuff");
                         //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren

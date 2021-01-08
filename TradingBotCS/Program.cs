@@ -92,7 +92,7 @@ namespace TradingBotCS
             //    }
             //}
 
-            IbClient.ClientSocket.reqOpenOrders();
+            //IbClient.ClientSocket.reqOpenOrders();
 
             await checkTime();
 
@@ -223,7 +223,7 @@ namespace TradingBotCS
                             try
                             {
                                 //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
-                                if (GettingData < 50 && Program.ActiveSymbolList.Count() < 99)
+                                if (GettingData < 50)
                                 {
                                     while (GettingData >= 49)
                                     {
@@ -245,8 +245,8 @@ namespace TradingBotCS
                         }
                         if(GettingData == 0)
                         {
-                            Logger.Info(Name, "Getting market data for all bought stocks");
-                            GetDataForActiveSymbols();
+                            Logger.Info(Name, "DONE buying stocks");
+                            //GetDataForActiveSymbols();
                             break;
                         }
                     }
@@ -262,7 +262,8 @@ namespace TradingBotCS
             Logger.Info("Active List", $"{ActiveSymbolList.Count()}");
             foreach (Symbol S in ActiveSymbolList)
             {
-                IbClient.ClientSocket.reqMktData(S.Id, S.Contract, "", false, false, MktDataOptions);
+                //IbClient.ClientSocket.reqMktData(S.Id, S.Contract, "", false, false, MktDataOptions);
+                IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null);
             }
         }
 

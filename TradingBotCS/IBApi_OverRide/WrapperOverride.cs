@@ -176,7 +176,7 @@ namespace TradingBotCS.IBApi_OverRide
             if (SymbolObject.GapCalculated == false)
             {
                 SymbolObject.CalculateGap();
-            } else if (SymbolObject.GapCalculated == true && Program.ActiveSymbolList.Count() < 99)
+            } else if (SymbolObject.GapCalculated == true)
             {
                 SymbolObject.ExecuteStrategy(true);
 

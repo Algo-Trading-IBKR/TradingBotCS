@@ -23,13 +23,6 @@ namespace TradingBotCS
                             Program.IbClient.ClientSocket.cancelOrder(order.OrderId);
                         }
                     }
-                    else if(S.LatestOrder.Action == "SELL" && order.Action == "SELL")
-                    {
-                        if ((float)S.LastRawData.Close < (S.AvgPrice * 0.995))
-                        {
-                            Program.IbClient.ClientSocket.cancelOrder(order.OrderId);
-                        }
-                    }
                 }
             }
             Console.WriteLine("checktest");
