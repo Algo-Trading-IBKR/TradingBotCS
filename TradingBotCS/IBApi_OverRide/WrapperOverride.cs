@@ -173,7 +173,17 @@ namespace TradingBotCS.IBApi_OverRide
             //Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
             Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
             Program.GettingData -= 1;
-            SymbolObject.CalculateGap();
+            if (SymbolObject.GapCalculated == false)
+            {
+                SymbolObject.CalculateGap();
+            } else if (SymbolObject.GapCalculated == true && Program.ActiveSymbolList.Count() < 99)
+            {
+                SymbolObject.ExecuteStrategy(true);
+
+                //vraag normale market data op voor sell
+            }
+
+
         }
         //! [historicaldataend]
 

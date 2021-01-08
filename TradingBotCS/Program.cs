@@ -42,6 +42,7 @@ namespace TradingBotCS
         //static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
 
         public static List<Symbol> CorrectGapList = new List<Symbol>();
+        public static List<Symbol> ActiveSymbolList = new List<Symbol>();
 
 
         static async Task Main(string[] args)
@@ -92,6 +93,8 @@ namespace TradingBotCS
             //}
 
             IbClient.ClientSocket.reqOpenOrders();
+
+            await checkTime();
 
             Logger.Info(Name, "KLAAR");
             while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
@@ -172,6 +175,8 @@ namespace TradingBotCS
        {
             String queryTime = DateTime.Now.ToString("yyyyMMdd HH:mm:ss");
 
+
+            //foreach (Symbol S in SymbolObjects.GetRange(0, 300))
             foreach (Symbol S in SymbolObjects)
             {
                 try
@@ -197,9 +202,69 @@ namespace TradingBotCS
                     Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
                 }
             }
+            Logger.Info(Name, "Historical Data Done");
 
        }
 
+        static async Task checkTime()
+        {
+            new Thread(() =>
+            {
+                while (IbClient.ClientSocket.IsConnected())
+                {
+                    //if (DateTime.Now.Hour >= 1 && DateTime.Now.Minute >= 45)
+                    if (DateTime.Now.Hour >= 15 && DateTime.Now.Minute >= 45)
+                    {
+                        //get latest datapoint
+                        String queryTime = DateTime.Now.ToString("yyyyMMdd HH:mm:ss");
+
+                        foreach (Symbol S in SymbolObjects)
+                        {
+                            try
+                            {
+                                //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
+                                if (GettingData < 50 && Program.ActiveSymbolList.Count() < 99)
+                                {
+                                    while (GettingData >= 49)
+                                    {
+                                        Thread.Sleep(1);
+                                        if (S == SymbolObjects.Last()) break;
+                                    };
+                                    IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1200 S", "15 mins", "MIDPOINT", 1, 1, false, null); // timing aanpassen dat het enkel het laatste punt is of checken of het al bestaat
+                                    GettingData += 1;
+                                    Thread.Sleep(20);
+                                }
+                                //IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
+                                //S.ExecuteStrategy();
+                                //Console.WriteLine(S.Ticker);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
+                            }
+                        }
+                        if(GettingData == 0)
+                        {
+                            Logger.Info(Name, "Getting market data for all bought stocks");
+                            GetDataForActiveSymbols();
+                            break;
+                        }
+                    }
+                }
+
+            })
+            { IsBackground = false }.Start();
+        }
+
+        static async Task GetDataForActiveSymbols()
+        {
+            List<TagValue> MktDataOptions = new List<TagValue>();
+            Logger.Info("Active List", $"{ActiveSymbolList.Count()}");
+            foreach (Symbol S in ActiveSymbolList)
+            {
+                IbClient.ClientSocket.reqMktData(S.Id, S.Contract, "", false, false, MktDataOptions);
+            }
+        }
 
         static async Task AccountUpdates()
         {

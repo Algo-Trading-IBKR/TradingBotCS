@@ -30,7 +30,7 @@ namespace TradingBotCS.Strategies
                 {
                     return true;
                 } 
-                return false; //niet kopen, true is wel kopen
+                return false;
             }
             catch (Exception ex)
             {
