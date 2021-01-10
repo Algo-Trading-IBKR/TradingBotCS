@@ -40,7 +40,7 @@ namespace TradingBotCS
         public RawData LastRawData { get; set; }
         public StrategyData StrategyData { get; set; }
         public int Position { get; set; }
-        public B_StochFRSI_MACD_S_TrailingPercent Strategy { get; set; }
+        public B_Scanner_MACD_S_TrailingPercent Strategy { get; set; }
         public List<RawData> HistoricalData { get; set; }
         public bool GapCalculated { get; set; }
 
@@ -48,29 +48,32 @@ namespace TradingBotCS
         {
             try
             {
-                if (Position > 0)
-                {
-                    bool Result = await Strategy.SellStrategy(AvgPrice, LastRawData, Ticker);
-                    Logger.Warn(Name, $"{Result}");
-                    if (Result)
-                    {
-                        // sell order
-                        //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, /*this moet een order worden. moeten we nog aanmaken. komt in orderManager*/);
-                    }
-                } else if (CashBalance >= Program.TradeCash && buyEnabled == true)
+                //if (Position > 0)
+                //{
+                //    bool Result = await Strategy.SellStrategy(AvgPrice, LastRawData, Ticker);
+                //    Logger.Warn(Name, $"{Result}");
+                //    if (Result)
+                //    {
+                //        // sell order
+                //        //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, /*this moet een order worden. moeten we nog aanmaken. komt in orderManager*/);
+                //    }
+                //} else 
+                if (CashBalance >= Program.TradeCash && buyEnabled == true)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
                     await CalculateData(HistoricalData);
 
-                    bool Result = await Strategy.BuyStrategy(this.StrategyData);
+                    var Results = await Strategy.BuyStrategy(this.StrategyData);
                     //Logger.Info(Name, $"{Result}");
-                    if (Result)
+                    if (Results.Item1)
                     {
                         Logger.Info(Name, "I try to buy stuff");
                         //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren
                         Program.ActiveSymbolList.Add(this);
+
                         // buy order
-                        //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, /*this moet een order worden. moeten we nog aanmaken. komt in orderManager*/);
+                        Order Order = await OrderManager.CreateOrder("BUY", "MKT", Results.Item2);
+                        Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
                     }
                 }
             }
@@ -85,9 +88,19 @@ namespace TradingBotCS
         {
             List<RawData> CloseList = new List<RawData>();
             List<RawData> OpenList = new List<RawData>();
+            string queryTime;
             //HistoricalData
+            DateTime dateValue = DateTime.Now;
+            int DayOfWeek = (int)dateValue.DayOfWeek;
+            if (DayOfWeek == 1)
+            {
+                queryTime = DateTime.Now.AddDays(-3).ToString("ddMMyyyy HH:mm:ss");
+            }
+            else 
+            {
+                queryTime = DateTime.Now.AddDays(-1).ToString("ddMMyyyy HH:mm:ss");
+            }
 
-            String queryTime = DateTime.Now.AddDays(-1).ToString("ddMMyyyy HH:mm:ss");
             string[] words = queryTime.Split(' ');
             queryTime = words[0] + " " +"21:45:00";
             queryTime = queryTime.Insert(2, "-");
@@ -97,7 +110,7 @@ namespace TradingBotCS
             queryTime = DateTime.Now.ToString("ddMMyyyy HH:mm:ss");
             words = queryTime.Split(' ');
             //queryTime = words[0] +" "+ "15:30:00";
-            queryTime = words[0] + " " + "00:30:00";
+            queryTime = words[0] + " " + "00:30:00";    
             queryTime = queryTime.Insert(2, "-");
             queryTime = queryTime.Insert(5, "-");
             DateTime OpenTime = Convert.ToDateTime(queryTime);
@@ -187,7 +200,7 @@ namespace TradingBotCS
         {
             this.Ticker = ticker;
             this.Id = id;
-            this.Strategy = new B_StochFRSI_MACD_S_TrailingPercent();
+            this.Strategy = new B_Scanner_MACD_S_TrailingPercent();
             this.HistoricalData = new List<RawData>();
             this.GapCalculated = false;
         }

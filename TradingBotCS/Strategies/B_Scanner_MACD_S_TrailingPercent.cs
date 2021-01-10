@@ -8,7 +8,7 @@ using TradingBotCS.HelperClasses;
 
 namespace TradingBotCS.Strategies
 {
-    class B_Scanner_MACD_S_TrailingPercent
+    public class B_Scanner_MACD_S_TrailingPercent
     {
         private static string Name = "B_Scanner_MACD_S_TrailingPercent";
 
@@ -20,7 +20,7 @@ namespace TradingBotCS.Strategies
         private float BottomProfit { get; set; }
         private bool PassedBottom { get; set; }
 
-        public async Task<bool> BuyStrategy(StrategyData data)
+        public async Task<(bool, int)> BuyStrategy(StrategyData data)
         {
             try
             {
@@ -28,15 +28,16 @@ namespace TradingBotCS.Strategies
                 //if (data.MacdHist > 0 && /data.Price )
                 if (data.MacdHist > 0 )
                 {
-                    return true;
+                    int Shares = (int)Math.Floor((decimal)Program.TradeCash / (decimal)data.Price);
+                    return (true, Shares);
                 } 
-                return false;
+                return (false, 0);
             }
             catch (Exception ex)
             {
                 Logger.Error(Name, ex.ToString());
             }
-            return false;
+            return (false, 0);
         }
 
         public async Task<bool> SellStrategy(float avgPrice, RawData lastRawData, string symbol)

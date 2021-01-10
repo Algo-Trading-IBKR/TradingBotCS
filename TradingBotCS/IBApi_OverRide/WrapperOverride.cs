@@ -92,6 +92,31 @@ namespace TradingBotCS.IBApi_OverRide
         }
         //! [position]
 
+        //! [updateportfolio]
+        public override async void updatePortfolio(Contract contract, double position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, string accountName)
+        {
+            Console.WriteLine("UpdatePortfolio. " + contract.Symbol + ", " + contract.SecType + " @ " + contract.Exchange
+                + ": Position: " + position + ", MarketPrice: " + marketPrice + ", MarketValue: " + marketValue + ", AverageCost: " + averageCost
+                + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
+
+            // als unrealized > 5% stuur sell order met limit price op die 5%
+            if (unrealizedPNL > averageCost * 0.06)
+            {
+                float PriceOffset = (float)averageCost*0.01f;
+                if (PriceOffset > 0.10)
+                {
+                    PriceOffset = 0.10f;
+                }
+                int trailingpercent = 2;
+
+                Order Order = await OrderManager.CreateTrailingStopLimit("SELL", "TRAIL LIMIT", position, averageCost*1.04, PriceOffset, trailingpercent);
+
+                Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, contract, Order);
+
+            }
+        }
+        //! [updateportfolio]
+
         //! [positionend]
         public override void positionEnd()
         {
@@ -133,15 +158,6 @@ namespace TradingBotCS.IBApi_OverRide
             //Console.WriteLine("UpdateAccountTime. Time: " + timestamp + "\n");
         }
         //! [updateaccounttime]
-
-        //! [updateportfolio]
-        public override void updatePortfolio(Contract contract, double position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, string accountName)
-        {
-            //Console.WriteLine("UpdatePortfolio. " + contract.Symbol + ", " + contract.SecType + " @ " + contract.Exchange
-            // + ": Position: " + position + ", MarketPrice: " + marketPrice + ", MarketValue: " + marketValue + ", AverageCost: " + averageCost
-            // + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
-        }
-        //! [updateportfolio]
 
         //! [historicaldata]
         public override void historicalData(int reqId, Bar bar)

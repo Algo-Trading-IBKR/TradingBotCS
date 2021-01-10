@@ -24,7 +24,8 @@ namespace TradingBotCS
 
 
         public static float TradeCash = 100;
-        static string Ip = "jorenvangoethem.duckdns.org";
+        //static string Ip = "jorenvangoethem.duckdns.org";
+        static string Ip = "192.168.50.107";
         static int Port = 4002;
         static int ApiId = 1;
         public static WrapperOverride IbClient = new WrapperOverride();
@@ -95,6 +96,8 @@ namespace TradingBotCS
             //IbClient.ClientSocket.reqOpenOrders();
 
             await checkTime();
+
+            IbClient.ClientSocket.reqPositions();
 
             Logger.Info(Name, "KLAAR");
             while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
@@ -251,10 +254,12 @@ namespace TradingBotCS
                         }
                     }
                 }
-
             })
             { IsBackground = false }.Start();
         }
+
+
+
 
         static async Task GetDataForActiveSymbols()
         {

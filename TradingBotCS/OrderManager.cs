@@ -27,5 +27,29 @@ namespace TradingBotCS
             }
             Console.WriteLine("checktest");
         }
+
+        public static async Task<Order> CreateOrder(string action, string type, int amount)
+        {
+            Order order = new Order();
+            order.Action = action;
+            order.OrderType = "MKT";
+            order.TotalQuantity = amount;
+            return order;
+        }
+
+        //"SELL", "TRAIL LIMIT", position, averageCost*1.04, PriceOffset, trailingpercent
+    
+        public static async Task<Order> CreateTrailingStopLimit(string action, string type, double amount, double trailStopPrice, float priceOffset, int trailingPercent)
+        {
+            Order order = new Order();
+            order.Action = action;
+            order.OrderType = type;
+            order.TotalQuantity = amount;
+            order.TrailStopPrice = trailStopPrice;
+            order.LmtPriceOffset = priceOffset;
+            order.TrailingPercent = trailingPercent;
+            
+            return order;
+        }
     }
 }
