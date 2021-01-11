@@ -52,8 +52,12 @@ namespace TradingBotCS.IBApi_OverRide
         {
             CommissionReportOverride commissionReportOverride = new CommissionReportOverride(commissionReport);
             CommissionRepository.InsertReport(commissionReportOverride);
-            //Console.WriteLine("CommissionReport. " + commissionReport.ExecId + " - " + commissionReport.Commission + " " + commissionReport.Currency + " RPNL " + commissionReport.RealizedPNL);
-            Logger.Info(Name, $"Profit: {commissionReportOverride.RealizedPNL}");
+            Console.WriteLine("CommissionReport. " + commissionReport.ExecId + " - " + commissionReport.Commission + " " + commissionReport.Currency + " RPNL " + commissionReport.RealizedPNL);
+            if (commissionReport.RealizedPNL != 0)
+            {
+                Logger.Info(Name, $"Profit: {commissionReportOverride.RealizedPNL}");
+            }
+
         }
         //! [commissionreport]
 
@@ -62,18 +66,17 @@ namespace TradingBotCS.IBApi_OverRide
         {
             ExecutionOverride executionOverride = new ExecutionOverride(execution);
             ExecutionRepository.InsertReport(contract, executionOverride);
-            //Console.WriteLine("ExecDetails. " + reqId + " - " + contract.Symbol + ", " + contract.SecType + ", " + contract.Currency + " - " + execution.ExecId + ", " + execution.OrderId + ", " + execution.Shares + ", " + execution.LastLiquidity);
+            Console.WriteLine("ExecDetails. " + reqId + " - " + contract.Symbol + ", " + contract.SecType + ", " + contract.Currency + " - " + execution.ExecId + ", " + execution.OrderId + ", " + execution.Shares + ", " + execution.LastLiquidity);
         }
         //! [execdetails]
 
         //! [openorder]
         public override async void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
         {
-            //Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account +
-            //    ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
-            //    ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
-            await OrderManager.CheckOrder(order);
-            Console.WriteLine("opentest");
+            Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account +
+                ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
+                ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
+            //await OrderManager.CheckOrder(order);
         }
         //! [openorder]
 
@@ -87,7 +90,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [position] request with reqPositions
         public override void position(string account, Contract contract, double pos, double avgCost)
         {
-            //Console.WriteLine("Position. " + account + " - Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + ", Currency: " + contract.Currency + ", Position: " + pos + ", Avg cost: " + avgCost);
+            Console.WriteLine("Position. " + account + " - Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + ", Currency: " + contract.Currency + ", Position: " + pos + ", Avg cost: " + avgCost);
             PositionsRepository.UpsertPositions(account, contract, pos, avgCost);
         }
         //! [position]
@@ -178,13 +181,28 @@ namespace TradingBotCS.IBApi_OverRide
             DateTime Time = Convert.ToDateTime(sTime);
             
             ObjectId id = new ObjectId();
-            RawData data = new RawData(id, SymbolObject.Ticker, Time, bar.Open, bar.High, bar.Low, bar.Close);
-            SymbolObject.HistoricalData.Add(data);
-
 
             if (SymbolObject.GapCalculated == true)
             {
                 Logger.Info(Name, SymbolObject.Ticker);
+                RawData existingData;
+                existingData = SymbolObject.HistoricalData.Find(i => i.DateTime == Time);
+                if(existingData != null)
+                {
+                    Logger.Verbose(Name, $"{SymbolObject.Ticker}: datapoint already exists");
+                }
+                else
+                {
+                    RawData data = new RawData(id, SymbolObject.Ticker, Time, bar.Open, bar.High, bar.Low, bar.Close);
+                    SymbolObject.HistoricalData.Add(data);
+                }
+                
+            }
+            else
+            {
+                RawData data = new RawData(id, SymbolObject.Ticker, Time, bar.Open, bar.High, bar.Low, bar.Close);
+                SymbolObject.HistoricalData.Add(data);
+
             }
         }
         //! [historicaldata]
