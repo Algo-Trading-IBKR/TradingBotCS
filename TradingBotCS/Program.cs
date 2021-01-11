@@ -45,11 +45,21 @@ namespace TradingBotCS
         public static List<Symbol> CorrectGapList = new List<Symbol>();
         public static List<Symbol> ActiveSymbolList = new List<Symbol>();
 
+        public static Symbol TestSymbol;
+
 
         static async Task Main(string[] args)
         {
             Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
             Logger.Verbose(Name, "Start");
+
+            // convert UTC time from the database to japanese time
+            DateTime databaseUtcTime = DateTime.UtcNow;
+            var NYtimezoneinfo = TimeZoneInfo.FindSystemTimeZoneById("US Eastern Standard Time");
+            var NYtime = TimeZoneInfo.ConvertTimeFromUtc(databaseUtcTime, NYtimezoneinfo);
+
+            Console.WriteLine(NYtime);
+
 
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
             //List<string> Numbers = new List<string>() { "32476067619", "32470579542" };
@@ -67,9 +77,9 @@ namespace TradingBotCS
             //await MarketScanner();
 
             //SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
-            
+
             //SymbolObjects = await CreateSymbolObjects(SymbolList);
-            
+
             //await RequestSymbolContracts();
 
             //await GetData();
@@ -77,6 +87,12 @@ namespace TradingBotCS
             //await checkTime();
 
             //IbClient.ClientSocket.reqPositions();
+
+           
+
+
+
+
 
             Logger.Info(Name, "KLAAR");
             while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
@@ -86,17 +102,29 @@ namespace TradingBotCS
         {
             new Thread(() =>
             {
+                (int, int) marketHours = (9,30);
+                bool MarketOpen = true;
                 while (true)
                 {
-                    if(DateTime.Now.Hour == 22 && DateTime.Now.Minute == 40)
+                    try
                     {
-                        if (!IbClient.ClientSocket.IsConnected())
+
+                        if (!IbClient.ClientSocket.IsConnected() && DateTime.Now.Hour >= 8 && DateTime.Now.Minute >= 00)
                         {
                             Connect();
                         }
                         else
                         {
-                            try
+                            (MarketOpen, marketHours) = CheckMartketHours();
+                        }
+
+                        if (MarketOpen && DateTime.Now.Hour == marketHours.Item1 && DateTime.Now.Minute == marketHours.Item2)
+                        {
+                            if (!IbClient.ClientSocket.IsConnected())
+                            {
+                                Connect();
+                            }
+                            else
                             {
                                 AccountUpdates();
                                 IbClient.ClientSocket.reqPositions();
@@ -111,21 +139,63 @@ namespace TradingBotCS
                                 GetData();
 
                                 checkTime();
-
-                                
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Error(Name, $"{ex}");
-                                throw;
                             }
                         }
+                        Thread.Sleep(100);
+
                     }
-                    Thread.Sleep(100);
+                    catch (Exception ex)
+                    {
+                        Logger.Critical(Name, $"{ex}");
+                    }
                 }
 
             })
             { IsBackground = false }.Start();
+        }
+
+        static (bool, (int, int)) CheckMartketHours()
+        {
+            try
+            {
+                TestSymbol = new Symbol("TSLA", 99999);
+
+                Contract Contract = new Contract();
+                Contract.Symbol = TestSymbol.Ticker;
+                Contract.SecType = "STK";
+                Contract.Exchange = "SMART";
+                Contract.Currency = "USD";
+
+                TestSymbol.Contract = Contract;
+                IbClient.ClientSocket.reqContractDetails(TestSymbol.Id, Contract);
+
+                while(TestSymbol.ContractDetails == null)
+                {
+                    Thread.Sleep(10);
+                }
+
+                // check hours
+                string hourstring = TestSymbol.ContractDetails.LiquidHours;
+
+                hourstring = hourstring.Split(';')[0];
+                if(hourstring.Contains("CLOSED"))
+                {
+                    return (false, (0, 0));
+                }
+                string startstring = hourstring.Split('-')[0];
+                startstring = startstring.Split(':')[1];
+
+                int hour = Convert.ToInt32(startstring.Substring(0, 2));
+                int minute = Convert.ToInt32(startstring.Substring(2, 2));
+                Logger.Info(Name, $"{hour}, {minute}");
+                return (true,(hour, minute));
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Critical(Name, $"{ex}");
+                return (false, (0, 0));
+            }
         }
 
         static async Task Connect()
@@ -232,7 +302,6 @@ namespace TradingBotCS
                 }
             }
             Logger.Info(Name, "Historical Data Done");
-
        }
 
         static async Task checkTime()
