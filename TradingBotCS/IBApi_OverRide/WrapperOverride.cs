@@ -29,12 +29,20 @@ namespace TradingBotCS.IBApi_OverRide
             //printContractMsg(contractDetails.Contract);
             //printContractDetailsMsg(contractDetails);
             //Console.WriteLine("ContractDetails end. ReqId: " + reqId);
-            foreach (Symbol S in Program.SymbolObjects)
+            if (reqId == 99999)
             {
-                if (contractDetails.Contract.Symbol == S.Ticker)
+                Program.TestSymbol.Contract = contractDetails.Contract;
+                Program.TestSymbol.ContractDetails = contractDetails;
+            }
+            else
+            {
+                foreach (Symbol S in Program.SymbolObjects)
                 {
-                    S.Contract = contractDetails.Contract;
-                    S.ContractDetails = contractDetails;
+                    if (contractDetails.Contract.Symbol == S.Ticker)
+                    {
+                        S.Contract = contractDetails.Contract;
+                        S.ContractDetails = contractDetails;
+                    }
                 }
             }
         }
