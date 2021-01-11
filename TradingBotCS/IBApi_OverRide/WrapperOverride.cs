@@ -180,6 +180,12 @@ namespace TradingBotCS.IBApi_OverRide
             ObjectId id = new ObjectId();
             RawData data = new RawData(id, SymbolObject.Ticker, Time, bar.Open, bar.High, bar.Low, bar.Close);
             SymbolObject.HistoricalData.Add(data);
+
+
+            if (SymbolObject.GapCalculated == true)
+            {
+                Logger.Info(Name, SymbolObject.Ticker);
+            }
         }
         //! [historicaldata]
 
@@ -187,8 +193,8 @@ namespace TradingBotCS.IBApi_OverRide
         public override void historicalDataEnd(int reqId, string startDate, string endDate)
         {
             //Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
-            Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
             Program.GettingData -= 1;
+            Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
             if (SymbolObject.GapCalculated == false)
             {
                 SymbolObject.CalculateGap();
@@ -198,8 +204,6 @@ namespace TradingBotCS.IBApi_OverRide
 
                 //vraag normale market data op voor sell
             }
-
-
         }
         //! [historicaldataend]
 

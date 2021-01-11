@@ -67,13 +67,13 @@ namespace TradingBotCS
                     //Logger.Info(Name, $"{Result}");
                     if (Results.Item1)
                     {
-                        Logger.Info(Name, "I try to buy stuff");
+                        Logger.Info(Name, $"{this.Ticker}: BUY");
                         //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren
                         Program.ActiveSymbolList.Add(this);
 
                         // buy order
                         Order Order = await OrderManager.CreateOrder("BUY", "MKT", Results.Item2);
-                        Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
+                        //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
                     }
                 }
             }
@@ -86,6 +86,7 @@ namespace TradingBotCS
 
         public async Task CalculateGap()
         {
+            GapCalculated = true;
             List<RawData> CloseList = new List<RawData>();
             List<RawData> OpenList = new List<RawData>();
             string queryTime;
@@ -109,8 +110,8 @@ namespace TradingBotCS
 
             queryTime = DateTime.Now.ToString("ddMMyyyy HH:mm:ss");
             words = queryTime.Split(' ');
-            //queryTime = words[0] +" "+ "15:30:00";
-            queryTime = words[0] + " " + "00:30:00";    
+            queryTime = words[0] +" "+ "15:30:00";
+            //queryTime = words[0] + " " + "00:30:00";    
             queryTime = queryTime.Insert(2, "-");
             queryTime = queryTime.Insert(5, "-");
             DateTime OpenTime = Convert.ToDateTime(queryTime);
@@ -132,7 +133,7 @@ namespace TradingBotCS
                 if(gap > MinimumGap && gap <= MaximumGap)
                 {
                     Program.CorrectGapList.Add(this);
-                    GapCalculated = true;
+                    
                     Logger.Info(Name, $"Correct Gap: {this.Ticker} {gap}%");
                 }
             }

@@ -166,7 +166,7 @@ namespace TradingBotCS
                 List<TagValue> test2 = new List<TagValue>();
                 while (ScannerReady == false)
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(1);
                 }
                 if (ScannerReady) IbClient.ClientSocket.reqScannerSubscription((int)i, temp, test, test2);
                 if (i == 24) Thread.Sleep(1000);
@@ -185,14 +185,15 @@ namespace TradingBotCS
                 try
                 {
                     //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
-                    if (GettingData < 50)
+                    //if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 45)
+                    if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 45)
                     {
                         while (GettingData >= 49)
                         {
                             Thread.Sleep(1);
                             if (S == SymbolObjects.Last()) break;
                         };
-                        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "2 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
+                        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "4 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
                         GettingData += 1;
                         Thread.Sleep(20);
                     }
