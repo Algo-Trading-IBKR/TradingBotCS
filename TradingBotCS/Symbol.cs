@@ -61,19 +61,24 @@ namespace TradingBotCS
                 if (CashBalance >= Program.TradeCash && buyEnabled == true)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
-                    await CalculateData(HistoricalData);
+                    bool calculationSucceeded = await CalculateData(HistoricalData);
 
-                    var Results = await Strategy.BuyStrategy(this.StrategyData);
-                    //Logger.Info(Name, $"{Result}");
-                    if (Results.Item1)
+                    if (calculationSucceeded)
                     {
-                        Logger.Info(Name, $"{this.Ticker}: BUY");
-                        //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren
-                        Program.ActiveSymbolList.Add(this);
+                        var Results = await Strategy.BuyStrategy(this.StrategyData);
+                    
+                        //Logger.Info(Name, $"{Result}");
+                        if (Results.Item1)
+                        {
+                            Logger.Info(Name, $"{this.Ticker}: BUY");
+                            //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren
+                            Program.ActiveSymbolList.Add(this);
 
-                        // buy order
-                        Order Order = await OrderManager.CreateOrder("BUY", "MKT", Results.Item2);
-                        //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
+                            // buy order
+                            Order Order = await OrderManager.CreateOrder("BUY", "MKT", Results.Item2);
+                            Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
+                            Program.IbClient.IncrementOrderId();
+                        }
                     }
                 }
             }
@@ -144,7 +149,7 @@ namespace TradingBotCS
 
         }
 
-        public async Task CalculateData(List<RawData> data)
+        public async Task<bool> CalculateData(List<RawData> data)
         {
             try
             {
@@ -189,10 +194,13 @@ namespace TradingBotCS
                 //Console.WriteLine(StrategyData.MacdHist);
                 //Console.WriteLine(StrategyData.MacdSignal);
                 //Console.WriteLine(StrategyData.DateTime);
+                return true;
+
             }
             catch (Exception ex)
             {
                 Logger.Error(Name, $"{ex}");
+                return false;
             }
         }
 
