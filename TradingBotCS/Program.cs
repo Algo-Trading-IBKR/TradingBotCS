@@ -56,51 +56,76 @@ namespace TradingBotCS
             //await MobileService.SendTextMsg(Messages, Numbers);
 
             //MongoDBtest();
-            
+
             //test();
+
+            InfiniteStartup();
+
+            //await Connect();
+            //await AccountUpdates();
+
+            //await MarketScanner();
+
+            //SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
             
-            await Connect();
-            await AccountUpdates();
-
-            await MarketScanner();
-
-            SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
+            //SymbolObjects = await CreateSymbolObjects(SymbolList);
             
-            SymbolObjects = await CreateSymbolObjects(SymbolList);
-            
-            await RequestSymbolContracts();
+            //await RequestSymbolContracts();
 
-            await GetData();
+            //await GetData();
 
-            //String queryTime = DateTime.Now.AddDays(-1).ToString("yyyyMMdd HH:mm:ss");
+            //await checkTime();
 
-            //foreach (Symbol S in SymbolObjects)
-            //{
-            //    try
-            //    {
-            //        //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
-
-                    
-            //        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
-
-            //        //IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
-            //        //S.ExecuteStrategy();
-            //        //Console.WriteLine(S.Ticker);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
-            //    }
-            //}
-
-            //IbClient.ClientSocket.reqOpenOrders();
-
-            await checkTime();
-
-            IbClient.ClientSocket.reqPositions();
+            //IbClient.ClientSocket.reqPositions();
 
             Logger.Info(Name, "KLAAR");
             while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
+        }
+
+        static async Task InfiniteStartup()
+        {
+            new Thread(() =>
+            {
+                while (true)
+                {
+                    if(DateTime.Now.Hour == 22 && DateTime.Now.Minute == 40)
+                    {
+                        if (!IbClient.ClientSocket.IsConnected())
+                        {
+                            Connect();
+                        }
+                        else
+                        {
+                            try
+                            {
+                                AccountUpdates();
+                                IbClient.ClientSocket.reqPositions();
+                                MarketScanner();
+
+                                SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
+
+                                SymbolObjects = CreateSymbolObjects(SymbolList);
+
+                                RequestSymbolContracts();
+
+                                GetData();
+
+                                checkTime();
+
+                                
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(Name, $"{ex}");
+                                throw;
+                            }
+                        }
+                    }
+                    Thread.Sleep(100);
+                }
+
+            })
+            { IsBackground = false }.Start();
         }
 
         static async Task Connect()
@@ -122,7 +147,7 @@ namespace TradingBotCS
             { IsBackground = true }.Start();
         }
 
-        static async Task<List<Symbol>> CreateSymbolObjects(List<string> symbolList)
+        static List<Symbol> CreateSymbolObjects(List<string> symbolList)
         {
             Logger.Info(Name, "Creating Symbol Objects");
 
@@ -186,7 +211,7 @@ namespace TradingBotCS
                 {
                     //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
                     //if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 45)
-                    if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 45)
+                    if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 38)
                     {
                         while (GettingData >= 49)
                         {
@@ -217,7 +242,7 @@ namespace TradingBotCS
                 while (IbClient.ClientSocket.IsConnected())
                 {
                     //if (DateTime.Now.Hour >= 1 && DateTime.Now.Minute >= 45)
-                    if (DateTime.Now.Hour >= 15 && DateTime.Now.Minute >= 45)
+                    if (DateTime.Now.Hour >= 15 && DateTime.Now.Minute >= 38)
                     {
                         //get latest datapoint
                         String queryTime = DateTime.Now.ToString("yyyyMMdd HH:mm:ss");
@@ -234,7 +259,7 @@ namespace TradingBotCS
                                         Thread.Sleep(1);
                                         if (S == SymbolObjects.Last()) break;
                                     };
-                                    IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "1200 S", "15 mins", "MIDPOINT", 1, 1, false, null); // timing aanpassen dat het enkel het laatste punt is of checken of het al bestaat
+                                    IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "3600 S", "15 mins", "MIDPOINT", 1, 1, false, null); // timing aanpassen dat het enkel het laatste punt is of checken of het al bestaat
                                     GettingData += 1;
                                     Thread.Sleep(20);
                                 }
