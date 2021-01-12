@@ -40,7 +40,6 @@ namespace TradingBotCS
         public static int GettingData = 0;
 
         public static List<string> SymbolList = new List<string>();
-        //static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
 
         public static List<Symbol> CorrectGapList = new List<Symbol>();
         public static List<Symbol> ActiveSymbolList = new List<Symbol>();
@@ -56,13 +55,6 @@ namespace TradingBotCS
         {
             Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
             Logger.Verbose(Name, "Start");
-
-            // convert UTC time from the database to japanese time
-            DateTime databaseUtcTime = DateTime.UtcNow;
-            var NYtimezoneinfo = TimeZoneInfo.FindSystemTimeZoneById("US Eastern Standard Time");
-            var NYtime = TimeZoneInfo.ConvertTimeFromUtc(databaseUtcTime, NYtimezoneinfo);
-
-            Console.WriteLine(NYtime.Hour);
 
 
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
@@ -92,13 +84,7 @@ namespace TradingBotCS
 
             //IbClient.ClientSocket.reqPositions();
 
-           
-
-
-
-
-
-            Logger.Info(Name, "KLAAR");
+            Logger.Info(Name, "Started");
             while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
         }
 
@@ -111,22 +97,20 @@ namespace TradingBotCS
                 {
                     try
                     {
-
-                        if (!IbClient.ClientSocket.IsConnected() && DateTime.Now.Hour >= 8 && DateTime.Now.Minute >= 00)
+                        DateTime NYtime = GetNewYorkTime();
+                        if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 6 && NYtime.Minute >= 00)
                         {
                             Connect();
+                            Thread.Sleep(10000);
                         }
                         else
                         {
+                            Thread.Sleep(10000);
                             CheckMartketHours();
                             if (MarketState == false) Logger.Critical(Name, "MARKET IS CLOSED TODAY");
-                            Thread.Sleep(10000);
                         }
 
-                        //get datetime now in new york
-                        DateTime databaseUtcTime = DateTime.UtcNow;
-                        TimeZoneInfo NYtimezoneinfo = TimeZoneInfo.FindSystemTimeZoneById("US Eastern Standard Time");
-                        DateTime NYtime = TimeZoneInfo.ConvertTimeFromUtc(databaseUtcTime, NYtimezoneinfo);
+                        NYtime = GetNewYorkTime();
 
                         if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
                         {
@@ -164,6 +148,16 @@ namespace TradingBotCS
             { IsBackground = false }.Start();
         }
 
+        public static DateTime GetNewYorkTime() 
+        {
+            //get datetime now in new york
+            DateTime databaseUtcTime = DateTime.UtcNow;
+            TimeZoneInfo NYtimezoneinfo = TimeZoneInfo.FindSystemTimeZoneById("US Eastern Standard Time");
+            DateTime NYtime = TimeZoneInfo.ConvertTimeFromUtc(databaseUtcTime, NYtimezoneinfo);
+            return NYtime;
+        }
+
+
         static async Task CheckMartketHours()
         {
             try
@@ -197,15 +191,16 @@ namespace TradingBotCS
                 else
                 {
                     MarketState = true;
-                }
-                string startstring = hourstring.Split('-')[0];
-                startstring = startstring.Split(':')[1];
+                
+                    string startstring = hourstring.Split('-')[0];
+                    startstring = startstring.Split(':')[1];
 
-                int hour = Convert.ToInt32(startstring.Substring(0, 2));
-                int minute = Convert.ToInt32(startstring.Substring(2, 2));
-                Logger.Verbose(Name, $"{hour}, {minute}");
-                MarketHour = hour;
-                MarketMinute = minute;
+                    int hour = Convert.ToInt32(startstring.Substring(0, 2));
+                    int minute = Convert.ToInt32(startstring.Substring(2, 2));
+                    Logger.Verbose(Name, $"{hour}, {minute}");
+                    MarketHour = hour;
+                    MarketMinute = minute;
+                }
             }
             catch (Exception ex)
             {
@@ -289,7 +284,8 @@ namespace TradingBotCS
 
        static async Task GetData()
        {
-            String queryTime = DateTime.Now.ToString("yyyyMMdd HH:mm:ss");
+            DateTime NYtime = GetNewYorkTime();
+            String queryTime = GetNewYorkTime().ToString("yyyyMMdd HH:mm:ss");
 
 
             //foreach (Symbol S in SymbolObjects.GetRange(0, 300))
@@ -299,7 +295,7 @@ namespace TradingBotCS
                 {
                     //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
                     //if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 45)
-                    if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 45)
+                    if (GettingData < 50 && NYtime.Hour >= 15 && NYtime.Minute < 45)
                     {
                         while (GettingData >= 49)
                         {
@@ -328,11 +324,12 @@ namespace TradingBotCS
             {
                 while (IbClient.ClientSocket.IsConnected())
                 {
+                    DateTime NYtime = GetNewYorkTime();
                     //if (DateTime.Now.Hour >= 1 && DateTime.Now.Minute >= 45)
-                    if (DateTime.Now.Hour >= 15 && DateTime.Now.Minute >= 45)
+                    if (NYtime.Hour >= 15 && NYtime.Minute >= 45)
                     {
                         //get latest datapoint
-                        String queryTime = DateTime.Now.ToString("yyyyMMdd HH:mm:ss");
+                        String queryTime = GetNewYorkTime().ToString("yyyyMMdd HH:mm:ss");
 
                         foreach (Symbol S in SymbolObjects)
                         {

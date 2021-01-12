@@ -97,26 +97,26 @@ namespace TradingBotCS
             List<RawData> OpenList = new List<RawData>();
             string queryTime;
             //HistoricalData
-            DateTime dateValue = DateTime.Now;
+            DateTime dateValue = Program.GetNewYorkTime();
             int DayOfWeek = (int)dateValue.DayOfWeek;
             if (DayOfWeek == 1)
             {
-                queryTime = DateTime.Now.AddDays(-3).ToString("ddMMyyyy HH:mm:ss");
+                queryTime = Program.GetNewYorkTime().AddDays(-3).ToString("ddMMyyyy HH:mm:ss");
             }
             else 
             {
-                queryTime = DateTime.Now.AddDays(-1).ToString("ddMMyyyy HH:mm:ss");
+                queryTime = Program.GetNewYorkTime().AddDays(-1).ToString("ddMMyyyy HH:mm:ss");
             }
 
             string[] words = queryTime.Split(' ');
-            queryTime = words[0] + " " +"21:45:00";
+            queryTime = words[0] + " " +"15:45:00";
             queryTime = queryTime.Insert(2, "-");
             queryTime = queryTime.Insert(5, "-");
             DateTime CloseTime = Convert.ToDateTime(queryTime);
 
-            queryTime = DateTime.Now.ToString("ddMMyyyy HH:mm:ss");
+            queryTime = Program.GetNewYorkTime().ToString("ddMMyyyy HH:mm:ss");
             words = queryTime.Split(' ');
-            queryTime = words[0] +" "+ "15:30:00";
+            queryTime = words[0] +" "+ "09:30:00";
             //queryTime = words[0] + " " + "00:30:00";    
             queryTime = queryTime.Insert(2, "-");
             queryTime = queryTime.Insert(5, "-");
