@@ -106,13 +106,14 @@ namespace TradingBotCS.IBApi_OverRide
         //! [updateportfolio]
         public override async void updatePortfolio(Contract contract, double position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, string accountName)
         {
-            Console.WriteLine("UpdatePortfolio. " + contract.Symbol + ", " + contract.SecType + " @ " + contract.Exchange
-                + ": Position: " + position + ", MarketPrice: " + marketPrice + ", MarketValue: " + marketValue + ", AverageCost: " + averageCost
-                + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
+            //Console.WriteLine("UpdatePortfolio. " + contract.Symbol + ", " + contract.SecType + " @ " + contract.Exchange
+            //    + ": Position: " + position + ", MarketPrice: " + marketPrice + ", MarketValue: " + marketValue + ", AverageCost: " + averageCost
+            //    + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
 
             // als unrealized > 5% stuur sell order met limit price op die 5%
             if (unrealizedPNL > averageCost * 0.06)
             {
+                Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL}");
                 float PriceOffset = (float)averageCost*0.01f;
                 if (PriceOffset > 0.10)
                 {
@@ -123,6 +124,7 @@ namespace TradingBotCS.IBApi_OverRide
                 Order Order = await OrderManager.CreateTrailingStopLimit("SELL", "TRAIL LIMIT", position, averageCost*1.04, PriceOffset, trailingpercent);
 
                 Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, contract, Order);
+                Program.IbClient.IncrementOrderId();
 
             }
         }
@@ -192,7 +194,6 @@ namespace TradingBotCS.IBApi_OverRide
 
             if (SymbolObject.GapCalculated == true)
             {
-                Logger.Info(Name, SymbolObject.Ticker);
                 RawData existingData;
                 existingData = SymbolObject.HistoricalData.Find(i => i.DateTime == Time);
                 if(existingData != null)
