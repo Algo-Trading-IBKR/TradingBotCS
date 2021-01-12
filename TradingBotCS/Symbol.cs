@@ -58,7 +58,8 @@ namespace TradingBotCS
                 //        //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, /*this moet een order worden. moeten we nog aanmaken. komt in orderManager*/);
                 //    }
                 //} else 
-                if (CashBalance >= Program.TradeCash && buyEnabled == true)
+                //if (CashBalance >= Program.TradeCash && buyEnabled == true)
+                if (buyEnabled == true)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
                     bool calculationSucceeded = await CalculateData(HistoricalData);
@@ -75,9 +76,9 @@ namespace TradingBotCS
                             Program.ActiveSymbolList.Add(this);
 
                             // buy order
-                            Order Order = await OrderManager.CreateOrder("BUY", "MKT", Results.Item2);
-                            Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
-                            Program.IbClient.IncrementOrderId();
+                            //Order Order = await OrderManager.CreateOrder("BUY", "MKT", Results.Item2);
+                            //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
+                            //Program.IbClient.IncrementOrderId();
                         }
                     }
                 }

@@ -28,7 +28,7 @@ namespace TradingBotCS.HelperClasses
             switch (logLevel)
             {
                 case LogLevel.LogLevelVerbose:
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Blue;
                     sLogLevel = "VERBOSE";
                     break;
                 case LogLevel.LogLevelInfo:
