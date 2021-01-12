@@ -47,6 +47,10 @@ namespace TradingBotCS
 
         public static Symbol TestSymbol;
 
+        public static bool MarketState = true;
+        public static int MarketHour = 9;
+        public static int MarketMinute = 30;
+
 
         static async Task Main(string[] args)
         {
@@ -58,7 +62,7 @@ namespace TradingBotCS
             var NYtimezoneinfo = TimeZoneInfo.FindSystemTimeZoneById("US Eastern Standard Time");
             var NYtime = TimeZoneInfo.ConvertTimeFromUtc(databaseUtcTime, NYtimezoneinfo);
 
-            Console.WriteLine(NYtime);
+            Console.WriteLine(NYtime.Hour);
 
 
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
@@ -103,7 +107,6 @@ namespace TradingBotCS
             new Thread(() =>
             {
                 (int, int) marketHours = (9,30);
-                bool MarketOpen = true;
                 while (true)
                 {
                     try
@@ -115,10 +118,17 @@ namespace TradingBotCS
                         }
                         else
                         {
-                            (MarketOpen, marketHours) = CheckMartketHours();
+                            CheckMartketHours();
+                            if (MarketState == false) Logger.Critical(Name, "MARKET IS CLOSED TODAY");
+                            Thread.Sleep(10000);
                         }
 
-                        if (MarketOpen && DateTime.Now.Hour == marketHours.Item1 && DateTime.Now.Minute == marketHours.Item2)
+                        //get datetime now in new york
+                        DateTime databaseUtcTime = DateTime.UtcNow;
+                        TimeZoneInfo NYtimezoneinfo = TimeZoneInfo.FindSystemTimeZoneById("US Eastern Standard Time");
+                        DateTime NYtime = TimeZoneInfo.ConvertTimeFromUtc(databaseUtcTime, NYtimezoneinfo);
+
+                        if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
                         {
                             if (!IbClient.ClientSocket.IsConnected())
                             {
@@ -154,7 +164,7 @@ namespace TradingBotCS
             { IsBackground = false }.Start();
         }
 
-        static (bool, (int, int)) CheckMartketHours()
+        static async Task CheckMartketHours()
         {
             try
             {
@@ -171,7 +181,7 @@ namespace TradingBotCS
 
                 while(TestSymbol.ContractDetails == null)
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(10000);
                 }
 
                 // check hours
@@ -180,21 +190,29 @@ namespace TradingBotCS
                 hourstring = hourstring.Split(';')[0];
                 if(hourstring.Contains("CLOSED"))
                 {
-                    return (false, (0, 0));
+                    MarketState = false;
+                    MarketHour = 0;
+                    MarketMinute = 0;
+                }
+                else
+                {
+                    MarketState = true;
                 }
                 string startstring = hourstring.Split('-')[0];
                 startstring = startstring.Split(':')[1];
 
                 int hour = Convert.ToInt32(startstring.Substring(0, 2));
                 int minute = Convert.ToInt32(startstring.Substring(2, 2));
-                Logger.Info(Name, $"{hour}, {minute}");
-                return (true,(hour, minute));
-
+                Logger.Verbose(Name, $"{hour}, {minute}");
+                MarketHour = hour;
+                MarketMinute = minute;
             }
             catch (Exception ex)
             {
                 Logger.Critical(Name, $"{ex}");
-                return (false, (0, 0));
+                MarketState = false;
+                MarketHour = 0;
+                MarketMinute = 0;
             }
         }
 
@@ -281,7 +299,7 @@ namespace TradingBotCS
                 {
                     //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
                     //if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 45)
-                    if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 38)
+                    if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 45)
                     {
                         while (GettingData >= 49)
                         {
@@ -311,7 +329,7 @@ namespace TradingBotCS
                 while (IbClient.ClientSocket.IsConnected())
                 {
                     //if (DateTime.Now.Hour >= 1 && DateTime.Now.Minute >= 45)
-                    if (DateTime.Now.Hour >= 15 && DateTime.Now.Minute >= 38)
+                    if (DateTime.Now.Hour >= 15 && DateTime.Now.Minute >= 45)
                     {
                         //get latest datapoint
                         String queryTime = DateTime.Now.ToString("yyyyMMdd HH:mm:ss");
