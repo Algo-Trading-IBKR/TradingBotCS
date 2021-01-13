@@ -49,6 +49,7 @@ namespace TradingBotCS
         public static bool MarketState = true;
         public static int MarketHour = 9;
         public static int MarketMinute = 30;
+        public static bool MarketClosedMessage = false;
 
 
         static async Task Main(string[] args)
@@ -66,23 +67,6 @@ namespace TradingBotCS
             //test();
 
             InfiniteStartup();
-
-            //await Connect();
-            //await AccountUpdates();
-
-            //await MarketScanner();
-
-            //SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
-
-            //SymbolObjects = await CreateSymbolObjects(SymbolList);
-
-            //await RequestSymbolContracts();
-
-            //await GetData();
-
-            //await checkTime();
-
-            //IbClient.ClientSocket.reqPositions();
 
             Logger.Info(Name, "Started");
             while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
@@ -103,17 +87,22 @@ namespace TradingBotCS
                             Connect();
                             Thread.Sleep(10000);
                         }
-                        else
+                        else if(NYtime.Hour >= 6 && NYtime.Minute >= 00)
                         {
                             Thread.Sleep(10000);
                             CheckMartketHours();
-                            if (MarketState == false) Logger.Critical(Name, "MARKET IS CLOSED TODAY");
+                            if (MarketState == false && MarketClosedMessage == false)
+                            {
+                                Logger.Critical(Name, "MARKET IS CLOSED TODAY");
+                                MarketClosedMessage = true;
+                            }
                         }
 
                         NYtime = GetNewYorkTime();
 
                         if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
                         {
+                            MarketClosedMessage = false;
                             if (!IbClient.ClientSocket.IsConnected())
                             {
                                 Connect();
