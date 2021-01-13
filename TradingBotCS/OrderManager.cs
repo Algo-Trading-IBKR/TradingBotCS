@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradingBotCS.HelperClasses;
 
 namespace TradingBotCS
 {
     public static class OrderManager
     {
+        private static string Name = "OrderManager";
         // zal waarschijnlijk veranderen en gebruik maken van database, dit is maar een placeholder
         public static async Task CheckOrder(Order order)
         {
@@ -28,7 +30,7 @@ namespace TradingBotCS
             Console.WriteLine("checktest");
         }
 
-        public static async Task<Order> CreateOrder(string action, string type, int amount)
+        public static async Task<Order> CreateMKTOrder(string action, int amount)
         {
             Order order = new Order();
             order.Action = action;
@@ -39,11 +41,11 @@ namespace TradingBotCS
 
         //"SELL", "TRAIL LIMIT", position, averageCost*1.04, PriceOffset, trailingpercent
     
-        public static async Task<Order> CreateTrailingStopLimit(string action, string type, double amount, double trailStopPrice, float priceOffset, int trailingPercent)
+        public static async Task<Order> CreateTrailingStopLimit(string action, double amount, double trailStopPrice, float priceOffset, int trailingPercent)
         {
             Order order = new Order();
             order.Action = action;
-            order.OrderType = type;
+            order.OrderType = "TRAIL LIMIT";
             order.TotalQuantity = amount;
             order.TrailStopPrice = trailStopPrice;
             order.LmtPriceOffset = priceOffset;
@@ -51,5 +53,28 @@ namespace TradingBotCS
             
             return order;
         }
+
+        public static async Task<Order> CreateOrder(string action, string type = "LMT", int amount = 0, double trailStopPrice = 0, float priceOffset = 0, int trailingPercent = 0)
+        {
+            Order order;
+            switch (type)
+            {
+                case "MKT":
+                    Console.WriteLine("Case 1");
+                    order = await CreateMKTOrder(action, amount);
+                    return order;
+                case "LMT":
+                    Console.WriteLine("Case 2");
+                    break;
+                case "TRAIL LIMIT":
+                    Console.WriteLine("Case 3");
+                    order = await CreateTrailingStopLimit(action, amount, trailStopPrice, priceOffset, trailingPercent);
+                    return order;
+                default:
+                    Logger.Critical(Name, "Order Type Not Allowed");
+                    break;
+            }
+        }
+
     }
 }
