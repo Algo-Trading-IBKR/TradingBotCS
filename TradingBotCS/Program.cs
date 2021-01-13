@@ -24,8 +24,8 @@ namespace TradingBotCS
 
 
         public static float TradeCash = 100;
-        //static string Ip = "jorenvangoethem.duckdns.org";
-        static string Ip = "192.168.50.107";
+        static string Ip = "jorenvangoethem.duckdns.org";
+        //static string Ip = "192.168.50.107";
         static int Port = 4002;
         static int ApiId = 1;
         public static WrapperOverride IbClient = new WrapperOverride();
@@ -82,14 +82,14 @@ namespace TradingBotCS
                     try
                     {
                         DateTime NYtime = GetNewYorkTime();
-                        if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 7 && NYtime.Minute >= 00)
+                        if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 7)
                         {
                             Connect();
-                            Thread.Sleep(10000);
+                            Thread.Sleep(5000);
                         }
-                        else if(IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 7 && NYtime.Minute >= 00)
+                        else if(IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 7)
                         {
-                            Thread.Sleep(10000);
+                            Thread.Sleep(5000);
                             CheckMartketHours();
                             if (MarketState == false && MarketClosedMessage == false)
                             {
@@ -164,7 +164,7 @@ namespace TradingBotCS
 
                 while(TestSymbol.ContractDetails == null)
                 {
-                    Thread.Sleep(10000);
+                    Thread.Sleep(1000);
                 }
 
                 // check hours
@@ -189,6 +189,9 @@ namespace TradingBotCS
                     Logger.Verbose(Name, $"{hour}, {minute}");
                     MarketHour = hour;
                     MarketMinute = minute;
+                    //for testing change this
+                    MarketHour = 12;
+                    MarketMinute = 24;
                 }
             }
             catch (Exception ex)
@@ -385,13 +388,14 @@ namespace TradingBotCS
             { IsBackground = false }.Start();
         }
 
-        static async Task<Contract> CreateContract(string symbol, string secType = "STK", string exchange = "SMART", string currency = "USD")
+        public static async Task<Contract> CreateContract(string symbol, string secType = "STK", string exchange = "SMART", string currency = "USD")
         {
             Logger.Verbose(Name, "Creating Contract");
             Contract Contract =  new Contract();
             Contract.Symbol = symbol;
             Contract.SecType = secType;
             Contract.Exchange = exchange;
+            Contract.PrimaryExch = "ISLAND";
             Contract.Currency = currency;
 
             return Contract;

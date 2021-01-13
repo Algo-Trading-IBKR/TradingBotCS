@@ -31,7 +31,7 @@ namespace TradingBotCS
             Console.WriteLine("checktest");
         }
 
-        public static async Task<OrderOverride> CreateOrder(string action, string type = "LMT", double amount = 0, double trailStopPrice = 0, float priceOffset = 0, int trailingPercent = 0)
+        public static async Task<OrderOverride> CreateOrder(string action, string type = "LMT", double amount = 0, double trailStopPrice = 0, float priceOffset = 0, double trailingPercent = 0)
         {
             OrderOverride order;
             Program.IbClient.IncrementOrderId();
@@ -50,7 +50,7 @@ namespace TradingBotCS
                     order = await CreateTrailingStopLimit(action, amount, trailStopPrice, priceOffset, trailingPercent);
                     return order;
                 default:
-                    Logger.Critical(Name, "Order Type Not Allowed");
+                    Logger.Critical(Name, $"Order Type {type} Not Allowed");
                     order = new OrderOverride();
                     return order;
             }
@@ -77,15 +77,16 @@ namespace TradingBotCS
 
         //"SELL", "TRAIL LIMIT", position, averageCost*1.04, PriceOffset, trailingpercent
 
-        public static async Task<OrderOverride> CreateTrailingStopLimit(string action, double amount, double trailStopPrice, float priceOffset, int trailingPercent)
+        public static async Task<OrderOverride> CreateTrailingStopLimit(string action, double amount, double trailStopPrice, float priceOffset, double trailingPercent)
         {
             OrderOverride order = new OrderOverride();
             order.Action = action;
             order.OrderType = "TRAIL LIMIT";
             order.TotalQuantity = amount;
-            order.TrailStopPrice = trailStopPrice;
+            //order.TrailStopPrice = trailStopPrice;
             order.LmtPriceOffset = priceOffset;
             order.TrailingPercent = trailingPercent;
+            //order.AuxPrice = 0.1;
             
             return order;
         }

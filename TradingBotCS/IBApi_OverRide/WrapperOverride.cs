@@ -21,6 +21,35 @@ namespace TradingBotCS.IBApi_OverRide
         }
         //! [incrementorderid]
 
+        //! [nextvalidid]
+        public virtual void nextValidId(int orderId)
+        {
+            //Console.WriteLine("Next Valid Id: " + orderId);
+            NextOrderId = orderId;
+        }
+        //! [nextvalidid]
+
+        //! [error]
+        public virtual void error(int id, int errorCode, string errorMsg)
+        {
+            //Console.WriteLine("Error. Id: " + id + ", Code: " + errorCode + ", Msg: " + errorMsg + "\n");
+            Logger.Warn(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
+        }
+        //! [error]
+
+        public virtual void error(Exception e)
+        {
+            //Console.WriteLine("Exception thrown: " + e);
+            Logger.Error(Name, $"Exception thrown: {e}");
+            throw e;
+        }
+
+        public virtual void error(string str)
+        {
+            //Console.WriteLine("Error: " + str + "\n");
+            Logger.Error(Name, $"Error: {str}");
+        }
+
         //! [contractdetails]
         public override async void contractDetails(int reqId, ContractDetails contractDetails)
         {
@@ -113,18 +142,19 @@ namespace TradingBotCS.IBApi_OverRide
             // als unrealized > 5% stuur sell order met limit price op die 5%
             if (unrealizedPNL > averageCost * 0.06)
             {
-                Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL}");
+                Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL} - {unrealizedPNL/(position*averageCost)}%");
                 float PriceOffset = (float)averageCost*0.01f;
                 if (PriceOffset > 0.10)
                 {
                     PriceOffset = 0.10f;
                 }
-                int trailingpercent = 2;
+                double trailingpercent = 2;
 
                 OrderOverride Order = await OrderManager.CreateOrder("SELL", "TRAIL LIMIT", position, averageCost*1.05, PriceOffset, trailingpercent);
-
+                //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);
+                contract = await Program.CreateContract(contract.Symbol);
+                
                 Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, contract, Order);
-
             }
         }
         //! [updateportfolio]
