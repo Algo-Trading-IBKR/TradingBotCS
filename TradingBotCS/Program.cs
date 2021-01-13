@@ -82,12 +82,12 @@ namespace TradingBotCS
                     try
                     {
                         DateTime NYtime = GetNewYorkTime();
-                        if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 6 && NYtime.Minute >= 00)
+                        if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 7 && NYtime.Minute >= 00)
                         {
                             Connect();
                             Thread.Sleep(10000);
                         }
-                        else if(NYtime.Hour >= 6 && NYtime.Minute >= 00)
+                        else if(IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 7 && NYtime.Minute >= 00)
                         {
                             Thread.Sleep(10000);
                             CheckMartketHours();

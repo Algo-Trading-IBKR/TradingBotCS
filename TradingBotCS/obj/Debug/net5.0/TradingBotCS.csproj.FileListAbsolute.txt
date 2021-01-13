@@ -52,3 +52,4 @@ C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\ref\TradingBot
 C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.pdb
 C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.genruntimeconfig.cache
 C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.csprojAssemblyReference.cache
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Files\image_Chapter2.ico

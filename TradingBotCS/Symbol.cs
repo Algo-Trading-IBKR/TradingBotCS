@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TradingBotCS.Database;
 using TradingBotCS.DataModels;
 using TradingBotCS.HelperClasses;
+using TradingBotCS.IBApi_OverRide;
 using TradingBotCS.Models_Indicators;
 using TradingBotCS.Strategies;
 
@@ -76,9 +77,8 @@ namespace TradingBotCS
                             Program.ActiveSymbolList.Add(this);
 
                             // buy order
-                            //Order Order = await OrderManager.CreateOrder("BUY", "MKT", Results.Item2);
-                            //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
-                            //Program.IbClient.IncrementOrderId();
+                            OrderOverride Order = await OrderManager.CreateOrder("BUY", "MKT", Results.Item2);
+                            Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
                         }
                     }
                 }

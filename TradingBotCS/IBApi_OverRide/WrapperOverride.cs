@@ -121,10 +121,9 @@ namespace TradingBotCS.IBApi_OverRide
                 }
                 int trailingpercent = 2;
 
-                Order Order = await OrderManager.CreateTrailingStopLimit("SELL", "TRAIL LIMIT", position, averageCost*1.04, PriceOffset, trailingpercent);
+                OrderOverride Order = await OrderManager.CreateOrder("SELL", "TRAIL LIMIT", position, averageCost*1.05, PriceOffset, trailingpercent);
 
                 Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, contract, Order);
-                Program.IbClient.IncrementOrderId();
 
             }
         }

@@ -24,3 +24,5 @@ C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Release\net5.0\TradingBotCS
 C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Release\net5.0\ref\TradingBotCS.dll
 C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Release\net5.0\TradingBotCS.pdb
 C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Release\net5.0\TradingBotCS.genruntimeconfig.cache
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\obj\Release\net5.0\TradingBotCS.csprojAssemblyReference.cache
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Release\net5.0\Files\image_Chapter2.ico

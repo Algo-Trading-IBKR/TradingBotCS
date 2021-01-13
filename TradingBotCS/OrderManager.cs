@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TradingBotCS.HelperClasses;
+using TradingBotCS.IBApi_OverRide;
 
 namespace TradingBotCS
 {
@@ -30,20 +31,55 @@ namespace TradingBotCS
             Console.WriteLine("checktest");
         }
 
-        public static async Task<Order> CreateMKTOrder(string action, int amount)
+        public static async Task<OrderOverride> CreateOrder(string action, string type = "LMT", double amount = 0, double trailStopPrice = 0, float priceOffset = 0, int trailingPercent = 0)
         {
-            Order order = new Order();
+            OrderOverride order;
+            Program.IbClient.IncrementOrderId();
+            switch (type)
+            {
+                case "MKT":
+                    Console.WriteLine("Case 1");
+                    order = await CreateMKT(action, amount);
+                    return order;
+                case "LMT":
+                    Console.WriteLine("Case 2");
+                    order = new OrderOverride();
+                    return order;
+                case "TRAIL LIMIT":
+                    Console.WriteLine("Case 3");
+                    order = await CreateTrailingStopLimit(action, amount, trailStopPrice, priceOffset, trailingPercent);
+                    return order;
+                default:
+                    Logger.Critical(Name, "Order Type Not Allowed");
+                    order = new OrderOverride();
+                    return order;
+            }
+        }
+
+        public static async Task<OrderOverride> CreateMKT(string action, double amount)
+        {
+            OrderOverride order = new OrderOverride();
             order.Action = action;
             order.OrderType = "MKT";
             order.TotalQuantity = amount;
             return order;
         }
 
-        //"SELL", "TRAIL LIMIT", position, averageCost*1.04, PriceOffset, trailingpercent
-    
-        public static async Task<Order> CreateTrailingStopLimit(string action, double amount, double trailStopPrice, float priceOffset, int trailingPercent)
+        public static async Task<OrderOverride> CreateLMT(string action, double amount, float price)
         {
-            Order order = new Order();
+            OrderOverride order = new OrderOverride();
+            order.Action = action;
+            order.OrderType = "LMT";
+            order.LmtPrice = price;
+            order.TotalQuantity = amount;
+            return order;
+        }
+
+        //"SELL", "TRAIL LIMIT", position, averageCost*1.04, PriceOffset, trailingpercent
+
+        public static async Task<OrderOverride> CreateTrailingStopLimit(string action, double amount, double trailStopPrice, float priceOffset, int trailingPercent)
+        {
+            OrderOverride order = new OrderOverride();
             order.Action = action;
             order.OrderType = "TRAIL LIMIT";
             order.TotalQuantity = amount;
@@ -54,27 +90,6 @@ namespace TradingBotCS
             return order;
         }
 
-        public static async Task<Order> CreateOrder(string action, string type = "LMT", int amount = 0, double trailStopPrice = 0, float priceOffset = 0, int trailingPercent = 0)
-        {
-            Order order;
-            switch (type)
-            {
-                case "MKT":
-                    Console.WriteLine("Case 1");
-                    order = await CreateMKTOrder(action, amount);
-                    return order;
-                case "LMT":
-                    Console.WriteLine("Case 2");
-                    break;
-                case "TRAIL LIMIT":
-                    Console.WriteLine("Case 3");
-                    order = await CreateTrailingStopLimit(action, amount, trailStopPrice, priceOffset, trailingPercent);
-                    return order;
-                default:
-                    Logger.Critical(Name, "Order Type Not Allowed");
-                    break;
-            }
-        }
-
+        
     }
 }
