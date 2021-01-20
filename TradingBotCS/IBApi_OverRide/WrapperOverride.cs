@@ -140,7 +140,7 @@ namespace TradingBotCS.IBApi_OverRide
             //    + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
 
             // als unrealized > 5% stuur sell order met limit price op die 5%
-            if (unrealizedPNL > averageCost * 0.06)
+            if (unrealizedPNL > averageCost * 0.07)
             {
                 Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL} - {unrealizedPNL/(position*averageCost)}%");
                 float PriceOffset = (float)averageCost*0.01f;

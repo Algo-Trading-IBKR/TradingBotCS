@@ -83,10 +83,9 @@ namespace TradingBotCS
             order.Action = action;
             order.OrderType = "TRAIL LIMIT";
             order.TotalQuantity = amount;
-            //order.TrailStopPrice = trailStopPrice;
+            order.TrailStopPrice = trailStopPrice;
             order.LmtPriceOffset = priceOffset;
             order.TrailingPercent = trailingPercent;
-            //order.AuxPrice = 0.1;
             
             return order;
         }

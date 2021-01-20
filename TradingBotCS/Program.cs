@@ -190,8 +190,8 @@ namespace TradingBotCS
                     MarketHour = hour;
                     MarketMinute = minute;
                     //for testing change this
-                    MarketHour = 12;
-                    MarketMinute = 24;
+                    //MarketHour = 15;
+                    //MarketMinute = 02;
                 }
             }
             catch (Exception ex)

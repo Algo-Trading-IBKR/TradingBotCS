@@ -1,0 +1,15 @@
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\bin\Release\netcoreapp3.1\DataCollectorCS.exe
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\bin\Release\netcoreapp3.1\DataCollectorCS.deps.json
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\bin\Release\netcoreapp3.1\DataCollectorCS.runtimeconfig.json
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\bin\Release\netcoreapp3.1\DataCollectorCS.runtimeconfig.dev.json
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\bin\Release\netcoreapp3.1\DataCollectorCS.dll
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\bin\Release\netcoreapp3.1\DataCollectorCS.pdb
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\bin\Release\netcoreapp3.1\CsvHelper.dll
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\obj\Release\netcoreapp3.1\DataCollectorCS.csprojAssemblyReference.cache
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\obj\Release\netcoreapp3.1\DataCollectorCS.AssemblyInfoInputs.cache
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\obj\Release\netcoreapp3.1\DataCollectorCS.AssemblyInfo.cs
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\obj\Release\netcoreapp3.1\DataCollectorCS.csproj.CoreCompileInputs.cache
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\obj\Release\netcoreapp3.1\DataCollectorCS.csproj.CopyComplete
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\obj\Release\netcoreapp3.1\DataCollectorCS.dll
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\obj\Release\netcoreapp3.1\DataCollectorCS.pdb
+C:\Users\joren\Desktop\TradingBotCS\DataCollectorCS\DataCollectorCS\obj\Release\netcoreapp3.1\DataCollectorCS.genruntimeconfig.cache
