@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TradingBotCS.DataModels;
 using TradingBotCS.HelperClasses;
@@ -26,7 +27,7 @@ namespace TradingBotCS.IBApi_OverRide
                     Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Ids.Contains(id) == true);
                     SymbolObject.Enabled = false;
                 }
-                
+                Thread.Sleep(20);
                 Program.GettingData -= 1;
             }
         }
