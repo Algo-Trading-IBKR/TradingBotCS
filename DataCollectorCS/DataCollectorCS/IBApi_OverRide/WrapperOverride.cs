@@ -71,7 +71,6 @@ namespace TradingBotCS.IBApi_OverRide
                 string[] morewords = words[2].Split(' ');
 
                 sTime = morewords[0] + "-" + words[1] + "-" + words[0] + " " + morewords[2];
-
                 //DateTime Time = Convert.ToDateTime(sTime);
                 Time = DateTime.ParseExact(sTime, "dd-MM-yyyy HH:mm:ss", null);
             }
@@ -82,7 +81,7 @@ namespace TradingBotCS.IBApi_OverRide
 
                 string[] words = sTime.Split('-');
 
-                sTime = words[1] + "-" + words[1] + "-" + words[0] + " " + "00:00:00";
+                sTime = words[2] + "-" + words[1] + "-" + words[0] + " " + "00:00:00";
 
                 //DateTime Time = Convert.ToDateTime(sTime);
                 Time = DateTime.ParseExact(sTime, "dd-MM-yyyy HH:mm:ss", null);
@@ -90,9 +89,10 @@ namespace TradingBotCS.IBApi_OverRide
 
             RawData existingData;
             existingData = SymbolObject.RawDataList.Find(i => i.DateTime == Time);
+
             if (existingData != null)
             {
-                Logger.Verbose(Name, $"{SymbolObject.Ticker}: datapoint already exists");
+                Logger.Warn(Name, $"{SymbolObject.Ticker}: datapoint {Time} already exists");
             }
             else
             {
