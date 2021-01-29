@@ -15,10 +15,10 @@ namespace TradingBotCS.IBApi_OverRide
     {
         private static string Name = "WrapperOverride";
         //! [incrementorderid]
-        public void IncrementOrderId()
-        {
-            NextOrderId++;
-        }
+        //public void IncrementOrderId()
+        //{
+        //    NextOrderId++;
+        //}
         //! [incrementorderid]
 
         //! [nextvalidid]
@@ -150,7 +150,7 @@ namespace TradingBotCS.IBApi_OverRide
                 }
                 double trailingpercent = 2;
 
-                OrderOverride Order = await OrderManager.CreateOrder("SELL", "TRAIL LIMIT", position, averageCost*1.05, PriceOffset, trailingpercent);
+                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: averageCost*1.05, priceOffset: PriceOffset, trailingPercent: trailingpercent);
                 //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);
                 contract = await Program.CreateContract(contract.Symbol);
                 

@@ -12,29 +12,12 @@ namespace TradingBotCS
     public static class OrderManager
     {
         private static string Name = "OrderManager";
-        // zal waarschijnlijk veranderen en gebruik maken van database, dit is maar een placeholder
-        public static async Task CheckOrder(Order order)
-        {
-            foreach(Symbol S in Program.SymbolObjects)
-            {
-                if(S.LatestOrder.OrderId == order.OrderId)
-                {
-                    if(S.LatestOrder.Action == "BUY" && order.Action == "BUY")
-                    {
-                        if((float)S.LastRawData.Close > (S.AvgPrice*1.005))
-                        {
-                            Program.IbClient.ClientSocket.cancelOrder(order.OrderId);
-                        }
-                    }
-                }
-            }
-            Console.WriteLine("checktest");
-        }
 
-        public static async Task<OrderOverride> CreateOrder(string action, string type = "LMT", double amount = 0, double trailStopPrice = 0, float priceOffset = 0, double trailingPercent = 0)
+        public static async Task<OrderOverride> CreateOrder(string action = "SELL", string type = "LMT", double amount = 0, double price = 1, double trailStopPrice = 0, float priceOffset = 0, double trailingPercent = 0)
         {
             OrderOverride order;
-            Program.IbClient.IncrementOrderId();
+            //Program.IbClient.IncrementOrderId();
+            Program.IbClient.ClientSocket.reqIds(-1);
             switch (type)
             {
                 case "MKT":
@@ -43,14 +26,14 @@ namespace TradingBotCS
                     return order;
                 case "LMT":
                     Console.WriteLine("Case 2");
-                    order = new OrderOverride();
+                    order = await CreateLMT(action, amount, price);
                     return order;
                 case "TRAIL LIMIT":
                     Console.WriteLine("Case 3");
                     order = await CreateTrailingStopLimit(action, amount, trailStopPrice, priceOffset, trailingPercent);
                     return order;
                 default:
-                    Logger.Critical(Name, $"Order Type {type} Not Allowed");
+                    Logger.Error(Name, $"Order Type {type} Not Allowed");
                     order = new OrderOverride();
                     return order;
             }
@@ -65,7 +48,7 @@ namespace TradingBotCS
             return order;
         }
 
-        public static async Task<OrderOverride> CreateLMT(string action, double amount, float price)
+        public static async Task<OrderOverride> CreateLMT(string action, double amount, double price)
         {
             OrderOverride order = new OrderOverride();
             order.Action = action;

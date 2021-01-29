@@ -8,15 +8,15 @@ namespace TradingBotCS.DataModels
 {
     public class TextMessage
     {
-        public string channel { get; set; }
-        public string to { get; set; }
-        public string content { get; set; }
+        public string Channel { get; set; }
+        public string To { get; set; }
+        public string Content { get; set; }
 
-        public TextMessage(string parcontent, string parchannel = "sms", string parto = "32476067619")
+        public TextMessage(string content, string channel = "sms", string to = "32476067619")
         {
-            content = parcontent;
-            channel = parchannel;
-            to = parto;
+            Content = content;
+            Channel = channel;
+            To = to;
         }
     }
 }

@@ -8,7 +8,7 @@ using TradingBotCS.HelperClasses;
 
 namespace TradingBotCS.Strategies
 {
-    public class B_Scanner_MACD_S_TrailingPercent
+    public class B_Scanner_MACD_S_TrailingPercent : BaseStrategy
     {
         private static string Name = "B_Scanner_MACD_S_TrailingPercent";
 

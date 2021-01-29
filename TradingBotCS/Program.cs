@@ -15,19 +15,27 @@ using TradingBotCS.IBApi_OverRide;
 using TradingBotCS.Messaging;
 using TradingBotCS.Models_Indicators;
 using TradingBotCS.Strategies;
+using TradingBotCS;
 
 namespace TradingBotCS
 {
     class Program
     {
-        public static string DevNumber = "32476067619";
+        // API
+        private static string Ip = Constants.Ip;
+        private static int Port = Constants.Port;
+        private static int ApiId = Constants.ApiId;
+
+        // Strategy
+        private static int StartingHour = Constants.StartingHour;
+        public static float TradeCash = Constants.TradeCash;
+        private static int MarketHour = Constants.MarketHour;
+        private static int MarketMinute = Constants.MarketMinute;
+
+        // Messaging
+        public static List<string> DevNumbers = Constants.DevNumbers;
 
 
-        public static float TradeCash = 100;
-        static string Ip = "jorenvangoethem.duckdns.org";
-        //static string Ip = "192.168.50.107";
-        static int Port = 4002;
-        static int ApiId = 1;
         public static WrapperOverride IbClient = new WrapperOverride();
         static EReader IbReader;
         public static List<Symbol> SymbolObjects;
@@ -47,10 +55,7 @@ namespace TradingBotCS
         public static Symbol TestSymbol;
 
         public static bool MarketState = true;
-        public static int MarketHour = 9;
-        public static int MarketMinute = 30;
         public static bool MarketClosedMessage = false;
-
 
         static async Task Main(string[] args)
         {
@@ -68,7 +73,7 @@ namespace TradingBotCS
 
             InfiniteStartup();
 
-            Logger.Info(Name, "Started");
+            Logger.Verbose(Name, "Started");
             while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
         }
 
@@ -76,18 +81,17 @@ namespace TradingBotCS
         {
             new Thread(() =>
             {
-                (int, int) marketHours = (9,30);
                 while (true)
                 {
                     try
                     {
                         DateTime NYtime = GetNewYorkTime();
-                        if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 7)
+                        if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
                             Connect();
                             Thread.Sleep(5000);
                         }
-                        else if(IbClient.ClientSocket.IsConnected() && NYtime.Hour >= 7)
+                        else if(IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
                             Thread.Sleep(5000);
                             CheckMartketHours();
@@ -102,6 +106,7 @@ namespace TradingBotCS
 
                         if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
                         {
+                            Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
                             if (!IbClient.ClientSocket.IsConnected())
                             {
@@ -145,7 +150,6 @@ namespace TradingBotCS
             DateTime NYtime = TimeZoneInfo.ConvertTimeFromUtc(databaseUtcTime, NYtimezoneinfo);
             return NYtime;
         }
-
 
         static async Task CheckMartketHours()
         {
@@ -224,7 +228,7 @@ namespace TradingBotCS
 
         static List<Symbol> CreateSymbolObjects(List<string> symbolList)
         {
-            Logger.Info(Name, "Creating Symbol Objects");
+            Logger.Verbose(Name, "Creating Symbol Objects");
 
             List<Symbol> Result = new List<Symbol>();
             for(int i = 0; i < symbolList.Count; i++)
@@ -237,7 +241,7 @@ namespace TradingBotCS
 
         static async Task RequestSymbolContracts()
         {
-            Logger.Info(Name, "Creating Symbol Contracts");
+            Logger.Verbose(Name, "Creating Symbol Contracts");
 
             foreach(Symbol S in SymbolObjects)
             {
@@ -278,7 +282,6 @@ namespace TradingBotCS
        {
             DateTime NYtime = GetNewYorkTime();
             String queryTime = GetNewYorkTime().ToString("yyyyMMdd HH:mm:ss");
-
 
             //foreach (Symbol S in SymbolObjects.GetRange(0, 300))
             foreach (Symbol S in SymbolObjects)
@@ -359,10 +362,7 @@ namespace TradingBotCS
             })
             { IsBackground = false }.Start();
         }
-
-
-
-
+        
         static async Task GetDataForActiveSymbols()
         {
             List<TagValue> MktDataOptions = new List<TagValue>();
@@ -420,7 +420,6 @@ namespace TradingBotCS
                 }
             }
         }
-
 
         public static async void test()
         {

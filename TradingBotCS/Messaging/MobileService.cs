@@ -58,7 +58,7 @@ namespace TradingBotCS.Messaging
                     {
                         string responseContent = reader.ReadToEnd();
                         JObject adResponse =
-                            Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(responseContent);
+                            JsonConvert.DeserializeObject<JObject>(responseContent);
                         Logger.Verbose(Name, adResponse.ToString());
                     }
                 }
@@ -69,7 +69,7 @@ namespace TradingBotCS.Messaging
                         using (StreamReader reader = new StreamReader(webException.Response.GetResponseStream()))
                         {
                             string responseContent = reader.ReadToEnd();
-                            Logger.Error(Name, Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(responseContent).ToString()); 
+                            Logger.Error(Name, JsonConvert.DeserializeObject<JObject>(responseContent).ToString()); 
                         }
                     }
                 }

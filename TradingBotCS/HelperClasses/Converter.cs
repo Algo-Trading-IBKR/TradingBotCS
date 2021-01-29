@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TradingBotCS.HelperClasses
 {
-    public static class Converter
+    public interface Converter
     {
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {

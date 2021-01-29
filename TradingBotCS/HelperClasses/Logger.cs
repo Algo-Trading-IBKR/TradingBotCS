@@ -7,7 +7,7 @@ using TradingBotCS.Messaging;
 
 namespace TradingBotCS.HelperClasses
 {
-    class Logger
+    public interface Logger
     {
         private static LogLevel logLevel = LogLevel.LogLevelInfo;
 
@@ -46,7 +46,7 @@ namespace TradingBotCS.HelperClasses
                 case LogLevel.LogLevelCritical:
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     sLogLevel = "CRITICAL";
-                    MobileService.SendTextMsg($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}", Program.DevNumber);
+                    MobileService.SendTextMsg($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}", Program.DevNumbers);
                     break;
             }
             if (Logger.logLevel <= logLevel)
