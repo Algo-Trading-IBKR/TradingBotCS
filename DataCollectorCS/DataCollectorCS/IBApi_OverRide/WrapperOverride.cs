@@ -21,7 +21,7 @@ namespace TradingBotCS.IBApi_OverRide
             
             if (errorCode == 162 || errorCode == 321 || errorCode == 322 || errorCode == 200)
             {
-                Logger.Warn(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
+                //Logger.Warn(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
                 if (errorCode == 200)
                 {
                     Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Ids.Contains(id) == true);
@@ -36,14 +36,14 @@ namespace TradingBotCS.IBApi_OverRide
         public override void error(Exception e)
         {
             //Console.WriteLine("Exception thrown: " + e);
-            Logger.Error(Name, $"Exception thrown: {e}");
+            //Logger.Error(Name, $"Exception thrown: {e}");
             throw e;
         }
 
         public override void error(string str)
         {
             //Console.WriteLine("Error: " + str + "\n");
-            Logger.Error(Name, $"Error: {str}");
+            //Logger.Error(Name, $"Error: {str}");
         }
 
         //! [contractdetailsend]
@@ -105,7 +105,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [historicaldataend]
         public override void historicalDataEnd(int reqId, string startDate, string endDate)
         {
-            Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
+            //Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
             Program.GettingData -= 1;
             Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
         }
