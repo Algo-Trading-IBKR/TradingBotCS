@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "LjyHxgf/6j7Sdp7iZjXxHORpUmad5qcIeQmtTf/iiCInPLt3aH5+pf+8AxM7VUmWLwbq+n6bHmmuq4Geqa6ozA==",
+  "dgSpecHash": "4ccTtSTjeEDOcBspTgT5lZ4XXNhakxLupyzFxnQrww+3oJG4EFpHxAhYE4F34/mofCMz9TScuKANxLVxoJX+LQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\joren\\Desktop\\TradingBotCS\\DataCollectorCS\\DataCollectorCS\\DataCollectorCS.csproj",
+  "projectFilePath": "C:\\Users\\SKIKK\\Desktop\\TradingBotCS\\DataCollectorCS\\DataCollectorCS\\DataCollectorCS.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\joren\\.nuget\\packages\\csvhelper\\21.0.3\\csvhelper.21.0.3.nupkg.sha512",
-    "C:\\Users\\joren\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512"
+    "C:\\Users\\SKIKK\\.nuget\\packages\\csvhelper\\21.0.3\\csvhelper.21.0.3.nupkg.sha512",
+    "C:\\Users\\SKIKK\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512"
   ],
   "logs": []
 }
