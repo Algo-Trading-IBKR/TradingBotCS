@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TradingBotCS.DataModels;
-using TradingBotCS.HelperClasses;
+using TradingBotCS.Util;
 
 namespace TradingBotCS.Strategies
 {

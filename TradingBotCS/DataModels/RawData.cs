@@ -18,8 +18,9 @@ namespace TradingBotCS.DataModels
         public double High { get; set; }
         public double Low { get; set; }
         public double Close { get; set; }
+        public double Volume { get; set; }
 
-        public RawData(ObjectId id, string symbol, DateTime time, double open, double high, double low, double close)
+        public RawData(ObjectId id, string symbol, DateTime time, double open, double high, double low, double close, double volume = 0)
         {
             this._id = id;
             this.Symbol = symbol;
@@ -28,7 +29,7 @@ namespace TradingBotCS.DataModels
             this.High = high;
             this.Low = low;
             this.Close = close;
-            
+            this.Volume = volume;
         }
         public RawData()
         {

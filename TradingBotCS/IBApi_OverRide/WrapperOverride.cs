@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TradingBotCS.Database;
 using TradingBotCS.DataModels;
-using TradingBotCS.HelperClasses;
+using TradingBotCS.Util;
 
 namespace TradingBotCS.IBApi_OverRide
 {
@@ -22,7 +22,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [incrementorderid]
 
         //! [nextvalidid]
-        public virtual void nextValidId(int orderId)
+        public override void nextValidId(int orderId)
         {
             //Console.WriteLine("Next Valid Id: " + orderId);
             NextOrderId = orderId;
@@ -30,21 +30,21 @@ namespace TradingBotCS.IBApi_OverRide
         //! [nextvalidid]
 
         //! [error]
-        public virtual void error(int id, int errorCode, string errorMsg)
+        public override void error(int id, int errorCode, string errorMsg)
         {
             //Console.WriteLine("Error. Id: " + id + ", Code: " + errorCode + ", Msg: " + errorMsg + "\n");
             Logger.Warn(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
         }
         //! [error]
 
-        public virtual void error(Exception e)
+        public override void error(Exception e)
         {
             //Console.WriteLine("Exception thrown: " + e);
             Logger.Error(Name, $"Exception thrown: {e}");
             throw e;
         }
 
-        public virtual void error(string str)
+        public override void error(string str)
         {
             //Console.WriteLine("Error: " + str + "\n");
             Logger.Error(Name, $"Error: {str}");
@@ -85,7 +85,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [contractdetailsend]
 
         //! [commissionreport]
-        public virtual void commissionReport(CommissionReport commissionReport)
+        public override void commissionReport(CommissionReport commissionReport)
         {
             CommissionReportOverride commissionReportOverride = new CommissionReportOverride(commissionReport);
             CommissionRepository.InsertReport(commissionReportOverride);
@@ -99,7 +99,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [commissionreport]
 
         //! [execdetails]
-        public virtual void execDetails(int reqId, Contract contract, Execution execution)
+        public override void execDetails(int reqId, Contract contract, Execution execution)
         {
             ExecutionOverride executionOverride = new ExecutionOverride(execution);
             ExecutionRepository.InsertReport(contract, executionOverride);
@@ -148,11 +148,11 @@ namespace TradingBotCS.IBApi_OverRide
                 {
                     PriceOffset = 0.10f;
                 }
-                double trailingpercent = 2;
+                double TrailingPercent = 2;
 
-                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: averageCost*1.05, priceOffset: PriceOffset, trailingPercent: trailingpercent);
+                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: averageCost*1.05, priceOffset: PriceOffset, trailingPercent: TrailingPercent);
                 //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);
-                contract = await Program.CreateContract(contract.Symbol);
+                contract = await ContractManager.CreateContract(contract.Symbol);
                 
                 Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, contract, Order);
             }
@@ -249,7 +249,7 @@ namespace TradingBotCS.IBApi_OverRide
         public override void historicalDataEnd(int reqId, string startDate, string endDate)
         {
             //Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
-            Program.GettingData -= 1;
+            Program.GettingHistoricalData -= 1;
             Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
             if (SymbolObject.GapCalculated == false)
             {

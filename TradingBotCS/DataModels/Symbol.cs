@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TradingBotCS.Database;
 using TradingBotCS.DataModels;
-using TradingBotCS.HelperClasses;
+using TradingBotCS.Util;
 using TradingBotCS.IBApi_OverRide;
 using TradingBotCS.Models_Indicators;
 using TradingBotCS.Strategies;
@@ -97,15 +97,15 @@ namespace TradingBotCS
             List<RawData> OpenList = new List<RawData>();
             string queryTime;
             //HistoricalData
-            DateTime dateValue = Program.GetNewYorkTime();
+            DateTime dateValue = Timezones.GetNewYorkTime();
             int DayOfWeek = (int)dateValue.DayOfWeek;
             if (DayOfWeek == 1)
             {
-                queryTime = Program.GetNewYorkTime().AddDays(-3).ToString("ddMMyyyy HH:mm:ss");
+                queryTime = Timezones.GetNewYorkTime().AddDays(-3).ToString("ddMMyyyy HH:mm:ss");
             }
             else 
             {
-                queryTime = Program.GetNewYorkTime().AddDays(-1).ToString("ddMMyyyy HH:mm:ss");
+                queryTime = Timezones.GetNewYorkTime().AddDays(-1).ToString("ddMMyyyy HH:mm:ss");
             }
 
             string[] words = queryTime.Split(' ');
@@ -114,7 +114,7 @@ namespace TradingBotCS
             queryTime = queryTime.Insert(5, "-");
             DateTime CloseTime = Convert.ToDateTime(queryTime);
 
-            queryTime = Program.GetNewYorkTime().ToString("ddMMyyyy HH:mm:ss");
+            queryTime = Timezones.GetNewYorkTime().ToString("ddMMyyyy HH:mm:ss");
             words = queryTime.Split(' ');
             queryTime = words[0] +" "+ "09:30:00";
             //queryTime = words[0] + " " + "00:30:00";    

@@ -8,14 +8,16 @@ namespace TradingBotCS.Strategies
 {
     public abstract class BaseStrategy
     {
-        public async Task BuyStrategy()
+        /// <summary>method <c>BuyStrategy</c> returns wether to buy or not and how many shares.</summary>
+        public async Task<(bool, int)> BuyStrategy(string query)
         {
-
+            return (false, 0);
         }
 
-        public async Task SellStrategy()
+        /// <summary>method <c>BuyStrategy</c> returns wether to sell or not.</summary>
+        public async Task<bool> SellStrategy()
         {
-
+            return false;
         }
 
     }

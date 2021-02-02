@@ -8,6 +8,9 @@ namespace TradingBotCS
 {
     public static class Constants
     {
+        // Account Info
+        public static string AccountId = "DU2361307"; // this is no longer correct
+
         // API
         public static string Ip = "127.0.0.1";
         public static int Port = 4002;

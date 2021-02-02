@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TradingBotCS.HelperClasses
+namespace TradingBotCS.Util
 {
-    public interface Converter
+    public  interface Converter
     {
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {

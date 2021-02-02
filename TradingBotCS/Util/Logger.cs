@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TradingBotCS.Messaging;
 
-namespace TradingBotCS.HelperClasses
+namespace TradingBotCS.Util
 {
     public interface Logger
     {
@@ -51,7 +51,7 @@ namespace TradingBotCS.HelperClasses
             }
             if (Logger.logLevel <= logLevel)
                 //Console.WriteLine($"[{group}/{sLogLevel}] {message}");
-                Console.WriteLine($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}");
+                Console.WriteLine($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} / {sLogLevel}]  {message}");
             Console.ResetColor();
         }
 

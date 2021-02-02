@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <ApplicationIcon>image_Chapter2.ico</ApplicationIcon>
+    <ApplicationIcon>Files\image_Chapter2.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
