@@ -147,41 +147,6 @@ namespace TradingBotCS
             { IsBackground = false }.Start();
         }
 
-       static async Task GetData()
-       {
-            DateTime NYtime = Timezones.GetNewYorkTime();
-            String queryTime = Timezones.GetNewYorkTime().ToString("yyyyMMdd HH:mm:ss");
-
-            //foreach (Symbol S in SymbolObjects.GetRange(0, 300))
-            foreach (Symbol S in SymbolObjects)
-            {
-                try
-                {
-                    //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
-                    //if (GettingData < 50 && DateTime.Now.Hour >= 15 && DateTime.Now.Minute < 45)
-                    if (GettingHistoricalData < 50 && NYtime.Hour >= 15 && NYtime.Minute < 45)
-                    {
-                        while (GettingHistoricalData >= 49)
-                        {
-                            Thread.Sleep(1);
-                            if (S == SymbolObjects.Last()) break;
-                        };
-                        IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "4 D", "15 mins", "MIDPOINT", 1, 1, false, null); // maar 50 tegelijk
-                        GettingHistoricalData += 1;
-                        Thread.Sleep(20);
-                    }
-                    //IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
-                    //S.ExecuteStrategy();
-                    //Console.WriteLine(S.Ticker);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
-                }
-            }
-            Logger.Info(Name, "Historical Data Done");
-       }
-
         static async Task checkTime()
         {
             new Thread(() =>

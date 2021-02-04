@@ -31,9 +31,10 @@ namespace TradingBotCS.Util
             }
         }
 
-        public static async Task GetHistoricalBars(List<Symbol> symbolObjects, DateTime endTime, string duration = "5 D", string barSize = "15 mins", string whatToShow = "MIDPOINT", int useRTH = 1, int formatDate = 1, bool keepUpToDate = false)
+        public static async Task GetHistoricalBars(List<Symbol> symbolObjects, DateTime endTime, int startingHour = 0, int endingHour = 0, int startingMinute = 0, int endingMinute = 0, string duration = "5 D", string barSize = "15 mins", string whatToShow = "MIDPOINT", int useRTH = 1, int formatDate = 1, bool keepUpToDate = false)
         {
             string QueryTime;
+            bool CustomTimeFrame = false;
 
             if (endTime == DateTime.UnixEpoch)
             {
@@ -44,10 +45,22 @@ namespace TradingBotCS.Util
                 QueryTime = endTime.ToString("yyyyMMdd HH:mm:ss");
             }
 
-            foreach (Symbol S in symbolObjects)
+            if (startingHour == 0 && endingHour == 0 && startingMinute == 0 && endingMinute == 0)
             {
-                try
+                CustomTimeFrame = true;
+            }
+
+            new Thread(() =>
+            {
+                DateTime NYtime = Timezones.GetNewYorkTime();
+                while (CustomTimeFrame == true && startingHour > NYtime.Hour && startingMinute > NYtime.Minute)
                 {
+                    NYtime = Timezones.GetNewYorkTime();
+                }
+                foreach (Symbol S in symbolObjects)
+                {
+                    try
+                    {
                     //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
                     if (Program.GettingHistoricalData < 50)
                     {
@@ -55,19 +68,21 @@ namespace TradingBotCS.Util
                         {
                             Thread.Sleep(1);
                             if (S == symbolObjects.Last()) break;
-                        };
+                            if (CustomTimeFrame == true && (endingHour < NYtime.Hour && endingMinute < NYtime.Minute)) break;
+                            };
                         Program.IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, QueryTime, duration, barSize, whatToShow, useRTH, formatDate, keepUpToDate, null); // maar 50 tegelijk
                         Program.GettingHistoricalData += 1;
                         Thread.Sleep(20);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
                     }
                 }
-                catch (Exception ex)
-                {
-                    Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
-                }
-            }
-            Logger.Info(Name, "Historical Data Done");
-
+                Logger.Info(Name, "Historical Data Done");
+            })
+            { IsBackground = false }.Start();
         }
 
     }
