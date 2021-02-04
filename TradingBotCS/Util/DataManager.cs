@@ -45,7 +45,7 @@ namespace TradingBotCS.Util
                 QueryTime = endTime.ToString("yyyyMMdd HH:mm:ss");
             }
 
-            if (startingHour == 0 && endingHour == 0 && startingMinute == 0 && endingMinute == 0)
+            if (startingHour != 0 && endingHour != 0 && startingMinute != 0 && endingMinute != 0)
             {
                 CustomTimeFrame = true;
             }
