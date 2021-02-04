@@ -53,7 +53,7 @@ namespace TradingBotCS.Util
             new Thread(() =>
             {
                 DateTime NYtime = Timezones.GetNewYorkTime();
-                while (CustomTimeFrame == true && startingHour > NYtime.Hour && startingMinute > NYtime.Minute)
+                while (CustomTimeFrame == true && (startingHour > NYtime.Hour || startingMinute > NYtime.Minute))
                 {
                     NYtime = Timezones.GetNewYorkTime();
                 }
@@ -80,7 +80,10 @@ namespace TradingBotCS.Util
                         Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
                     }
                 }
-                Logger.Info(Name, "Historical Data Done");
+                if (Program.GettingHistoricalData == 0)
+                {
+                    Logger.Info(Name, "Historical Data Done");
+                }
             })
             { IsBackground = false }.Start();
         }

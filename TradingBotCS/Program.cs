@@ -129,9 +129,10 @@ namespace TradingBotCS
 
                                 ContractManager.RequestSymbolContracts(SymbolObjects);
 
-                                DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now);
+                                DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now); // nog niet getest
 
-                                checkTime();
+                                //checkTime();
+                                DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, 15, 45, 99, 99); // nog niet getest
                             }
                         }
                         Thread.Sleep(100);
@@ -147,75 +148,75 @@ namespace TradingBotCS
             { IsBackground = false }.Start();
         }
 
-        static async Task checkTime()
-        {
-            new Thread(() =>
-            {
-                while (IbClient.ClientSocket.IsConnected())
-                {
-                    DateTime NYtime = Timezones.GetNewYorkTime();
-                    //if (DateTime.Now.Hour >= 1 && DateTime.Now.Minute >= 45)
-                    if (NYtime.Hour >= 15 && NYtime.Minute >= 45)
-                    {
-                        //get latest datapoint
-                        String queryTime = Timezones.GetNewYorkTime().ToString("yyyyMMdd HH:mm:ss");
+        //static async Task checkTime()
+        //{
+        //    new Thread(() =>
+        //    {
+        //        while (IbClient.ClientSocket.IsConnected())
+        //        {
+        //            DateTime NYtime = Timezones.GetNewYorkTime();
+        //            //if (DateTime.Now.Hour >= 1 && DateTime.Now.Minute >= 45)
+        //            if (NYtime.Hour >= 15 && NYtime.Minute >= 45)
+        //            {
+        //                //get latest datapoint
+        //                String queryTime = Timezones.GetNewYorkTime().ToString("yyyyMMdd HH:mm:ss");
 
-                        foreach (Symbol S in SymbolObjects)
-                        {
-                            try
-                            {
-                                //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
-                                if (GettingHistoricalData < 50)
-                                {
-                                    while (GettingHistoricalData >= 49)
-                                    {
-                                        Thread.Sleep(1);
-                                        if (S == SymbolObjects.Last()) break;
-                                    };
-                                    IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "3600 S", "15 mins", "MIDPOINT", 1, 1, false, null); // timing aanpassen dat het enkel het laatste punt is of checken of het al bestaat
-                                    GettingHistoricalData += 1;
-                                    Thread.Sleep(20);
-                                }
-                                //IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
-                                //S.ExecuteStrategy();
-                                //Console.WriteLine(S.Ticker);
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
-                            }
-                        }
-                        if(GettingHistoricalData == 0)
-                        {
-                            Logger.Info(Name, "DONE buying stocks");
-                            //GetDataForActiveSymbols();
-                            break;
-                        }
-                    }
-                }
-            })
-            { IsBackground = false }.Start();
-        }
+        //                foreach (Symbol S in SymbolObjects)
+        //                {
+        //                    try
+        //                    {
+        //                        //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
+        //                        if (GettingHistoricalData < 50)
+        //                        {
+        //                            while (GettingHistoricalData >= 49)
+        //                            {
+        //                                Thread.Sleep(1);
+        //                                if (S == SymbolObjects.Last()) break;
+        //                            };
+        //                            IbClient.ClientSocket.reqHistoricalData(S.Id, S.Contract, queryTime, "3600 S", "15 mins", "MIDPOINT", 1, 1, false, null); // timing aanpassen dat het enkel het laatste punt is of checken of het al bestaat
+        //                            GettingHistoricalData += 1;
+        //                            Thread.Sleep(20);
+        //                        }
+        //                        //IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, 5, "MIDPOINT", false, null); // false om ook data buiten trading hours te krijgen
+        //                        //S.ExecuteStrategy();
+        //                        //Console.WriteLine(S.Ticker);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        Logger.Error(Name, $"{S.Ticker} Failed: \n{ex}");
+        //                    }
+        //                }
+        //                if(GettingHistoricalData == 0)
+        //                {
+        //                    Logger.Info(Name, "DONE buying stocks");
+        //                    //GetDataForActiveSymbols();
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //    })
+        //    { IsBackground = false }.Start();
+        //}
         
-        public static async Task MongoDBtest()
-        {
-            Logger.Verbose(Name, "Started MongoDB Test");
+        //public static async Task MongoDBtest()
+        //{
+        //    Logger.Verbose(Name, "Started MongoDB Test");
 
-            var db = MongoDBClient.GetDatabase("TradingBot");
-            var collection = db.GetCollection<BsonDocument>("AccountInfo");
-            var count = await collection.CountDocumentsAsync(new BsonDocument("Type", "cashbalance")); // ALWAYS USE AWAIT
-            var filter = new BsonDocument();
-            using (var cursor = await collection.Find(filter).ToCursorAsync())
-            {
-                while (await cursor.MoveNextAsync())
-                {
-                    foreach (var doc in cursor.Current)
-                    {
-                        //Console.WriteLine(doc);
-                    }
-                }
-            }
-        }
+        //    var db = MongoDBClient.GetDatabase("TradingBot");
+        //    var collection = db.GetCollection<BsonDocument>("AccountInfo");
+        //    var count = await collection.CountDocumentsAsync(new BsonDocument("Type", "cashbalance")); // ALWAYS USE AWAIT
+        //    var filter = new BsonDocument();
+        //    using (var cursor = await collection.Find(filter).ToCursorAsync())
+        //    {
+        //        while (await cursor.MoveNextAsync())
+        //        {
+        //            foreach (var doc in cursor.Current)
+        //            {
+        //                //Console.WriteLine(doc);
+        //            }
+        //        }
+        //    }
+        //}
 
         public static async void test()
         {
