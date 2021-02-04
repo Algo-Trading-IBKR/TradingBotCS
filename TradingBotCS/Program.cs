@@ -38,7 +38,7 @@ namespace TradingBotCS
         // IB objects
         public static WrapperOverride IbClient = new WrapperOverride();
         public static EReader IbReader;
-        public static List<Symbol> SymbolObjects;
+        
 
         // Databases
         public static MongoClient MongoDBClient = new MongoClient(); // automatically connects to localhost:27017
@@ -57,8 +57,9 @@ namespace TradingBotCS
         public static bool MarketClosedMessage = false;
 
         // SymbolList for trading
-        public static List<Symbol> CorrectGapList = new List<Symbol>();
-        public static List<Symbol> ActiveSymbolList = new List<Symbol>();
+        public static List<Symbol> SymbolObjects; // ALL symbol object stay in this list
+        public static List<Symbol> CorrectGapList = new List<Symbol>(); // only used for strategy with gap up/down
+        public static List<Symbol> ActiveSymbolList = new List<Symbol>(); // list for active trading or realtime data
 
         
         static async Task Main(string[] args)
@@ -128,7 +129,7 @@ namespace TradingBotCS
 
                                 ContractManager.RequestSymbolContracts(SymbolObjects);
 
-                                GetData();
+                                DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now);
 
                                 checkTime();
                             }

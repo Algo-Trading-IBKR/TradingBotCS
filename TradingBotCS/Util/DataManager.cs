@@ -31,10 +31,9 @@ namespace TradingBotCS.Util
             }
         }
 
-        public static async Task GetHistoricalBars(List<Symbol> symbolObjects, int startingHour = 15, int endingMinute = 30,DateTime endTime, string duration = "5 D", string barSize = "15 mins", string whatToShow = "MIDPOINT", int useRTH = 1, int formatDate = 1, bool keepUpToDate = false)
+        public static async Task GetHistoricalBars(List<Symbol> symbolObjects, DateTime endTime, string duration = "5 D", string barSize = "15 mins", string whatToShow = "MIDPOINT", int useRTH = 1, int formatDate = 1, bool keepUpToDate = false)
         {
-            DateTime NYtime = Timezones.GetNewYorkTime();
-            string QueryTime = Timezones.GetNewYorkTime().ToString("yyyyMMdd HH:mm:ss");
+            string QueryTime;
 
             if (endTime == DateTime.UnixEpoch)
             {
@@ -50,7 +49,7 @@ namespace TradingBotCS.Util
                 try
                 {
                     //S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker);
-                    if (Program.GettingHistoricalData < 50 && NYtime.Hour == startingHour && NYtime.Minute < endingMinute)
+                    if (Program.GettingHistoricalData < 50)
                     {
                         while (Program.GettingHistoricalData >= 49)
                         {
