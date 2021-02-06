@@ -53,7 +53,7 @@ namespace TradingBotCS.Util
             new Thread(() =>
             {
                 DateTime NYtime = Timezones.GetNewYorkTime();
-                while (CustomTimeFrame == true && (startingHour > NYtime.Hour || startingMinute > NYtime.Minute))
+                while (CustomTimeFrame && (startingHour > NYtime.Hour || startingMinute > NYtime.Minute))
                 {
                     NYtime = Timezones.GetNewYorkTime();
                 }

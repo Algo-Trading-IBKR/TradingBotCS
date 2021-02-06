@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TradingBotCS.Database;
 using TradingBotCS.DataModels;
@@ -15,16 +16,16 @@ namespace TradingBotCS.IBApi_OverRide
     {
         private static string Name = "WrapperOverride";
         //! [incrementorderid]
-        //public void IncrementOrderId()
-        //{
-        //    NextOrderId++;
-        //}
+        public void IncrementOrderId()
+        {
+            NextOrderId++;
+        }
         //! [incrementorderid]
 
         //! [nextvalidid]
         public override void nextValidId(int orderId)
         {
-            //Console.WriteLine("Next Valid Id: " + orderId);
+            Console.WriteLine("Next Valid Id: " + orderId);
             NextOrderId = orderId;
         }
         //! [nextvalidid]
@@ -140,21 +141,18 @@ namespace TradingBotCS.IBApi_OverRide
             //    + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
 
             // als unrealized > 5% stuur sell order met limit price op die 5%
-            if (unrealizedPNL > averageCost * 0.07)
+            if (position > 0 && unrealizedPNL/(averageCost*position) > 0.09)
             {
                 Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL} - {unrealizedPNL/(position*averageCost)}%");
-                float PriceOffset = (float)averageCost*0.01f;
-                if (PriceOffset > 0.10)
-                {
-                    PriceOffset = 0.10f;
-                }
-                double TrailingPercent = 2;
+                float PriceOffset = 0.01f;
+                double TrailingPercent = 8;
 
-                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: averageCost*1.05, priceOffset: PriceOffset, trailingPercent: TrailingPercent);
+                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: marketPrice * (1- (TrailingPercent/100)), priceOffset: PriceOffset, trailingPercent: TrailingPercent);
                 //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);
                 contract = await ContractManager.CreateContract(contract.Symbol);
                 
                 Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, contract, Order);
+                Thread.Sleep(20);
             }
         }
         //! [updateportfolio]

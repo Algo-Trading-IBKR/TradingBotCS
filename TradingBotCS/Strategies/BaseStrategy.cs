@@ -14,7 +14,7 @@ namespace TradingBotCS.Strategies
             return (false, 0);
         }
 
-        /// <summary>method <c>BuyStrategy</c> returns wether to sell or not.</summary>
+        /// <summary>method <c>SellStrategy</c> returns wether to sell or not.</summary>
         public async Task<bool> SellStrategy()
         {
             return false;

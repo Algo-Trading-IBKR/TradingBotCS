@@ -13,30 +13,36 @@ namespace TradingBotCS
     {
         private static string Name = "OrderManager";
 
-        public static async Task<OrderOverride> CreateOrder(string action = "SELL", string type = "LMT", double amount = 0, double price = 1, double trailStopPrice = 0, float priceOffset = 0, double trailingPercent = 0)
+        public static async Task<OrderOverride> CreateOrder(string action = "SELL", string type = "LMT", double amount = 0, double price = 1, double trailStopPrice = 0, float priceOffset = 0, double trailingPercent = 0, string tif = "GTC")
         {
             OrderOverride order;
-            //Program.IbClient.IncrementOrderId();
+            
+            Program.IbClient.IncrementOrderId();
             Program.IbClient.ClientSocket.reqIds(-1);
+            Console.WriteLine(Program.IbClient.NextOrderId);
             switch (type)
             {
                 case "MKT":
                     Console.WriteLine("Case 1");
                     order = await CreateMKT(action, amount);
-                    return order;
+                    break;
                 case "LMT":
                     Console.WriteLine("Case 2");
                     order = await CreateLMT(action, amount, price);
-                    return order;
+                    break;
                 case "TRAIL LIMIT":
                     Console.WriteLine("Case 3");
                     order = await CreateTrailingStopLimit(action, amount, trailStopPrice, priceOffset, trailingPercent);
-                    return order;
+                    break;
                 default:
                     Logger.Error(Name, $"Order Type {type} Not Allowed");
                     order = new OrderOverride();
-                    return order;
+                    break;
             }
+            // same for all orders
+            order.Tif = tif; // Time In Force, how long an order stays active, GTC stays for 3 months, DAY stays till the end of the day
+
+            return order;
         }
 
         public static async Task<OrderOverride> CreateMKT(string action, double amount)
@@ -44,7 +50,7 @@ namespace TradingBotCS
             OrderOverride order = new OrderOverride();
             order.Action = action;
             order.OrderType = "MKT";
-            order.TotalQuantity = amount;
+            order.TotalQuantity = Math.Round(amount, 1);
             return order;
         }
 
@@ -53,8 +59,8 @@ namespace TradingBotCS
             OrderOverride order = new OrderOverride();
             order.Action = action;
             order.OrderType = "LMT";
-            order.LmtPrice = price;
-            order.TotalQuantity = amount;
+            order.LmtPrice = Math.Round(price, 2);
+            order.TotalQuantity = Math.Round(amount, 1);
             return order;
         }
 
@@ -65,10 +71,10 @@ namespace TradingBotCS
             OrderOverride order = new OrderOverride();
             order.Action = action;
             order.OrderType = "TRAIL LIMIT";
-            order.TotalQuantity = amount;
-            order.TrailStopPrice = trailStopPrice;
-            order.LmtPriceOffset = priceOffset;
-            order.TrailingPercent = trailingPercent;
+            order.TotalQuantity = Math.Round(amount, 1);
+            order.TrailStopPrice = Math.Round(trailStopPrice, 2);
+            order.LmtPriceOffset = Math.Round(priceOffset, 2);
+            order.TrailingPercent = Math.Round(trailingPercent, 2);
             
             return order;
         }

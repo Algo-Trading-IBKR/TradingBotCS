@@ -51,7 +51,7 @@ namespace TradingBotCS
         public static int GettingHistoricalData = 0;
 
         // market data checker
-        public static List<string> SymbolList = new List<string>();
+        public static List<string> SymbolList = new List<string>(); //either made by a scanner or manually
         public static Symbol TestSymbol;
         public static bool MarketState = true;
         public static bool MarketClosedMessage = false;
@@ -64,7 +64,7 @@ namespace TradingBotCS
         
         static async Task Main(string[] args)
         {
-            Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
+            Logger.SetLogLevel(Logger.LogLevel.LogLevelWarn); // Custom Logger Test
             Logger.Verbose(Name, "Start");
 
 
@@ -76,7 +76,9 @@ namespace TradingBotCS
 
             //test();
 
-            InfiniteStartup();
+            PaperTrailTest();
+
+            //InfiniteStartup();
 
             Logger.Verbose(Name, "Started");
             while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
@@ -146,6 +148,14 @@ namespace TradingBotCS
 
             })
             { IsBackground = false }.Start();
+        }
+
+
+        public static async Task PaperTrailTest()
+        {
+            ApiConnection.Connect();
+            IbClient.ClientSocket.reqManagedAccts();
+            ApiConnection.AccountUpdates();
         }
 
         //static async Task checkTime()

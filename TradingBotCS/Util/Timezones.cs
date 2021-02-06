@@ -11,16 +11,11 @@ namespace TradingBotCS.Util
         public static DateTime GetNewYorkTime()
         {
             //get datetime now in new york
-            DateTime databaseUtcTime = DateTime.UtcNow;
+            DateTime UtcTime = DateTime.UtcNow;
             TimeZoneInfo NYtimezoneinfo = TimeZoneInfo.FindSystemTimeZoneById("US Eastern Standard Time");
-            DateTime NYtime = TimeZoneInfo.ConvertTimeFromUtc(databaseUtcTime, NYtimezoneinfo);
+            DateTime NYtime = TimeZoneInfo.ConvertTimeFromUtc(UtcTime, NYtimezoneinfo);
             return NYtime;
         }
-
-
-
-
-
 
     }
 }

@@ -77,7 +77,7 @@ namespace TradingBotCS
                             Program.ActiveSymbolList.Add(this);
 
                             // buy order
-                            OrderOverride Order = await OrderManager.CreateOrder("BUY", "MKT", Results.Item2);
+                            OrderOverride Order = await OrderManager.CreateOrder("BUY", "MKT", amount:Results.Item2);
                             Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
                         }
                     }
