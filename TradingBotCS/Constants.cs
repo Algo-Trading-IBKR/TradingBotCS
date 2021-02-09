@@ -26,6 +26,7 @@ namespace TradingBotCS
         public static List<string> DevNumbers = new List<string>() { "32476067619" };
 
         // Sell Trailing Limit order
+        public static bool UseTrailLimitOrders = true;
         public static float MinimumProfit = 0.10f; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
         public static float PriceOffset = 0.10f;
         public static float TrailingPercent = 8;

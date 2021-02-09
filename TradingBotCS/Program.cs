@@ -38,7 +38,12 @@ namespace TradingBotCS
         // IB objects
         public static WrapperOverride IbClient = new WrapperOverride();
         public static EReader IbReader;
-        
+
+        // Sell Trailing Limit order
+        public static bool UseTrailLimitOrders = Constants.UseTrailLimitOrders;
+        public static float MinimumProfit = Constants.MinimumProfit; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
+        public static float PriceOffset = Constants.PriceOffset;
+        public static float TrailingPercent = Constants.TrailingPercent;
 
         // Databases
         public static MongoClient MongoDBClient = new MongoClient(); // automatically connects to localhost:27017
@@ -57,6 +62,7 @@ namespace TradingBotCS
         public static bool MarketClosedMessage = false;
 
         // SymbolList for trading
+        public static List<Symbol> OwnedStocks = new List<Symbol>();
         public static List<Symbol> SymbolObjects; // ALL symbol object stay in this list
         public static List<Symbol> CorrectGapList = new List<Symbol>(); // only used for strategy with gap up/down
         public static List<Symbol> ActiveSymbolList = new List<Symbol>(); // list for active trading or realtime data
@@ -66,7 +72,6 @@ namespace TradingBotCS
         {
             Logger.SetLogLevel(Logger.LogLevel.LogLevelWarn); // Custom Logger Test
             Logger.Verbose(Name, "Start");
-
 
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
             //List<string> Numbers = new List<string>() { "32476067619", "32470579542" };
