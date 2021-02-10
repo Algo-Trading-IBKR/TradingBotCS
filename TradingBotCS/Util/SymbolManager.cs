@@ -10,12 +10,12 @@ namespace TradingBotCS.Util
     {
         private static string Name = "Symbol Manager";
 
-        public static List<Symbol> CreateSymbolObjects(List<string> symbolList)
+        public static List<Symbol> CreateSymbolObjects(List<string> symbolList, int startingId = 0) // startingid is used for different lists of symbols to avoid conflicts
         {
             Logger.Verbose(Name, "Creating Symbol Objects");
 
             List<Symbol> Result = new List<Symbol>();
-            for (int i = 0; i < symbolList.Count; i++)
+            for (int i = startingId; i < (symbolList.Count + startingId); i++)
             {
                 Symbol s = new Symbol(symbolList[i], i);
                 Result.Add(s);
