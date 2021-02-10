@@ -41,7 +41,7 @@ namespace TradingBotCS
         public RawData LastRawData { get; set; }
         public StrategyData StrategyData { get; set; }
         public int Position { get; set; }
-        public B_Scanner_MACD_S_TrailingPercent Strategy { get; set; }
+        public B_StochFRSI_MACD_S_TrailingPercent Strategy { get; set; }
         public List<RawData> HistoricalData { get; set; }
         public bool GapCalculated { get; set; }
 
@@ -73,10 +73,11 @@ namespace TradingBotCS
                         if (Results.Item1)
                         {
                             Logger.Info(Name, $"{this.Ticker}: BUY");
-                            //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren
-                            Program.ActiveSymbolList.Add(this);
 
-                            // buy order
+                            //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren - IRRELEVANT NU!!!
+                            //Program.ActiveSymbolList.Add(this);
+
+                            // market buy order
                             OrderOverride Order = await OrderManager.CreateOrder("BUY", "MKT", amount:Results.Item2);
                             Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
                         }
@@ -169,12 +170,12 @@ namespace TradingBotCS
                     foreach (RawData R in data) RawPriceList.Add((decimal)R.Close);
                 }
 
-                //List<decimal> Rsi = await IndicatorRSI.RSI(RawPriceList, RsiPeriod);
+                List<decimal> Rsi = await IndicatorRSI.RSI(RawPriceList, RsiPeriod);
 
-                //var StochRsi = await IndicatorRSI.stochRSI(Rsi, FastKperiod, FastDPeriod);
-                //List<decimal> K = StochRsi.Item1;
-                //List<decimal> D = StochRsi.Item2;
-            
+                var StochRsi = await IndicatorRSI.stochRSI(Rsi, FastKperiod, FastDPeriod);
+                List<decimal> K = StochRsi.Item1;
+                List<decimal> D = StochRsi.Item2;
+
                 List<decimal> Macd = await IndicatorMACD.MACD(RawPriceList, MacdSlowPeriod, MacdFastPeriod);
                 List<decimal> MacdSignal = await IndicatorMACD.MACDsignal(Macd, MacdSignalPeriod);
                 List<decimal> MacdHist = await IndicatorMACD.MACDhist(Macd, MacdSignal);
@@ -210,8 +211,9 @@ namespace TradingBotCS
         {
             this.Ticker = ticker;
             this.Id = id;
-            this.Strategy = new B_Scanner_MACD_S_TrailingPercent();
+            this.Strategy = new B_StochFRSI_MACD_S_TrailingPercent();
             this.HistoricalData = new List<RawData>();
+            this.RawDataList = new List<RawData>();
             this.GapCalculated = false;
         }
 

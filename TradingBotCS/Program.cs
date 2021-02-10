@@ -1,26 +1,19 @@
-﻿using System;
+﻿using IBApi;
+using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using IBApi;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using TradingBotCS.Database;
-using TradingBotCS.Email;
-using TradingBotCS.Util;
 using TradingBotCS.IBApi_OverRide;
-using TradingBotCS.Messaging;
 using TradingBotCS.Models_Indicators;
-using TradingBotCS.Strategies;
-using TradingBotCS;
+using TradingBotCS.Util;
 
 namespace TradingBotCS
 {
     class Program
     {
+
         // API
         public static string Ip = Constants.Ip;
         public static int Port = Constants.Port;
@@ -39,6 +32,9 @@ namespace TradingBotCS
         public static WrapperOverride IbClient = new WrapperOverride();
         public static EReader IbReader;
 
+        // Buy
+        public static bool BuyEnabled = Constants.BuyEnabled;
+
         // Sell Trailing Limit order
         public static bool UseTrailLimitOrders = Constants.UseTrailLimitOrders;
         public static float MinimumProfit = Constants.MinimumProfit; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
@@ -56,7 +52,9 @@ namespace TradingBotCS
         public static int GettingHistoricalData = 0;
 
         // market data checker
-        public static List<string> SymbolList = new List<string>(); //either made by a scanner or manually
+        //public static List<string> SymbolList = new List<string>(); //either made by a scanner or manually
+        public static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
+        // symbols = ["ACHC", "ARAY","ALVR", "ATEC", "ALXO", "AMTI", "ABUS",  "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK",  "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD","RRR","IBKR","MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT","SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI",  "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL"]
         public static Symbol TestSymbol;
         public static bool MarketState = true;
         public static bool MarketClosedMessage = false;
@@ -67,10 +65,10 @@ namespace TradingBotCS
         public static List<Symbol> CorrectGapList = new List<Symbol>(); // only used for strategy with gap up/down
         public static List<Symbol> ActiveSymbolList = new List<Symbol>(); // list for active trading or realtime data
 
-        
+
         static async Task Main(string[] args)
         {
-            Logger.SetLogLevel(Logger.LogLevel.LogLevelWarn); // Custom Logger Test
+            Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
             Logger.Verbose(Name, "Start");
 
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
@@ -79,14 +77,14 @@ namespace TradingBotCS
 
             //MongoDBtest();
 
-            //test();
+            test();
 
-            PaperTrailTest();
+            //PaperTrailTest();
 
             //InfiniteStartup();
 
             Logger.Verbose(Name, "Started");
-            while(true)Console.ReadKey(); // zorgt er voor dat de console nooit sluit
+            while (true) Console.ReadKey(); // zorgt er voor dat de console nooit sluit
         }
 
         static async Task InfiniteStartup()
@@ -103,7 +101,7 @@ namespace TradingBotCS
                             ApiConnection.Connect();
                             Thread.Sleep(5000);
                         }
-                        else if(IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
+                        else if (IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
                             Thread.Sleep(5000);
                             Market.CheckMartketHours();
@@ -116,7 +114,8 @@ namespace TradingBotCS
 
                         NYtime = Timezones.GetNewYorkTime();
 
-                        if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
+                        //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
+                        if (MarketState && NYtime.Hour == 15 && NYtime.Minute == 48)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
@@ -127,8 +126,9 @@ namespace TradingBotCS
                             else
                             {
                                 ApiConnection.AccountUpdates();
-                                IbClient.ClientSocket.reqPositions();
-                                MarketScanner.GapUp();
+                                IbClient.ClientSocket.reqPositions(); // stock lijst aanmaken met positions
+
+                                //MarketScanner.GapUp();
 
                                 SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
 
@@ -136,13 +136,17 @@ namespace TradingBotCS
 
                                 ContractManager.RequestSymbolContracts(SymbolObjects);
 
-                                DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now); // nog niet getest
+                                //realtime bars opvragen voor symbollist
+                                DataManager.GetRealTimeBars(SymbolObjects);
 
+                                //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now); // nog niet getest
                                 //checkTime();
-                                DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, 15, 45, 99, 99); // nog niet getest
+                                //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, 15, 45, 99, 99); // nog niet getest
+                                Thread.Sleep(60000);
+
                             }
                         }
-                        Thread.Sleep(100);
+
 
                     }
                     catch (Exception ex)
@@ -212,7 +216,7 @@ namespace TradingBotCS
         //    })
         //    { IsBackground = false }.Start();
         //}
-        
+
         //public static async Task MongoDBtest()
         //{
         //    Logger.Verbose(Name, "Started MongoDB Test");
@@ -235,48 +239,59 @@ namespace TradingBotCS
 
         public static async void test()
         {
-            List<decimal> intList = new List<decimal>() { 1, 5, 9, 7, 4, 5, 6, 8, 5, 4, 1, 2, 3, 6, 9, 8, 7, 4, 5, 8, 9, 6, 5, 4, 6, 8, 7, 5, 2, 4, 3, 2, 7, 8, 9, 8, 9, 7, 5, 6, 7, 8, 9, 1, 5, 9, 7, 4, 5, 6, 8, 5, 4, 1, 2, 3, 6, 9, 8, 7, 4, 5, 8, 9, 6, 5 };
+            List<double> intList1 = new List<double>() { 54.3, 54.3, 54.3, 54.31, 54.3, 54.29, 54.32, 54.28, 54.27, 54.275, 54.27, 54.27, 54.265, 54.27, 54.275, 54.28, 54.28, 54.265, 54.265, 54.265, 54.265, 54.27, 54.265, 54.27, 54.28, 54.27, 54.27, 54.275, 54.28, 54.295, 54.35, 54.37, 54.36, 54.34, 54.34, 54.32, 54.32, 54.31, 54.35, 54.31, 54.32, 54.3, 54.3, 54.32, 54.31, 54.32, 54.33, 54.31, 54.29, 54.295, 54.3, 54.3, 54.33, 54.34, 54.34, 54.34, 54.335, 54.34, 54.33, 54.34, 54.345, 54.34, 54.35, 54.36, 54.355, 54.33, 54.33, 54.33 };
+
+
+            List<decimal> intList = new List<decimal>();
+            intList1.ForEach(item => intList.Add((decimal)item));
+
+
             List<decimal> declist = new List<decimal>();
             List<decimal> declist2 = new List<decimal>();
             List<decimal> declist3 = new List<decimal>();
-            //declist = await MovingAverage.SMA(intList, 9);
+            //declist = await IndicatorMA.SMA(intList, 9);
             //foreach (decimal x in declist)
             //{
             //    Console.WriteLine(x);
             //}
+            //Console.ReadKey();
 
-            //declist = await MovingAverage.EMA(intList, 9);
+            //declist = await IndicatorMA.EMA(intList, 9);
             //foreach (decimal x in declist)
             //{
             //    Console.WriteLine(x);
             //}
+            //Console.ReadKey();
 
-            //declist = await MovingAverage.DEMA(intList, 5);
+            //declist = await IndicatorMA.DEMA(intList, 5);
             //foreach (decimal x in declist)
             //{
             //    Console.WriteLine(x);
             //}
+            //Console.ReadKey();
 
-            //declist = await MovingAverage.KAMA(intList, 10, 2, 30);
+            //declist = await IndicatorMA.KAMA(intList, 10, 2, 30);
             //foreach (decimal x in declist)
             //{
             //    Console.WriteLine(x);
             //}
+            //Console.ReadKey();
 
-            //declist = await IndicatorMACD.MACD(intList, 28, 12);
+            //declist = await IndicatorMACD.MACD(intList, 28, 12, 2, 2);
             //declist2 = await IndicatorMACD.MACDsignal(declist, 10);
             //declist3 = await IndicatorMACD.MACDhist(declist, declist2);
             //foreach (decimal x in declist3)
             //{
             //    Console.WriteLine(x);
             //}
-
-            //declist = await IndicatorRSI.RSI(intList, 14);
-            //foreach (decimal x in declist)
-            //{
-            //    Console.WriteLine(x);
-            //}
             //Console.ReadKey();
+
+            declist = await IndicatorRSI.RSI(intList, 14);
+            foreach (decimal x in declist)
+            {
+                Console.WriteLine(x);
+            }
+            Console.ReadKey();
 
             //var Results = await IndicatorRSI.stochRSI(declist, 14, 3);
             //declist = Results.Item1;
@@ -290,8 +305,8 @@ namespace TradingBotCS
             //{
             //    Console.WriteLine(x);
             //}
-
             //Console.ReadKey();
+
         }
     }
 }

@@ -81,3 +81,4 @@ C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.d
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\ref\TradingBotCS.dll
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.pdb
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.genruntimeconfig.cache
+D:\AAA_personal_projects\tradingbot\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Files\image_Chapter2.ico

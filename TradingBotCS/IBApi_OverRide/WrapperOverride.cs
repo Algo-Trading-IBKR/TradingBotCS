@@ -111,9 +111,9 @@ namespace TradingBotCS.IBApi_OverRide
         //! [openorder]
         public override async void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
         {
-            Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account +
-                ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
-                ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
+            // Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account +
+            //    ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
+            //    ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
             //await OrderManager.CheckOrder(order);
         }
         //! [openorder]
@@ -128,7 +128,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [position] request with reqPositions
         public override void position(string account, Contract contract, double pos, double avgCost)
         {
-            Console.WriteLine("Position. " + account + " - Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + ", Currency: " + contract.Currency + ", Position: " + pos + ", Avg cost: " + avgCost);
+            // Console.WriteLine("Position. " + account + " - Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + ", Currency: " + contract.Currency + ", Position: " + pos + ", Avg cost: " + avgCost);
             PositionsRepository.UpsertPositions(account, contract, pos, avgCost);
         }
         //! [position]
@@ -141,7 +141,7 @@ namespace TradingBotCS.IBApi_OverRide
             //    + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
 
             // als unrealized > 5% stuur sell order met limit price op die 5%
-            if (position > 0 && unrealizedPNL/(averageCost*position) > 0.09)
+            if (Program.UseTrailLimitOrders && position > 0 && unrealizedPNL/(averageCost*position) > 0.09)
             {
                 Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL} - {unrealizedPNL/(position*averageCost)}%");
                 float PriceOffset = 0.01f;
@@ -167,7 +167,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [realtimebar]
         public override void realtimeBar(int reqId, long time, double open, double high, double low, double close, long volume, double WAP, int count)
         {
-            //Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP);
+            Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP);
             RawDataRepository.InsertRawData(reqId, time, open, high, low, close);// data moet ook toegevoegd worden aan symbol raw data list
         }
         //! [realtimebar]
@@ -264,7 +264,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [scannerparameters]
         public override void scannerParameters(string xml)
         {
-            Console.WriteLine("ScannerParameters. " + xml + "\n");
+            // Console.WriteLine("ScannerParameters. " + xml + "\n");
             System.IO.File.WriteAllText(@"C:\Users\Public\WriteLines.txt", xml);
         }
         //! [scannerparameters]

@@ -23,7 +23,7 @@ namespace TradingBotCS.Strategies
         private float BottomProfit { get; set; }
         private bool PassedBottom { get; set; }
 
-        public async Task<bool> BuyStrategy(StrategyData data)
+        public async Task<(bool, int)> BuyStrategy(StrategyData data)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace TradingBotCS.Strategies
                             PassedBottom = false;
                             TakeProfit = 0.055f;
                             BottomProfit = 0.05f;
-                            return true;
+                            return (true, Convert.ToInt32(Shares));
                         }
                     }
                 }
@@ -59,13 +59,13 @@ namespace TradingBotCS.Strategies
                 {
                     MacdCounter = 0;
                 }
-                return false;
+                return (false,0);
             }
             catch (Exception ex)
             {
                 Logger.Error(Name, ex.ToString());
             }
-            return false;
+            return (false,0);
         }
 
         public async Task<bool> SellStrategy(float avgPrice, RawData lastRawData, string symbol)

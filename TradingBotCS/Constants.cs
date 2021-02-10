@@ -25,6 +25,9 @@ namespace TradingBotCS
         // Messaging
         public static List<string> DevNumbers = new List<string>() { "32476067619" };
 
+        // Buy
+        public static bool BuyEnabled = true;
+
         // Sell Trailing Limit order
         public static bool UseTrailLimitOrders = true;
         public static float MinimumProfit = 0.10f; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
