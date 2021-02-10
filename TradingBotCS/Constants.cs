@@ -41,7 +41,7 @@ namespace TradingBotCS
         public static float BTrailingPercent = 8;
 
         // info/warn/error codes
-        public static List<int> InfoCodes = new List<int>() { 2158, 2106 };
+        public static List<int> InfoCodes = new List<int>() { 2158, 2106, 2107 };
         public static List<int> WarningCodes = new List<int>();
 
     }
