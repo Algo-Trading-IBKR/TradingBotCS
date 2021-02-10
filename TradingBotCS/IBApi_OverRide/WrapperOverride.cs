@@ -154,13 +154,12 @@ namespace TradingBotCS.IBApi_OverRide
             //    + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
 
             // als unrealized > 5% stuur sell order met limit price op die 5%
-            if (Program.UseTrailLimitOrders && position > 0 && unrealizedPNL/(averageCost*position) > 0.09)
+
+            if (Program.UseTrailLimitOrders && position > 0 && unrealizedPNL/(averageCost*position) > Program.MinimumProfit)
             {
                 Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL} - {unrealizedPNL/(position*averageCost)}%");
-                float PriceOffset = 0.01f;
-                double TrailingPercent = 8;
-
-                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: marketPrice * (1- (TrailingPercent/100)), priceOffset: PriceOffset, trailingPercent: TrailingPercent);
+                
+                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: marketPrice * (1- (Program.TrailingPercent / 100)), priceOffset: Program.PriceOffset, trailingPercent: Program.TrailingPercent);
                 //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);
                 contract = await ContractManager.CreateContract(contract.Symbol);
                 
