@@ -17,6 +17,7 @@ namespace TradingBotCS.Util
             if (symbolObjects.Count() > 100) Logger.Warn(Name, $"Maximum allowed data request is 100, length of list is {symbolObjects.Count()}"); else Logger.Info(Name, $"Length of Symbol list: {symbolObjects.Count()}");
             foreach (Symbol S in symbolObjects)
             {
+                Program.IbClient.ClientSocket.reqMarketDataType(4); // verwijderen voor live data of naar 1 veranderen
                 Program.IbClient.ClientSocket.reqMktData(S.Id, S.Contract, generickTickList, false, false, null);
             }
         }
