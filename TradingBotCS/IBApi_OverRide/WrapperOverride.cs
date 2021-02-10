@@ -34,7 +34,17 @@ namespace TradingBotCS.IBApi_OverRide
         public override void error(int id, int errorCode, string errorMsg)
         {
             //Console.WriteLine("Error. Id: " + id + ", Code: " + errorCode + ", Msg: " + errorMsg + "\n");
-            Logger.Warn(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
+            if (Program.InfoCodes.Contains(errorCode))
+            {
+                Logger.Info(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
+            }else if (Program.WarningCodes.Contains(errorCode))
+            {
+                Logger.Warn(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
+            }else
+            {
+                Logger.Error(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
+            }
+
         }
         //! [error]
 
@@ -104,9 +114,17 @@ namespace TradingBotCS.IBApi_OverRide
         {
             ExecutionOverride executionOverride = new ExecutionOverride(execution);
             ExecutionRepository.InsertReport(contract, executionOverride);
-            Console.WriteLine("ExecDetails. " + reqId + " - " + contract.Symbol + ", " + contract.SecType + ", " + contract.Currency + " - " + execution.ExecId + ", " + execution.OrderId + ", " + execution.Shares + ", " + execution.LastLiquidity);
+            //Console.WriteLine("ExecDetails. " + reqId + " - " + contract.Symbol + ", " + contract.SecType + ", " + contract.Currency + " - " + execution.ExecId + ", " + execution.OrderId + ", " + execution.Shares + ", " + execution.LastLiquidity);
         }
         //! [execdetails]
+
+        //! [orderstatus]
+        public override void orderStatus(int orderId, string status, double filled, double remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld, double mktCapPrice)
+        {
+            //Console.WriteLine("OrderStatus. Id: " + orderId + ", Status: " + status + ", Filled: " + filled + ", Remaining: " + remaining
+            //    + ", AvgFillPrice: " + avgFillPrice + ", PermId: " + permId + ", ParentId: " + parentId + ", LastFillPrice: " + lastFillPrice + ", ClientId: " + clientId + ", WhyHeld: " + whyHeld + ", MktCapPrice: " + mktCapPrice);
+        }
+        //! [orderstatus]
 
         //! [openorder]
         public override async void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
@@ -138,7 +156,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [position]
 
         //! [positionend]
-        public override void positionEnd()
+        public override async void positionEnd()
         {
             //Console.WriteLine("PositionEnd \n");
 
@@ -155,11 +173,11 @@ namespace TradingBotCS.IBApi_OverRide
 
             // als unrealized > 5% stuur sell order met limit price op die 5%
 
-            if (Program.UseTrailLimitOrders && position > 0 && unrealizedPNL/(averageCost*position) > Program.MinimumProfit)
+            if (Program.SUseTrailLimitOrders && position > 0 && unrealizedPNL/(averageCost*position) > Program.SMinimumProfit)
             {
-                Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL} - {unrealizedPNL/(position*averageCost)}%");
+                Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL} - {Math.Round(unrealizedPNL/(position*averageCost)*100,2)}%");
                 
-                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: marketPrice * (1- (Program.TrailingPercent / 100)), priceOffset: Program.PriceOffset, trailingPercent: Program.TrailingPercent);
+                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: marketPrice * (1- (Program.STrailingPercent / 100)), priceOffset: Program.SPriceOffset, trailingPercent: Program.STrailingPercent);
                 //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);
                 contract = await ContractManager.CreateContract(contract.Symbol);
                 
@@ -174,7 +192,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [realtimebar]
         public override void realtimeBar(int reqId, long time, double open, double high, double low, double close, long volume, double WAP, int count)
         {
-            Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP);
+            //Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP);
             RawDataRepository.InsertRawData(reqId, time, open, high, low, close);// data moet ook toegevoegd worden aan symbol raw data list
         }
         //! [realtimebar]

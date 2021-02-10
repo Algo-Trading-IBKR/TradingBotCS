@@ -29,10 +29,20 @@ namespace TradingBotCS
         public static bool BuyEnabled = true;
 
         // Sell Trailing Limit order
-        public static bool UseTrailLimitOrders = true;
-        public static float MinimumProfit = 0.10f; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
-        public static float PriceOffset = 0.10f;
-        public static float TrailingPercent = 8;
+        public static bool SUseTrailLimitOrders = true;
+        public static float SMinimumProfit = 0.10f; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
+        public static float SPriceOffset = 0.01f;
+        public static float STrailingPercent = 8;
+
+        // Buy Trailing Limit order
+        public static bool BUseTrailLimitOrders = true;
+        public static float BMinimumProfit = 0.10f; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
+        public static float BPriceOffset = 0.01f;
+        public static float BTrailingPercent = 8;
+
+        // info/warn/error codes
+        public static List<int> InfoCodes = new List<int>() { 2158, 2106 };
+        public static List<int> WarningCodes = new List<int>();
 
     }
 }

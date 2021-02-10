@@ -15,9 +15,10 @@ namespace TradingBotCS.Util
             Logger.Verbose(Name, "Creating Symbol Objects");
 
             List<Symbol> Result = new List<Symbol>();
+
             for (int i = startingId; i < (symbolList.Count + startingId); i++)
             {
-                Symbol s = new Symbol(symbolList[i], i);
+                Symbol s = new Symbol(symbolList[i-startingId], i);
                 Result.Add(s);
             }
             return Result;

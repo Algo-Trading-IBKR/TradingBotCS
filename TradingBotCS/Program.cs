@@ -36,16 +36,20 @@ namespace TradingBotCS
         public static bool BuyEnabled = Constants.BuyEnabled;
 
         // Sell Trailing Limit order
-        public static bool UseTrailLimitOrders = Constants.UseTrailLimitOrders;
-        public static float MinimumProfit = Constants.MinimumProfit; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
-        public static float PriceOffset = Constants.PriceOffset;
-        public static float TrailingPercent = Constants.TrailingPercent;
+        public static bool SUseTrailLimitOrders = Constants.SUseTrailLimitOrders;
+        public static float SMinimumProfit = Constants.SMinimumProfit; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
+        public static float SPriceOffset = Constants.SPriceOffset;
+        public static float STrailingPercent = Constants.STrailingPercent;
 
         // Databases
         public static MongoClient MongoDBClient = new MongoClient(); // automatically connects to localhost:27017
 
         // File specific
         private static string Name = "Program";
+
+        // Error handling
+        public static List<int> InfoCodes = Constants.InfoCodes;
+        public static List<int> WarningCodes = Constants.WarningCodes;
 
         // historical data getter
         public static bool ScannerReady = true;
@@ -54,7 +58,7 @@ namespace TradingBotCS
         // market data checker
         //public static List<string> SymbolList = new List<string>(); //either made by a scanner or manually
         public static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
-        // symbols = ["ACHC", "ARAY","ALVR", "ATEC", "ALXO", "AMTI", "ABUS",  "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK",  "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD","RRR","IBKR","MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT","SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI",  "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL"]
+        
         public static Symbol TestSymbol;
         public static bool MarketState = true;
         public static bool MarketClosedMessage = false;
@@ -78,11 +82,11 @@ namespace TradingBotCS
 
             //MongoDBtest();
 
-            test();
+            //test();
 
             //PaperTrailTest();
 
-            //InfiniteStartup();
+            InfiniteStartup();
 
             Logger.Verbose(Name, "Started");
             while (true) Console.ReadKey(); // zorgt er voor dat de console nooit sluit
@@ -100,7 +104,7 @@ namespace TradingBotCS
                         if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
                             ApiConnection.Connect();
-                            Thread.Sleep(5000);
+                            Thread.Sleep(2000);
                         }
                         else if (IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
@@ -116,7 +120,7 @@ namespace TradingBotCS
                         NYtime = Timezones.GetNewYorkTime();
 
                         //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
-                        if (MarketState && NYtime.Hour == 15 && NYtime.Minute == 48)
+                        if (MarketState && NYtime.Hour == 18-6 && NYtime.Minute == 38)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
