@@ -129,9 +129,22 @@ namespace TradingBotCS.IBApi_OverRide
         public override void position(string account, Contract contract, double pos, double avgCost)
         {
             // Console.WriteLine("Position. " + account + " - Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + ", Currency: " + contract.Currency + ", Position: " + pos + ", Avg cost: " + avgCost);
+            if(pos > 0)
+            {
+                Program.OwnedStocks.Add(contract.Symbol);
+            }
             PositionsRepository.UpsertPositions(account, contract, pos, avgCost);
         }
         //! [position]
+
+        //! [positionend]
+        public override void positionEnd()
+        {
+            //Console.WriteLine("PositionEnd \n");
+
+            Program.OwnedSymbols = SymbolManager.CreateSymbolObjects(Program.OwnedStocks, 100000);
+        }
+        //! [positionend]
 
         //! [updateportfolio]
         public override async void updatePortfolio(Contract contract, double position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, string accountName)
@@ -157,12 +170,7 @@ namespace TradingBotCS.IBApi_OverRide
         }
         //! [updateportfolio]
 
-        //! [positionend]
-        public override void positionEnd()
-        {
-            //Console.WriteLine("PositionEnd \n");
-        }
-        //! [positionend]
+        
 
         //! [realtimebar]
         public override void realtimeBar(int reqId, long time, double open, double high, double low, double close, long volume, double WAP, int count)

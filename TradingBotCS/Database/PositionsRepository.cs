@@ -17,15 +17,7 @@ namespace TradingBotCS.Database
         public static async Task UpsertPositions(string account, Contract contract, double pos, double avgCost)
         {
             BsonDocument doc;
-            BsonDocument Doc = new BsonDocument
-            {
-                {"AccountId", account},
-                {"DateTime", DateTime.Now},
-                {"Symbol", contract.Symbol},
-                {"Position", pos},
-                {"AverageCost", avgCost }
-            };
-
+           
             var Filter = new BsonDocument() { { "Symbol", contract.Symbol } };
             var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
 
@@ -35,8 +27,17 @@ namespace TradingBotCS.Database
             }
             catch
             {
+                BsonDocument Doc = new BsonDocument
+                {
+                    {"AccountId", account},
+                    {"DateTime", DateTime.Now},
+                    {"Symbol", contract.Symbol},
+                    {"Position", pos},
+                    {"AverageCost", avgCost }
+                };
                 await Collection.InsertOneAsync(Doc);
-                doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
+                doc = Doc;
+                //doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
             }
 
             var IdFilter = Builders<BsonDocument>.Filter.Eq("_id", (ObjectId)doc.GetElement("_id").Value);

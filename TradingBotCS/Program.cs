@@ -60,7 +60,8 @@ namespace TradingBotCS
         public static bool MarketClosedMessage = false;
 
         // SymbolList for trading
-        public static List<Symbol> OwnedStocks = new List<Symbol>();
+        public static List<string> OwnedStocks = new List<string>();
+        public static List<Symbol> OwnedSymbols = new List<Symbol>();
         public static List<Symbol> SymbolObjects; // ALL symbol object stay in this list
         public static List<Symbol> CorrectGapList = new List<Symbol>(); // only used for strategy with gap up/down
         public static List<Symbol> ActiveSymbolList = new List<Symbol>(); // list for active trading or realtime data
