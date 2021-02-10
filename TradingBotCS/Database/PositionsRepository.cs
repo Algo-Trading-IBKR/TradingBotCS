@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradingBotCS.DataModels;
 
 namespace TradingBotCS.Database
 {
@@ -14,11 +15,11 @@ namespace TradingBotCS.Database
         private static IMongoDatabase Db = Program.MongoDBClient.GetDatabase("TradingBot");
         private static IMongoCollection<BsonDocument> Collection = Db.GetCollection<BsonDocument>("Positions");
 
-        public static async Task UpsertPositions(string account, Contract contract, double pos, double avgCost)
+        public static async Task UpsertPositions(Position position)
         {
             BsonDocument doc;
            
-            var Filter = new BsonDocument() { { "Symbol", contract.Symbol } };
+            var Filter = new BsonDocument() { { "Symbol", position.Contract.Symbol } };
             var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
 
             try
@@ -27,21 +28,15 @@ namespace TradingBotCS.Database
             }
             catch
             {
-                BsonDocument Doc = new BsonDocument
-                {
-                    {"AccountId", account},
-                    {"DateTime", DateTime.Now},
-                    {"Symbol", contract.Symbol},
-                    {"Position", pos},
-                    {"AverageCost", avgCost }
-                };
+                BsonDocument Doc = position.ToBsonDocument();
+
                 await Collection.InsertOneAsync(Doc);
                 doc = Doc;
                 //doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
             }
 
             var IdFilter = Builders<BsonDocument>.Filter.Eq("_id", (ObjectId)doc.GetElement("_id").Value);
-            var Update = Builders<BsonDocument>.Update.Set("DateTime", DateTime.Now).Set("AverageCost", avgCost).Set("Position", pos);
+            var Update = Builders<BsonDocument>.Update.Set("DateTime", DateTime.Now).Set("AvgCost", position.AvgCost).Set("Shares", position.Shares);
             var Options = new UpdateOptions { IsUpsert = true };
 
             await Collection.UpdateOneAsync(IdFilter, Update, Options);

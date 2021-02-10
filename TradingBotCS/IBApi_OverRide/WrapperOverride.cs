@@ -25,7 +25,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [nextvalidid]
         public override void nextValidId(int orderId)
         {
-            Console.WriteLine("Next Valid Id: " + orderId);
+            //Console.WriteLine("Next Valid Id: " + orderId);
             NextOrderId = orderId;
         }
         //! [nextvalidid]
@@ -151,7 +151,9 @@ namespace TradingBotCS.IBApi_OverRide
             {
                 Program.OwnedStocks.Add(contract.Symbol);
             }
-            PositionsRepository.UpsertPositions(account, contract, pos, avgCost);
+            ObjectId Id = new ObjectId();
+            Position Position = new Position(Id, account, DateTime.Now, pos, avgCost, contract);
+            PositionsRepository.UpsertPositions(Position);
         }
         //! [position]
 
