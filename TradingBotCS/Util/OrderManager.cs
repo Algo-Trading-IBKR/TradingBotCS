@@ -19,19 +19,16 @@ namespace TradingBotCS
             
             Program.IbClient.IncrementOrderId();
             Program.IbClient.ClientSocket.reqIds(-1);
-            Console.WriteLine(Program.IbClient.NextOrderId);
+
             switch (type)
             {
                 case "MKT":
-                    Console.WriteLine("Case 1");
                     order = await CreateMKT(action, amount);
                     break;
                 case "LMT":
-                    Console.WriteLine("Case 2");
                     order = await CreateLMT(action, amount, price);
                     break;
                 case "TRAIL LIMIT":
-                    Console.WriteLine("Case 3");
                     order = await CreateTrailingStopLimit(action, amount, trailStopPrice, priceOffset, trailingPercent);
                     break;
                 default:
