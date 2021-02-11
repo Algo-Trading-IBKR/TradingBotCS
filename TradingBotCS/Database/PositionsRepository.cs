@@ -19,7 +19,7 @@ namespace TradingBotCS.Database
         {
             BsonDocument doc;
            
-            var Filter = new BsonDocument() { { "Symbol", position.Contract.Symbol } };
+            var Filter = new BsonDocument() { { "Contract.Symbol", position.Contract.Symbol } };
             var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
 
             try
