@@ -155,6 +155,10 @@ namespace TradingBotCS
         {
             try
             {
+                if(data.Count < 40)
+                {
+                    return false;
+                }
                 if (LastRawData == null)
                 {
                     LastRawData = data.Last();
