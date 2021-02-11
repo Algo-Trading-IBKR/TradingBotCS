@@ -277,7 +277,6 @@ namespace TradingBotCS.IBApi_OverRide
             //}
            
 
-            }
         }
         //! [historicaldata]
 
