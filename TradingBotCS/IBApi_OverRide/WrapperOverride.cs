@@ -161,7 +161,14 @@ namespace TradingBotCS.IBApi_OverRide
         public override async void positionEnd()
         {
             //Console.WriteLine("PositionEnd \n");
-
+            foreach(string S in Program.OwnedStocks)
+            {
+                if (Program.SymbolList.Contains(S))
+                {
+                    Logger.Info(Name, $"Removed {S} from symbol list, we already have a position in {S}");
+                    Program.SymbolList.Remove(S);
+                }
+            }
             Program.OwnedSymbols = SymbolManager.CreateSymbolObjects(Program.OwnedStocks, 100000);
         }
         //! [positionend]
