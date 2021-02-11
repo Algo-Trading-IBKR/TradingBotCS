@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace TradingBotCS.DataModels
 {
-    [BsonIgnoreExtraElements]
     public class AccountInfo
     {
         public ObjectId _id { get; set; }

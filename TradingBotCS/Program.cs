@@ -88,7 +88,6 @@ namespace TradingBotCS
 
             InfiniteStartup();
 
-            Logger.Verbose(Name, "Started");
             while (true) Console.ReadKey(); // zorgt er voor dat de console nooit sluit
         }
 
@@ -120,7 +119,7 @@ namespace TradingBotCS
                         NYtime = Timezones.GetNewYorkTime();
 
                         //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
-                        if (MarketState && NYtime.Hour == 24-6 && NYtime.Minute == 1)
+                        if (MarketState && NYtime.Hour == 26-6 && NYtime.Minute == 33)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
@@ -131,7 +130,6 @@ namespace TradingBotCS
                             else
                             {
                                 ApiConnection.AccountUpdates();
-                                IbClient.ClientSocket.reqPositions(); // stock lijst aanmaken met positions
 
                                 //MarketScanner.GapUp();
 
@@ -142,9 +140,9 @@ namespace TradingBotCS
                                 ContractManager.RequestSymbolContracts(SymbolObjects);
 
                                 //realtime bars opvragen voor symbollist
-                                DataManager.GetRealTimeBars(SymbolObjects);
+                                //DataManager.GetRealTimeBars(SymbolObjects);
 
-                                //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now); // nog niet getest
+                                DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, duration: "1 M"); // nog niet getest
                                 //checkTime();
                                 //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, 15, 45, 99, 99); // nog niet getest
                                 Thread.Sleep(60000);
