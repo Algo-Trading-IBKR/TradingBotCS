@@ -254,25 +254,28 @@ namespace TradingBotCS.IBApi_OverRide
 
             ObjectId id = new ObjectId();
 
-            if (SymbolObject.GapCalculated == true)
-            {
-                RawData existingData;
-                existingData = SymbolObject.HistoricalData.Find(i => i.DateTime == Time);
-                if(existingData != null)
-                {
-                    Logger.Verbose(Name, $"{SymbolObject.Ticker}: datapoint already exists");
-                }
-                else
-                {
-                    RawData data = new RawData(id, SymbolObject.Ticker, Time, bar.Open, bar.High, bar.Low, bar.Close);
-                    SymbolObject.HistoricalData.Add(data);
-                }
-                
-            }
-            else
-            {
-                RawData data = new RawData(id, SymbolObject.Ticker, Time, bar.Open, bar.High, bar.Low, bar.Close);
-                SymbolObject.HistoricalData.Add(data);
+            RawDataRepository.InsertRawData(SymbolObject.Id, ((DateTimeOffset)Time).ToUnixTimeSeconds(), bar.Open, bar.High, bar.Low, bar.Close);
+            //if (SymbolObject.GapCalculated == true)
+            //{
+            //    RawData existingData;
+            //    existingData = SymbolObject.HistoricalData.Find(i => i.DateTime == Time);
+            //    if(existingData != null)
+            //    {
+            //        Logger.Verbose(Name, $"{SymbolObject.Ticker}: datapoint already exists");
+            //    }
+            //    else
+            //    {
+            //        RawData data = new RawData(id, SymbolObject.Ticker, Time, bar.Open, bar.High, bar.Low, bar.Close);
+            //        SymbolObject.HistoricalData.Add(data);
+            //    }
+
+            //}
+            //else
+            //{
+            //    RawData data = new RawData(id, SymbolObject.Ticker, Time, bar.Open, bar.High, bar.Low, bar.Close);
+            //    SymbolObject.HistoricalData.Add(data);
+            //}
+           
 
             }
         }
