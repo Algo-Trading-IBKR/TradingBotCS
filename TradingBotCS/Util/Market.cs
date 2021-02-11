@@ -52,7 +52,7 @@ namespace TradingBotCS.Util
 
                     int hour = Convert.ToInt32(startstring.Substring(0, 2));
                     int minute = Convert.ToInt32(startstring.Substring(2, 2));
-                    Logger.Verbose(Name, $"{hour}, {minute}");
+                    //Logger.Verbose(Name, $"{hour}, {minute}");
                     Program.MarketHour = hour;
                     Program.MarketMinute = minute;
                     //for testing change this

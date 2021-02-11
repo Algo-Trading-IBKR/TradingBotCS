@@ -184,7 +184,7 @@ namespace TradingBotCS.IBApi_OverRide
 
             if (Program.SUseTrailLimitOrders && position > 0 && unrealizedPNL/(averageCost*position) > Program.SMinimumProfit)
             {
-                Logger.Info(Name, $"{contract.Symbol} unrealized at {unrealizedPNL} - {Math.Round(unrealizedPNL/(position*averageCost)*100,2)}%");
+                Logger.Verbose(Name, $"{contract.Symbol} unrealized at ${unrealizedPNL} - {Math.Round(unrealizedPNL/(position*averageCost)*100,2)}%");
                 
                 OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: marketPrice * (1- (Program.STrailingPercent / 100)), priceOffset: Program.SPriceOffset, trailingPercent: Program.STrailingPercent);
                 //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);

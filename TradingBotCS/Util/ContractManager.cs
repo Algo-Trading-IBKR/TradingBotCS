@@ -13,7 +13,6 @@ namespace TradingBotCS.Util
         private static string Name = "Contract Manager";
         public static async Task<Contract> CreateContract(string symbol, string secType = "STK", string exchange = "SMART", string currency = "USD")
         {
-            Logger.Verbose(Name, $"Creating Contract for {symbol}");
             Contract Contract = new Contract();
             Contract.Symbol = symbol;
             Contract.SecType = secType;

@@ -73,7 +73,7 @@ namespace TradingBotCS
 
         static async Task Main(string[] args)
         {
-            Logger.SetLogLevel(Logger.LogLevel.LogLevelInfo); // Custom Logger Test
+            Logger.SetLogLevel(Logger.LogLevel.LogLevelVerbose); // Custom Logger Test
             Logger.Verbose(Name, "Start");
 
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
