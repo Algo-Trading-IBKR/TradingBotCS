@@ -14,7 +14,7 @@ namespace TradingBotCS.IBApi_OverRide
 {
     public class WrapperOverride : EWrapperImpl
     {
-        private static string Name = "WrapperOverride";
+        private static readonly string Name = "WrapperOverride";
         //! [incrementorderid]
         public void IncrementOrderId()
         {
@@ -252,7 +252,7 @@ namespace TradingBotCS.IBApi_OverRide
             //DateTime Time = Convert.ToDateTime(sTime);
             DateTime Time = DateTime.ParseExact(sTime, "dd-MM-yyyy HH:mm:ss", null);
 
-            ObjectId id = new ObjectId();
+            //ObjectId id = new ObjectId();
 
             RawDataRepository.InsertRawData(SymbolObject.Id, ((DateTimeOffset)Time).ToUnixTimeSeconds(), bar.Open, bar.High, bar.Low, bar.Close);
             //if (SymbolObject.GapCalculated == true)

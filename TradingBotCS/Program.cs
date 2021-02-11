@@ -45,7 +45,7 @@ namespace TradingBotCS
         public static MongoClient MongoDBClient = new MongoClient(); // automatically connects to localhost:27017
 
         // File specific
-        private static string Name = "Program";
+        private static readonly string Name = "Program";
 
         // Error handling
         public static List<int> InfoCodes = Constants.InfoCodes;
@@ -71,7 +71,7 @@ namespace TradingBotCS
         public static List<Symbol> ActiveSymbolList = new List<Symbol>(); // list for active trading or realtime data
 
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             Logger.SetLogLevel(Logger.LogLevel.LogLevelVerbose); // Custom Logger Test
             Logger.Verbose(Name, "Start");

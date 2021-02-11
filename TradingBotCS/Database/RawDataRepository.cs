@@ -14,9 +14,9 @@ namespace TradingBotCS.Database
 {
     public static class RawDataRepository
     {
-        private static string Name = "RawDataRepository";
-        private static IMongoDatabase Db = Program.MongoDBClient.GetDatabase("TradingBot");
-        private static IMongoCollection<BsonDocument> Collection = Db.GetCollection<BsonDocument>("RawData");
+        private static readonly string Name = "RawDataRepository";
+        private static readonly IMongoDatabase Db = Program.MongoDBClient.GetDatabase("TradingBot");
+        private static readonly IMongoCollection<BsonDocument> Collection = Db.GetCollection<BsonDocument>("RawData");
 
         public static async Task InsertRawData(int tickerId, long time, double open, double high, double low, double close)
         {
