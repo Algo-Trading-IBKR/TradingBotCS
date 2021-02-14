@@ -8,7 +8,7 @@ namespace TradingBotCS.api
 {
     class test
     {
-        // REST API proberen maken ZONDER ASP.NET MVC
+
 
 
     }

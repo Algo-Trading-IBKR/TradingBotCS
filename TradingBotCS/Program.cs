@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using TradingBotCS.IBApi_OverRide;
 using TradingBotCS.Models_Indicators;
 using TradingBotCS.Util;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace TradingBotCS
 {
@@ -71,10 +75,12 @@ namespace TradingBotCS
         public static List<Symbol> ActiveSymbolList = new List<Symbol>(); // list for active trading or realtime data
 
 
-        static async Task Main()
+        static async Task Main(string[] args)
         {
             Logger.SetLogLevel(Logger.LogLevel.LogLevelVerbose); // Custom Logger Test
             Logger.Verbose(Name, "Start");
+
+            CreateHostBuilder(args).Build().Run();
 
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
             //List<string> Numbers = new List<string>() { "32476067619", "32470579542" };
@@ -84,9 +90,9 @@ namespace TradingBotCS
 
             //test();
 
-            //PaperTrailTest();
+            PaperTrailTest();
 
-            InfiniteStartup();
+            //InfiniteStartup();
 
             while (true) Console.ReadKey(); // zorgt er voor dat de console nooit sluit
         }
@@ -169,6 +175,14 @@ namespace TradingBotCS
             IbClient.ClientSocket.reqManagedAccts();
             ApiConnection.AccountUpdates();
         }
+
+        // api test stuff
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
 
         //static async Task checkTime()
         //{
