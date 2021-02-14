@@ -38,7 +38,7 @@ namespace TradingBotCS.Util
             {
                 if (Program.IbClient.ClientSocket.IsConnected())
                 {
-                    Program.IbClient.ClientSocket.reqAccountUpdates(true, Constants.AccountId);
+                    Program.IbClient.ClientSocket.reqAccountUpdates(true, Program.AccountId);
                     Program.IbClient.ClientSocket.reqPositions();
                 }
             })
