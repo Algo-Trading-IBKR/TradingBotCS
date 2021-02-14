@@ -28,7 +28,7 @@ namespace TradingBotCS.Strategies
                 //if (data.MacdHist > 0 && /data.Price )
                 if (data.MacdHist > 0 )
                 {
-                    int Shares = (int)Math.Floor((decimal)Program.TradeCash / (decimal)data.Price);
+                    int Shares = (int)Math.Floor((decimal)Program.MaxTradeValue / (decimal)data.Price);
                     return (true, Shares);
                 } 
                 return (false, 0);

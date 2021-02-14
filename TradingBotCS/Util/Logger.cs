@@ -46,7 +46,7 @@ namespace TradingBotCS.Util
                 case LogLevel.LogLevelCritical:
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     sLogLevel = "CRITICAL";
-                    MobileService.SendTextMsg($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}", Program.DevNumbers);
+                    MobileService.SendTextMsg($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}", Program.PhoneNumbers);
                     break;
             }
             if (Logger.logLevel <= logLevel)

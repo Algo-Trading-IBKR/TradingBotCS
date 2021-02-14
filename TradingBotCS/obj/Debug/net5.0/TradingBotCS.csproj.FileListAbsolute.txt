@@ -82,3 +82,17 @@ C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\ref\TradingBot
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.pdb
 C:\Users\SKIKK\Desktop\TradingBotCS\TradingBotCS\obj\Debug\net5.0\TradingBotCS.genruntimeconfig.cache
 D:\AAA_personal_projects\tradingbot\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Files\image_Chapter2.ico
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.AspNetCore.Razor.Language.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.CodeAnalysis.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.CodeAnalysis.Razor.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.DotNet.PlatformAbstractions.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Microsoft.OpenApi.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll

@@ -25,28 +25,31 @@ namespace TradingBotCS.Database
             //ReadAccountUpdate("cashbalance");
         }
 
-        public static async Task ReadAccountUpdate(string key, bool allItems = false)
+        public static async Task<List<AccountInfo>> ReadAccountUpdate(string key, bool allItems = false)
         {
             var Filter = new BsonDocument() { { "Type", key.ToLower() } };
             var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
-            dynamic Doc;
+            dynamic results;
+            List<AccountInfo> Doc = new List<AccountInfo>();
             if (allItems == true)
             {
-                Doc = await Collection.Find(Filter).Sort(Sort).ToListAsync();
-                foreach(var d in Doc)
+                results = await Collection.Find(Filter).Sort(Sort).ToListAsync();
+                foreach(var d in results)
                 {
-                    AccountInfo doc = BsonSerializer.Deserialize<AccountInfo>(d);
-                    Console.WriteLine(doc.Value);
+                    //AccountInfo doc = BsonSerializer.Deserialize<AccountInfo>(d);
+                    //Console.WriteLine(doc.Value);
+                    Doc.Add(BsonSerializer.Deserialize<AccountInfo>(d));
                 }
             }
             else
             {
-                Doc = await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync();
+                Doc.Add(BsonSerializer.Deserialize<AccountInfo>(await Collection.Find(Filter).Limit(1).Sort(Sort).SingleAsync()));
                 
-                AccountInfo doc = BsonSerializer.Deserialize<AccountInfo>(Doc);
-                Console.WriteLine(doc.Value);
+                //AccountInfo doc = BsonSerializer.Deserialize<AccountInfo>(Doc);
+                //Console.WriteLine(doc.Value);
 
             }
+            return Doc;
         }
 
     }

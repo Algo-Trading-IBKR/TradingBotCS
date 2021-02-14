@@ -44,7 +44,7 @@ namespace TradingBotCS.Strategies
                     }else if (MacdCounter == 3 && FirstCounterprice*1.02 > data.Price)
                     {
                         MacdCounter = 0;
-                        decimal Shares = Math.Floor((decimal)Program.TradeCash / (decimal)data.Price);
+                        decimal Shares = Math.Floor((decimal)Program.MaxTradeValue / (decimal)data.Price);
                         if (Shares > 0)
                         {
                             PassedBottom = false;

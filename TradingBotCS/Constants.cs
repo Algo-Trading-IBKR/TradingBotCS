@@ -36,13 +36,11 @@ namespace TradingBotCS
 
         // Buy Trailing Limit order
         public static bool BUseTrailLimitOrders = true;
-        public static float BMinimumProfit = 0.10f; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
         public static float BPriceOffset = 0.01f;
         public static float BTrailingPercent = 8;
 
         // info/warn/error codes
         public static List<int> InfoCodes = new List<int>() { 1102, 2106, 2107, 2158 };
         public static List<int> WarningCodes = new List<int>();
-
     }
 }

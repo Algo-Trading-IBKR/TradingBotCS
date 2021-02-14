@@ -12,48 +12,57 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TradingBotCS.DataModels;
+using TradingBotCS.Database;
 
 namespace TradingBotCS
 {
     class Program
     {
+        public static Configuration Config;
 
         // API
-        public static string Ip = Constants.Ip;
-        public static int Port = Constants.Port;
-        public static int ApiId = Constants.ApiId;
+        public static string AccountId;
+        public static string Ip;
+        public static int Port;
+        public static int ApiId;
 
         // Strategy
-        private static int StartingHour = Constants.StartingHour;
-        public static float TradeCash = Constants.TradeCash;
-        public static int MarketHour = Constants.MarketHour;
-        public static int MarketMinute = Constants.MarketMinute;
+        private static int StartingHour;
+        public static float MaxTradeValue;
+        public static int MarketHour;
+        public static int MarketMinute;
 
         // Messaging
-        public static List<string> DevNumbers = Constants.DevNumbers;
+        public static List<string> PhoneNumbers;
+        public static List<string> MailAddresses;
+
+        // Buy
+        public static bool BuyEnabled;
+        public static bool BUseTrailLimitOrders;
+        public static float BPriceOffset;
+        public static float BTrailingPercent;
+
+        // Sell Trailing Limit order
+        public static bool SellEnabled;
+        public static bool SUseTrailLimitOrders;
+        public static float SMinimumProfit;
+        public static float SPriceOffset;
+        public static float STrailingPercent;
+
+        // Error handling
+        public static List<int> InfoCodes;
+        public static List<int> WarningCodes;
 
         // IB objects
         public static WrapperOverride IbClient = new WrapperOverride();
         public static EReader IbReader;
-
-        // Buy
-        public static bool BuyEnabled = Constants.BuyEnabled;
-
-        // Sell Trailing Limit order
-        public static bool SUseTrailLimitOrders = Constants.SUseTrailLimitOrders;
-        public static float SMinimumProfit = Constants.SMinimumProfit; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
-        public static float SPriceOffset = Constants.SPriceOffset;
-        public static float STrailingPercent = Constants.STrailingPercent;
 
         // Databases
         public static MongoClient MongoDBClient = new MongoClient(); // automatically connects to localhost:27017
 
         // File specific
         private static readonly string Name = "Program";
-
-        // Error handling
-        public static List<int> InfoCodes = Constants.InfoCodes;
-        public static List<int> WarningCodes = Constants.WarningCodes;
 
         // historical data getter
         public static bool ScannerReady = true;
@@ -82,6 +91,8 @@ namespace TradingBotCS
 
             CreateHostBuilder(args).Build().Run();
 
+            await UpdateConfigs();
+
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
             //List<string> Numbers = new List<string>() { "32476067619", "32470579542" };
             //await MobileService.SendTextMsg(Messages, Numbers);
@@ -90,7 +101,7 @@ namespace TradingBotCS
 
             //test();
 
-            PaperTrailTest();
+            //PaperTrailTest();
 
             //InfiniteStartup();
 
@@ -174,6 +185,44 @@ namespace TradingBotCS
             ApiConnection.Connect();
             IbClient.ClientSocket.reqManagedAccts();
             ApiConnection.AccountUpdates();
+        }
+
+        public static async Task UpdateConfigs()
+        {
+            Config = await ConfigRepository.ReadConfig();
+
+            // API
+            AccountId = Config.ApiConfig.AccountId;
+            Ip = Config.ApiConfig.Ip;
+            Port = Config.ApiConfig.Port;
+            ApiId = Config.ApiConfig.ApiId;
+
+            // Strategy
+            StartingHour = Config.StrategyConfig.StartingHour;
+            MaxTradeValue = Config.StrategyConfig.MaxTradeValue;
+            MarketHour = Config.StrategyConfig.MarketHour;
+            MarketMinute = Config.StrategyConfig.MarketMinute;
+
+            // Messaging
+            PhoneNumbers = Config.MessagingConfig.PhoneNumbers;
+            MailAddresses = Config.MessagingConfig.MailAddresses;
+
+            // Buy
+            BuyEnabled = Config.BuyConfig.BuyEnabled;
+            BUseTrailLimitOrders = Config.BuyConfig.UseTrailLimitOrders;
+            BPriceOffset = Config.BuyConfig.PriceOffset;
+            BTrailingPercent = Config.BuyConfig.TrailingPercent;
+
+            // Sell Trailing Limit order
+            SellEnabled = Config.SellConfig.SellEnabled;
+            SUseTrailLimitOrders = Config.SellConfig.UseTrailLimitOrders;
+            SMinimumProfit = Config.SellConfig.MinimumProfit; // make sure minimum profit is higher than TrailingPercent to prevent sell with loss
+            SPriceOffset = Config.SellConfig.PriceOffset;
+            STrailingPercent = Config.SellConfig.TrailingPercent;
+
+            // Error handling
+            InfoCodes = Config.ErrorCodeConfig.InfoCodes;
+            WarningCodes = Config.ErrorCodeConfig.WarningCodes;
         }
 
         // api test stuff
