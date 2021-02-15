@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradingBotCS.Database;
 using TradingBotCS.Messaging;
 
 namespace TradingBotCS.Util
@@ -47,6 +48,7 @@ namespace TradingBotCS.Util
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     sLogLevel = "CRITICAL";
                     MobileService.SendTextMsg($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}", Program.PhoneNumbers);
+                    await LogRepository.InsertLog(group, message, sLogLevel);
                     break;
             }
             if (Logger.logLevel <= logLevel)
