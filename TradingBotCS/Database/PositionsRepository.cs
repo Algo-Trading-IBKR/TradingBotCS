@@ -67,5 +67,13 @@ namespace TradingBotCS.Database
             }
             return Doc;
         }
+
+        public static async Task RemovePosition(string symbol = "*")
+        {
+            var Filter = new BsonDocument() { { "Contract.Symbol", symbol.ToUpper() } };
+            await Collection.DeleteOneAsync(Filter);
+        }
+
+
     }
 }

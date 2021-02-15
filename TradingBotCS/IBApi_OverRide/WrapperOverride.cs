@@ -154,6 +154,7 @@ namespace TradingBotCS.IBApi_OverRide
             ObjectId Id = new ObjectId();
             Position Position = new Position(Id, account, DateTime.Now, pos, avgCost, contract);
             PositionsRepository.UpsertPositions(Position);
+            if (pos == 0) Logger.Error(Name,$"POSITION 0 {contract.Symbol}");
         }
         //! [position]
 
@@ -168,6 +169,11 @@ namespace TradingBotCS.IBApi_OverRide
                     Logger.Info(Name, $"Removed {S} from symbol list, we already have a position in {S}");
                     Program.SymbolList.Remove(S);
                 }
+            }
+            List<Position> DbPositions = await PositionsRepository.ReadPositions(allItems: true);
+            foreach(Position P in DbPositions)
+            {
+                if (!Program.SymbolList.Contains(P.Contract.Symbol)) PositionsRepository.RemovePosition(P.Contract.Symbol);
             }
             Program.OwnedSymbols = SymbolManager.CreateSymbolObjects(Program.OwnedStocks, 100000);
         }
