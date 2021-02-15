@@ -6,22 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using TradingBotCS.Database;
 using TradingBotCS.DataModels;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
 
 namespace TradingBotCS.Controllers
 {
     [ApiController]
-    [Route("Config")]
+    [Route("config")]
     public class ConfigController : ControllerBase
     {
 
-        private readonly ILogger<ConfigController> Logger;
-        public ConfigController(ILogger<ConfigController> logger) {
-            Logger = logger;
-            Logger.LogInformation("ctor");
-        }
+        public ConfigController() {}
 
         [HttpGet]
         public async Task<ActionResult> GetConfig()
@@ -43,18 +37,7 @@ namespace TradingBotCS.Controllers
             {
                 return new StatusCodeResult(500);
             }
-            
         }
-
-        //[HttpGet]
-        //[Route("account/{key}")]
-        //public async Task<ActionResult> GetAccountInfo(string key)
-        //{
-        //    List<AccountInfo> result = await AccountRepository.ReadAccountUpdate(key);
-        //    return new OkObjectResult(result);
-        //}
-
-
 
     }
 }
