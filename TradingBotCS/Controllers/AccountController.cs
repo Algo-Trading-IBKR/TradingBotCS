@@ -16,12 +16,6 @@ namespace TradingBotCS.Controllers
     {
         public AccountController() { }
 
-        [HttpGet] 
-        public ActionResult GetTest()
-        {
-            return new OkObjectResult("test");
-        }
-
         [HttpGet]
         [Route("{key}/{allItems}")]
         public async Task<ActionResult> GetAccountInfo(string key, bool allItems = false)
@@ -29,5 +23,7 @@ namespace TradingBotCS.Controllers
             List<AccountInfo> Result = await AccountRepository.ReadAccountUpdate(key, allItems);
             return new OkObjectResult(Result);
         }
+
+
     }
 }
