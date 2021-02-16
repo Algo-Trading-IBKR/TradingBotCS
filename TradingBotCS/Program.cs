@@ -97,6 +97,7 @@ namespace TradingBotCS
 
             await UpdateConfigs();
 
+
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
             //List<string> Numbers = new List<string>() { "32476067619", "32470579542" };
             //await MobileService.SendTextMsg(Messages, Numbers);
@@ -107,7 +108,7 @@ namespace TradingBotCS
 
             //PaperTrailTest();
 
-            //InfiniteStartup();
+            InfiniteStartup();
 
             while (true) Console.ReadKey(); // zorgt er voor dat de console nooit sluit
         }
@@ -140,7 +141,7 @@ namespace TradingBotCS
                         NYtime = Timezones.GetNewYorkTime();
 
                         //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
-                        if (MarketState && NYtime.Hour == 17-6 && NYtime.Minute == 9)
+                        if (MarketState && NYtime.Hour == 23-6 && NYtime.Minute == 44)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;

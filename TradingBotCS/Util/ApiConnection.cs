@@ -40,6 +40,7 @@ namespace TradingBotCS.Util
                 {
                     Program.IbClient.ClientSocket.reqAccountUpdates(true, Program.AccountId);
                     Program.IbClient.ClientSocket.reqPositions();
+                    //Program.IbClient.ClientSocket.reqAllOpenOrders();
                 }
             })
             { IsBackground = false }.Start();

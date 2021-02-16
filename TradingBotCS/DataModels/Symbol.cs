@@ -10,6 +10,7 @@ using TradingBotCS.Util;
 using TradingBotCS.IBApi_OverRide;
 using TradingBotCS.Models_Indicators;
 using TradingBotCS.Strategies;
+using System.Threading;
 
 namespace TradingBotCS
 {
@@ -78,8 +79,11 @@ namespace TradingBotCS
                             //Program.ActiveSymbolList.Add(this);
 
                             // market buy order
-                            OrderOverride Order = await OrderManager.CreateOrder("BUY", "MKT", amount:Results.Item2);
-                            Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Order);
+                            var Result = await OrderManager.CreateOrder("BUY", "MKT", amount:Results.Item2);
+                            if (Result.Item1 == true)
+                            {
+                                Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Result.Item2);
+                            }
                         }
                     }
                 }
@@ -155,7 +159,9 @@ namespace TradingBotCS
         {
             try
             {
-                if(data.Count < 40)
+                RawDataList = RawDataList.OrderBy(R => R.DateTime).ToList();
+                
+                if (data.Count < 40)
                 {
                     return false;
                 }
