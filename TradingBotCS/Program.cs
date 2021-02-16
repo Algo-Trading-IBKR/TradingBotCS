@@ -89,7 +89,11 @@ namespace TradingBotCS
             Logger.SetLogLevel(Logger.LogLevel.LogLevelVerbose); // Custom Logger Test
             Logger.Verbose(Name, "Start");
 
-            CreateHostBuilder(args).Build().Run();
+            new Thread(() =>
+            {
+                CreateHostBuilder(args).Build().Run();
+            })
+            { IsBackground = false }.Start();
 
             await UpdateConfigs();
 
@@ -189,6 +193,7 @@ namespace TradingBotCS
 
         public static async Task UpdateConfigs()
         {
+            Logger.Verbose(Name, "Updating Config");
             Config = await ConfigRepository.ReadConfig();
 
             // API
@@ -226,22 +231,24 @@ namespace TradingBotCS
         }
 
         // api test stuff
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    //logging.AddConsole(); // logging uitschakelen van de api
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+               return Host.CreateDefaultBuilder(args)
+                    .ConfigureLogging(logging =>
+                    {
+                        logging.ClearProviders();
+                        
+                        //logging.AddConsole(); // logging uitschakelen van de api
+                    })
+                    .ConfigureWebHostDefaults(webBuilder =>
+                    {
+                        webBuilder.UseStartup<Startup>();
+                    });
+        }
 
         //static async Task checkTime()
         //{
-        //    new Thread(() =>
-        //    {
+        //    
         //        while (IbClient.ClientSocket.IsConnected())
         //        {
         //            DateTime NYtime = Timezones.GetNewYorkTime();

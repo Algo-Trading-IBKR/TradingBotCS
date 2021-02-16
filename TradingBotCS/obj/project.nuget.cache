@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "tXfkNyxUaHMdSS+hZv5JvUCTUg0eYSkPii63fyV0Np6IaQ//o1kGnVKYqswHxUk8rfBmyU6rz11XDAZunJJyBg==",
+  "dgSpecHash": "/AmAUZrz16vOHOwOQkNAQTa1BF2cKtdnhPYiThLHxjydpgzJtddSoe4SLfd+rrK79VDh8C51y9NCdj10feJFiQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\joren\\Desktop\\TradingBotCS\\TradingBotCS\\TradingBotCS.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\joren\\.nuget\\packages\\bcrypt.net-next\\4.0.2\\bcrypt.net-next.4.0.2.nupkg.sha512",
     "C:\\Users\\joren\\.nuget\\packages\\dnsclient\\1.3.1\\dnsclient.1.3.1.nupkg.sha512",
     "C:\\Users\\joren\\.nuget\\packages\\microsoft.aspnetcore.antiforgery\\2.2.0\\microsoft.aspnetcore.antiforgery.2.2.0.nupkg.sha512",
     "C:\\Users\\joren\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
