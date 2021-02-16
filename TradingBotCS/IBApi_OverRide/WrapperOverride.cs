@@ -132,6 +132,8 @@ namespace TradingBotCS.IBApi_OverRide
             // Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account +
             //    ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
             //    ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
+            OrderOverride Order = new OrderOverride(order, contract);
+            OrderRepository.UpsertOrder(Order);
             //await OrderManager.CheckOrder(order);
         }
         //! [openorder]
@@ -173,7 +175,14 @@ namespace TradingBotCS.IBApi_OverRide
             List<Position> DbPositions = await PositionsRepository.ReadPositions(allItems: true);
             foreach(Position P in DbPositions)
             {
-                if (!Program.SymbolList.Contains(P.Contract.Symbol)) PositionsRepository.RemovePosition(P.Contract.Symbol);
+                try
+                {
+                    if (P.Contract != null && !Program.SymbolList.Contains(P.Contract.Symbol)) PositionsRepository.RemovePosition(P.Contract.Symbol);
+                }
+                catch (Exception)
+                {
+                    Logger.Warn(Name, $"Something went wrong when removing a symbol from DB");
+                }
             }
             Program.OwnedSymbols = SymbolManager.CreateSymbolObjects(Program.OwnedStocks, 100000);
         }
@@ -188,16 +197,20 @@ namespace TradingBotCS.IBApi_OverRide
 
             // als unrealized > 5% stuur sell order met limit price op die 5%
 
-            if (Program.SUseTrailLimitOrders && position > 0 && unrealizedPNL/(averageCost*position) > Program.SMinimumProfit)
+            if (Program.SUseTrailLimitOrders && position > 0 && unrealizedPNL / (averageCost * position) > Program.SMinimumProfit)
             {
-                Logger.Verbose(Name, $"{contract.Symbol} unrealized at ${unrealizedPNL} - {Math.Round(unrealizedPNL/(position*averageCost)*100,2)}%");
-                
-                OrderOverride Order = await OrderManager.CreateOrder(action: "SELL", type:"TRAIL LIMIT", amount: position, trailStopPrice: marketPrice * (1- (Program.STrailingPercent / 100)), priceOffset: Program.SPriceOffset, trailingPercent: Program.STrailingPercent);
-                //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);
-                contract = await ContractManager.CreateContract(contract.Symbol);
-                
-                Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, contract, Order);
-                Thread.Sleep(20);
+                Logger.Verbose(Name, $"{contract.Symbol} unrealized at ${unrealizedPNL} - {Math.Round(unrealizedPNL / (position * averageCost) * 100, 2)}%");
+
+                var Results = await OrderManager.CreateOrder(symbol: contract.Symbol, action: "SELL", type: "TRAIL LIMIT", amount: position, trailStopPrice: marketPrice * (1 - (Program.STrailingPercent / 100)), priceOffset: Program.SPriceOffset, trailingPercent: Program.STrailingPercent);
+
+                if (Results.Item1 == true) { 
+
+                    //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);
+                    contract = await ContractManager.CreateContract(contract.Symbol);
+
+                    Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, contract, Results.Item2);
+                    Thread.Sleep(20);
+                }
             }
         }
         //! [updateportfolio]

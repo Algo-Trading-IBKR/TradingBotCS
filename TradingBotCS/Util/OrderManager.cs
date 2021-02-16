@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TradingBotCS.Util;
 using TradingBotCS.IBApi_OverRide;
+using TradingBotCS.Database;
 
 namespace TradingBotCS
 {
@@ -13,9 +14,19 @@ namespace TradingBotCS
     {
         private static string Name = "OrderManager";
 
-        public static async Task<OrderOverride> CreateOrder(string action = "SELL", string type = "LMT", double amount = 0, double price = 1, double trailStopPrice = 0, float priceOffset = 0, double trailingPercent = 0, string tif = "GTC")
+        public static async Task<(bool,OrderOverride)> CreateOrder(string symbol="*", string action = "SELL", string type = "LMT", double amount = 0, double price = 1, double trailStopPrice = 0, float priceOffset = 0, double trailingPercent = 0, string tif = "GTC")
         {
             OrderOverride order;
+
+            List<OrderOverride> OpenOrders = await OrderRepository.GetAllOrders();
+            foreach(OrderOverride O in OpenOrders)
+            {
+                if (O.Contract.Symbol == symbol)
+                {
+                    order = new OrderOverride();
+                    return (false, order);
+                }
+            }
             
             Program.IbClient.IncrementOrderId();
             Program.IbClient.ClientSocket.reqIds(-1);
@@ -39,7 +50,7 @@ namespace TradingBotCS
             // same for all orders
             order.Tif = tif; // Time In Force, how long an order stays active, GTC stays for 3 months, DAY stays till the end of the day
 
-            return order;
+            return (true, order);
         }
 
         public static async Task<OrderOverride> CreateMKT(string action, double amount)
