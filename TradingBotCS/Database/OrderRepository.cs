@@ -52,12 +52,11 @@ namespace TradingBotCS.Database
 
         public static async Task DeleteOrders(string symbol)
         {
-            var Filter = new BsonDocument() { { "Contract.Symbol", symbol } };
+            //var Filter = new BsonDocument() { { "Contract.Symbol", symbol } };
+            var Filter = new BsonDocument();
             try
             {
-                for(int i = 0; i < 5; i++){
-                     await Collection.FindOneAndDeleteAsync(Filter); 
-                }
+                await Collection.DeleteManyAsync(Filter); 
             }
             catch (Exception)
             { }

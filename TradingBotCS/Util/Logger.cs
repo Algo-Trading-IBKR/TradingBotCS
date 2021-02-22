@@ -43,11 +43,12 @@ namespace TradingBotCS.Util
                 case LogLevel.LogLevelError:
                     Console.ForegroundColor = ConsoleColor.Red;
                     sLogLevel = "ERROR";
+                    await LogRepository.InsertLog(group, message, sLogLevel);
                     break;
                 case LogLevel.LogLevelCritical:
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     sLogLevel = "CRITICAL";
-                    MobileService.SendTextMsg($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}", Program.PhoneNumbers);
+                    //MobileService.SendTextMsg($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}", Program.PhoneNumbers);
                     await LogRepository.InsertLog(group, message, sLogLevel);
                     break;
             }

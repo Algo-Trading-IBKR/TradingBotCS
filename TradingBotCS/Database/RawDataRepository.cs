@@ -23,6 +23,7 @@ namespace TradingBotCS.Database
             Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == tickerId);
 
             DateTime Time = Converter.UnixTimeStampToDateTime(time);
+            //Console.WriteLine(Time);
             ObjectId id = new ObjectId();
             RawData Data = new RawData(id, SymbolObject.Ticker, Time, open, high, low, close);
 
@@ -33,7 +34,7 @@ namespace TradingBotCS.Database
 
             await Collection.InsertOneAsync(Doc);
 
-            SymbolObject.ExecuteStrategy();
+            await SymbolObject.ExecuteStrategy();
         }
 
         public static async Task<List<RawData>> ReadRawData(string symbol, int amount=5000)

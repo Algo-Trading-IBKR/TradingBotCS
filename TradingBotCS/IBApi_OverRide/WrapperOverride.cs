@@ -177,7 +177,7 @@ namespace TradingBotCS.IBApi_OverRide
             {
                 try
                 {
-                    if (P.Contract != null && !Program.SymbolList.Contains(P.Contract.Symbol)) PositionsRepository.RemovePosition(P.Contract.Symbol);
+                    if (P.Contract != null && !Program.OwnedStocks.Contains(P.Contract.Symbol)) PositionsRepository.RemovePosition(P.Contract.Symbol);
                 }
                 catch (Exception)
                 {
@@ -304,8 +304,8 @@ namespace TradingBotCS.IBApi_OverRide
         {
             //Console.WriteLine("HistoricalDataEnd - " + reqId + " from " + startDate + " to " + endDate);
             Program.GettingHistoricalData -= 1;
-            Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
-            SymbolObject.ExecuteStrategy(true);
+            //Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == reqId);
+            //SymbolObject.ExecuteStrategy();
             //if (SymbolObject.GapCalculated == false)
             //{
             //    SymbolObject.CalculateGap();

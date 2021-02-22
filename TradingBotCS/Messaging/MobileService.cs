@@ -26,14 +26,15 @@ namespace TradingBotCS.Messaging
 
         public static async Task SendTextMsg(List<string> contents, List<string> numbers)
         {
-            
+
             for (int i = 0; i < contents.Count; i++)
             {
                 List<TextMessage> Messages = new List<TextMessage>();
                 TextMessage Message = new TextMessage(contents[i], "sms", numbers[i]);
                 Messages.Add(Message);
-            
-                string RawData = JsonConvert.SerializeObject(new{ 
+
+                string RawData = JsonConvert.SerializeObject(new
+                {
                     messages = Messages
                 });
                 Console.WriteLine(RawData);
@@ -57,8 +58,7 @@ namespace TradingBotCS.Messaging
                     using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                     {
                         string responseContent = reader.ReadToEnd();
-                        JObject adResponse =
-                            JsonConvert.DeserializeObject<JObject>(responseContent);
+                        JObject adResponse = JsonConvert.DeserializeObject<JObject>(responseContent);
                         Logger.Verbose(Name, adResponse.ToString());
                     }
                 }
@@ -69,7 +69,7 @@ namespace TradingBotCS.Messaging
                         using (StreamReader reader = new StreamReader(webException.Response.GetResponseStream()))
                         {
                             string responseContent = reader.ReadToEnd();
-                            Logger.Error(Name, JsonConvert.DeserializeObject<JObject>(responseContent).ToString()); 
+                            Logger.Error(Name, JsonConvert.DeserializeObject<JObject>(responseContent).ToString());
                         }
                     }
                 }

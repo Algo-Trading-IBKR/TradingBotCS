@@ -41,30 +41,20 @@ namespace TradingBotCS
         public List<RawData> RawDataList { get; set; }
         public RawData LastRawData { get; set; }
         public StrategyData StrategyData { get; set; }
-        public int Position { get; set; }
         public B_StochFRSI_MACD_S_TrailingPercent Strategy { get; set; }
         public List<RawData> HistoricalData { get; set; }
         public bool GapCalculated { get; set; }
 
-        public async Task ExecuteStrategy(bool buyEnabled = false)
+        public async Task ExecuteStrategy()
         {
             try
             {
-                //if (Position > 0)
-                //{
-                //    bool Result = await Strategy.SellStrategy(AvgPrice, LastRawData, Ticker);
-                //    Logger.Warn(Name, $"{Result}");
-                //    if (Result)
-                //    {
-                //        // sell order
-                //        //Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, /*this moet een order worden. moeten we nog aanmaken. komt in orderManager*/);
-                //    }
-                //} else 
                 //if (CashBalance >= Program.TradeCash && buyEnabled == true)
-                if (buyEnabled == true)
+                if (Program.BuyEnabled == true)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
-                    bool calculationSucceeded = await CalculateData(HistoricalData);
+                    //bool calculationSucceeded = await CalculateData(HistoricalData);
+                    bool calculationSucceeded = await CalculateData(RawDataList);
 
                     if (calculationSucceeded)
                     {
@@ -75,7 +65,7 @@ namespace TradingBotCS
                         {
                             Logger.Info(Name, $"{this.Ticker}: BUY");
 
-                            //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren - IRRELEVANT NU!!!
+                            //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren
                             //Program.ActiveSymbolList.Add(this);
 
                             // market buy order
@@ -95,96 +85,104 @@ namespace TradingBotCS
         }
 
 
-        public async Task CalculateGap()
-        {
-            GapCalculated = true;
-            List<RawData> CloseList = new List<RawData>();
-            List<RawData> OpenList = new List<RawData>();
-            string queryTime;
-            //HistoricalData
-            DateTime dateValue = Timezones.GetNewYorkTime();
-            int DayOfWeek = (int)dateValue.DayOfWeek;
-            if (DayOfWeek == 1)
-            {
-                queryTime = Timezones.GetNewYorkTime().AddDays(-3).ToString("ddMMyyyy HH:mm:ss");
-            }
-            else 
-            {
-                queryTime = Timezones.GetNewYorkTime().AddDays(-1).ToString("ddMMyyyy HH:mm:ss");
-            }
+        //public async Task CalculateGap()
+        //{
+        //    GapCalculated = true;
+        //    List<RawData> CloseList = new List<RawData>();
+        //    List<RawData> OpenList = new List<RawData>();
+        //    string queryTime;
+        //    //HistoricalData
+        //    DateTime dateValue = Timezones.GetNewYorkTime();
+        //    int DayOfWeek = (int)dateValue.DayOfWeek;
+        //    if (DayOfWeek == 1)
+        //    {
+        //        queryTime = Timezones.GetNewYorkTime().AddDays(-3).ToString("ddMMyyyy HH:mm:ss");
+        //    }
+        //    else 
+        //    {
+        //        queryTime = Timezones.GetNewYorkTime().AddDays(-1).ToString("ddMMyyyy HH:mm:ss");
+        //    }
 
-            string[] words = queryTime.Split(' ');
-            queryTime = words[0] + " " +"15:45:00";
-            queryTime = queryTime.Insert(2, "-");
-            queryTime = queryTime.Insert(5, "-");
-            DateTime CloseTime = Convert.ToDateTime(queryTime);
+        //    string[] words = queryTime.Split(' ');
+        //    queryTime = words[0] + " " +"15:45:00";
+        //    queryTime = queryTime.Insert(2, "-");
+        //    queryTime = queryTime.Insert(5, "-");
+        //    DateTime CloseTime = Convert.ToDateTime(queryTime);
 
-            queryTime = Timezones.GetNewYorkTime().ToString("ddMMyyyy HH:mm:ss");
-            words = queryTime.Split(' ');
-            queryTime = words[0] +" "+ "09:30:00";
-            //queryTime = words[0] + " " + "00:30:00";    
-            queryTime = queryTime.Insert(2, "-");
-            queryTime = queryTime.Insert(5, "-");
-            DateTime OpenTime = Convert.ToDateTime(queryTime);
-            // if priceRange < 0.97 and priceRange > 0.88:
-            foreach (RawData item in HistoricalData)
-            {
-                if (item.DateTime == CloseTime)
-                {
-                    CloseList.Add(item);
-                }
-                else if (item.DateTime == OpenTime)
-                {
-                    OpenList.Add(item);
-                }    
-            }
-            if(OpenList.Count == 1 && CloseList.Count == 1)
-            {
-                double gap = (OpenList[0].Close - CloseList[0].Close) / CloseList[0].Close * 100;
-                if(gap > MinimumGap && gap <= MaximumGap)
-                {
-                    Program.CorrectGapList.Add(this);
+        //    queryTime = Timezones.GetNewYorkTime().ToString("ddMMyyyy HH:mm:ss");
+        //    words = queryTime.Split(' ');
+        //    queryTime = words[0] +" "+ "09:30:00";
+        //    //queryTime = words[0] + " " + "00:30:00";    
+        //    queryTime = queryTime.Insert(2, "-");
+        //    queryTime = queryTime.Insert(5, "-");
+        //    DateTime OpenTime = Convert.ToDateTime(queryTime);
+        //    // if priceRange < 0.97 and priceRange > 0.88:
+        //    foreach (RawData item in HistoricalData)
+        //    {
+        //        if (item.DateTime == CloseTime)
+        //        {
+        //            CloseList.Add(item);
+        //        }
+        //        else if (item.DateTime == OpenTime)
+        //        {
+        //            OpenList.Add(item);
+        //        }    
+        //    }
+        //    if(OpenList.Count == 1 && CloseList.Count == 1)
+        //    {
+        //        double gap = (OpenList[0].Close - CloseList[0].Close) / CloseList[0].Close * 100;
+        //        if(gap > MinimumGap && gap <= MaximumGap)
+        //        {
+        //            Program.CorrectGapList.Add(this);
                     
-                    Logger.Info(Name, $"Correct Gap: {this.Ticker} {gap}%");
-                }
-            }
-            else
-            {
-                Logger.Error(Name, "Gap Calculation Failed");
-            }
+        //            Logger.Info(Name, $"Correct Gap: {this.Ticker} {gap}%");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Logger.Error(Name, "Gap Calculation Failed");
+        //    }
 
-        }
+        //}
 
-        public async Task<bool> CalculateData(List<RawData> data)
+        public async Task<bool> CalculateData(List<RawData> rawdata)
         {
             try
             {
-                RawDataList = RawDataList.OrderBy(R => R.DateTime).ToList();
-                
-                if (data.Count < 40)
-                {
-                    return false;
-                }
+                if (rawdata.Count < 200) return false;
+                var data = rawdata.OrderBy(R => R.DateTime).ToList<RawData>();
+
                 if (LastRawData == null)
                 {
                     LastRawData = data.Last();
                 }
-                List<decimal> RawPriceList = new List<decimal>();
 
-                if (data.Count > 50)
+                List<RawData> StratData = new List<RawData>();
+                // lijst filteren op kwartieren en dan lastRawData toevoegen
+                foreach (RawData R in data)
                 {
-                    foreach (RawData R in data.GetRange((data.Count - 40), 40)) RawPriceList.Add((decimal)R.Close);
+                    if((R.DateTime.Minute == 00 || R.DateTime.Minute == 15 || R.DateTime.Minute == 30 || R.DateTime.Minute == 45) && R.DateTime.Second == 0) {
+                        StratData.Add(R);
+                    }
+                }
+                StratData.Add(LastRawData);
+                if (StratData.Count < 50) return false;
+
+                List<decimal> RawPriceList = new List<decimal>();
+                if (StratData.Count > 50)
+                {
+                    foreach (RawData R in StratData.GetRange((StratData.Count - 50), 50)) RawPriceList.Add((decimal)R.Close);
                 }
                 else
                 {
-                    foreach (RawData R in data) RawPriceList.Add((decimal)R.Close);
+                    foreach (RawData R in StratData) RawPriceList.Add((decimal)R.Close);
                 }
 
                 List<decimal> Rsi = await IndicatorRSI.RSI(RawPriceList, RsiPeriod);
 
-                var StochRsi = await IndicatorRSI.stochRSI(Rsi, FastKperiod, FastDPeriod);
-                List<decimal> K = StochRsi.Item1;
-                List<decimal> D = StochRsi.Item2;
+                //var StochRsi = await IndicatorRSI.stochRSI(Rsi, FastKperiod, FastDPeriod);
+                //List<decimal> K = StochRsi.Item1;
+                //List<decimal> D = StochRsi.Item2;
 
                 List<decimal> Macd = await IndicatorMACD.MACD(RawPriceList, MacdSlowPeriod, MacdFastPeriod);
                 List<decimal> MacdSignal = await IndicatorMACD.MACDsignal(Macd, MacdSignalPeriod);
@@ -198,7 +196,7 @@ namespace TradingBotCS
                 //Console.WriteLine(MacdHist.Count);
 
                 //StrategyData = new StrategyData(LastRawData.Close, K.Last(), D.Last(), Macd.Last(), MacdHist.Last(), MacdSignal.Last(), LastRawData.DateTime);
-                StrategyData = new StrategyData(LastRawData.Close, 0m, 0m, Macd.Last(), MacdHist.Last(), MacdSignal.Last(), LastRawData.DateTime);
+                StrategyData = new StrategyData(Ticker, LastRawData.Close, Rsi.Last(), 0m, 0m, Macd.Last(), MacdHist.Last(), MacdSignal.Last(), LastRawData.DateTime);
                 //Console.WriteLine(StrategyData.Price);
                 //Console.WriteLine(StrategyData.StochFRSIK);
                 //Console.WriteLine(StrategyData.StochFRSID);
@@ -207,7 +205,6 @@ namespace TradingBotCS
                 //Console.WriteLine(StrategyData.MacdSignal);
                 //Console.WriteLine(StrategyData.DateTime);
                 return true;
-
             }
             catch (Exception ex)
             {

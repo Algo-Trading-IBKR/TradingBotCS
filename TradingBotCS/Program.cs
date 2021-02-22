@@ -97,6 +97,7 @@ namespace TradingBotCS
 
             await UpdateConfigs();
 
+            //OrderRepository.DeleteOrders("*"); // reset orders, orders that get executed do not get removed from DB yet, this is a temporary solution
 
             //List<string> Messages = new List<string>() { "test 3", "HA GAYY" };
             //List<string> Numbers = new List<string>() { "32476067619", "32470579542" };
@@ -140,11 +141,13 @@ namespace TradingBotCS
 
                         NYtime = Timezones.GetNewYorkTime();
 
-                        //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
-                        if (MarketState && NYtime.Hour == 23-6 && NYtime.Minute == 44)
+                        if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute-1)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
+
+                            OrderRepository.DeleteOrders("*"); // reset orders, orders that get executed do not get removed from DB yet, this is a temporary solution
+
                             if (!IbClient.ClientSocket.IsConnected())
                             {
                                 ApiConnection.Connect();
@@ -162,11 +165,11 @@ namespace TradingBotCS
                                 ContractManager.RequestSymbolContracts(SymbolObjects);
 
                                 //realtime bars opvragen voor symbollist
-                                //DataManager.GetRealTimeBars(SymbolObjects);
+                                DataManager.GetRealTimeBars(SymbolObjects);
 
-                                DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, duration: "1 M"); // nog niet getest
+                                //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, duration: "1 M"); // nog niet getest
                                 //checkTime();
-                                //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, 15, 45, 99, 99); // nog niet getest
+                                //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, duration: "1 W", barSize: "3 mins"); // nog niet getest
                                 Thread.Sleep(60000);
 
                             }
