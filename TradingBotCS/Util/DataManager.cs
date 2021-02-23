@@ -5,16 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TradingBotCS.Database;
 
 namespace TradingBotCS.Util
 {
     public class DataManager
     {
-        private static string Name = "Data Manager";
+        private static readonly string Name = "Data Manager";
+
+        public static async Task ReadRawData(List<Symbol> symbols)
+        {
+            foreach (Symbol s in symbols) s.RawDataList = await RawDataRepository.ReadRawData(s.Ticker, 10000);
+        }
 
         public static async Task GetRealTimeData(List<Symbol> symbolObjects, string generickTickList = "")
         {
-            if (symbolObjects.Count() > 100) Logger.Warn(Name, $"Maximum allowed data request is 100, length of list is {symbolObjects.Count()}"); else Logger.Info(Name, $"Length of Symbol list: {symbolObjects.Count()}");
+            if (symbolObjects.Count > 100) Logger.Warn(Name, $"Maximum allowed data request is 100, length of list is {symbolObjects.Count}"); else Logger.Info(Name, $"Length of Symbol list: {symbolObjects.Count}");
             foreach (Symbol S in symbolObjects)
             {
                 Program.IbClient.ClientSocket.reqMarketDataType(4); // verwijderen voor live data of naar 1 veranderen
@@ -24,7 +30,7 @@ namespace TradingBotCS.Util
 
         public static async Task GetRealTimeBars(List<Symbol> symbolObjects, int barSize = 5, string type = "MIDPOINT", bool useRTH = true)
         {
-            if (symbolObjects.Count() > 100) Logger.Warn(Name, $"Maximum allowed data request is 100, length of list is {symbolObjects.Count()}"); else Logger.Info(Name, $"Length of Symbol list: {symbolObjects.Count()}");
+            if (symbolObjects.Count > 100) Logger.Warn(Name, $"Maximum allowed data request is 100, length of list is {symbolObjects.Count}"); else Logger.Info(Name, $"Length of Symbol list: {symbolObjects.Count}");
             foreach (Symbol S in symbolObjects)
             {
                 //IbClient.ClientSocket.reqMktData(S.Id, S.Contract, "", false, false, MktDataOptions);
