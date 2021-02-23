@@ -23,6 +23,7 @@ namespace TradingBotCS.Database
 
             BsonDocument Doc = commissionReport.ToBsonDocument();
             await Collection.InsertOneAsync(Doc);
+            OrderRepository.DeleteOrders(commissionReport.Execution.Order.Contract.Symbol);
         }
 
         public static async Task<List<CommissionReportOverride>> ReadCommissionReports(string symbol, int amount = 5000)

@@ -26,7 +26,7 @@ namespace TradingBotCS.Database
         public static async Task UpsertOrder(OrderOverride order)
         {
             BsonDocument Doc;
-            var Filter = new BsonDocument(){ { "Contract.Symbol", order.Contract.Symbol } };
+            var Filter = new BsonDocument(){ { "Contract.ConId", order.Contract.ConId } };
             try
             {
                 Doc = await Collection.Find(Filter).Limit(1).SingleAsync();

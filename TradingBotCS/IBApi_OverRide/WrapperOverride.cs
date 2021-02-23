@@ -40,10 +40,16 @@ namespace TradingBotCS.IBApi_OverRide
             }else if (Program.WarningCodes.Contains(errorCode))
             {
                 Logger.Warn(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
+            }else if (errorCode == 200)
+            {
+                Symbol result = Program.SymbolObjects.Find(x => x.Id == id);
+                if (result != null) Logger.Error(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} {result.Ticker} \n");
             }else
             {
                 Logger.Error(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
             }
+
+            
 
         }
         //! [error]
@@ -129,10 +135,11 @@ namespace TradingBotCS.IBApi_OverRide
         //! [openorder]
         public override async void openOrder(int orderId, Contract contract, Order order, OrderState orderState)
         {
-            // Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account +
-            //    ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
-            //    ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
+             //Console.WriteLine("OpenOrder. PermID: " + order.PermId + ", ClientId: " + order.ClientId + ", OrderId: " + orderId + ", Account: " + order.Account +
+             //   ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
+             //   ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
             OrderOverride Order = new OrderOverride(order, contract);
+            //Console.WriteLine(Order.OrderType);
             OrderRepository.UpsertOrder(Order);
             //await OrderManager.CheckOrder(order);
         }

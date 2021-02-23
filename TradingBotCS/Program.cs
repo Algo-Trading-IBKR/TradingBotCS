@@ -71,7 +71,7 @@ namespace TradingBotCS
 
         // market data checker
         //public static List<string> SymbolList = new List<string>(); //either made by a scanner or manually
-        public static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PEIX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
+        public static List<string> SymbolList = new List<string>() { "ACHC", "ARAY", "ALVR", "ATEC", "ALXO", "AMTI", "ABUS", "AYTU", "BEAM", "BLFS", "CAN", "CRDF", "CDNA", "CELH", "CDEV", "CHFS", "CTRN", "CLSK", "CVGI", "CUTR", "DNLI", "FATE", "FPRX", "FRHC", "FNKO", "GEVO", "GDEN", "GRBK", "GRPN", "GRWG", "HMHC", "IMAB", "IMVT", "NTLA", "KURA", "LE", "LXRX", "LOB", "LAZR", "AMD", "RRR", "IBKR", "MARA", "MESA", "MEOH", "MVIS", "COOP", "NNDM", "NSTG", "NNOX", "NFE", "NXGN", "OPTT", "OCUL", "ORBC", "OESX", "PENN", "PSNL", "PLUG", "PGEN", "QNST", "RRGB", "REGI", "SGMS", "RUTH", "RIOT", "SWTX", "SPWR", "SUNW", "SGRY", "SNDX", "TCBI", "TA", "UPWK", "VSTM", "WPRT", "WWR", "XPEL" };
         
         public static Symbol TestSymbol;
         public static bool MarketState = true;
@@ -127,7 +127,7 @@ namespace TradingBotCS
                         if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
                             ApiConnection.Connect();
-                            OrderRepository.DeleteOrders("*");
+                            //OrderRepository.DeleteOrders("*");
                             Thread.Sleep(2000);
                         }
                         else if (IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
@@ -144,7 +144,7 @@ namespace TradingBotCS
                         NYtime = Timezones.GetNewYorkTime();
 
                         //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute-1)
-                        if (MarketState && NYtime.Hour == 16-6 && NYtime.Minute == 48)
+                        if (MarketState && NYtime.Hour == 19-6 && NYtime.Minute == 21)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
