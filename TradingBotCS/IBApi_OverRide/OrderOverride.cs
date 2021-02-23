@@ -26,6 +26,23 @@ namespace TradingBotCS.IBApi_OverRide
                 _id = new ObjectId();
                 DateTime = DateTime.Now;
                 Contract = new Contract();
+                OrderId = order.OrderId;
+                ClientId = order.ClientId;
+                PermId = order.PermId;
+                TotalQuantity = order.TotalQuantity;
+                OcaType = order.OcaType;
+                ParentId = order.ParentId;
+                DisplaySize = order.DisplaySize;
+                TriggerMethod = order.TriggerMethod;
+                ShortSaleSlot = order.ShortSaleSlot;
+                DiscretionaryAmt = order.DiscretionaryAmt;
+                AuctionStrategy = order.AuctionStrategy;
+                ContinuousUpdate = order.ContinuousUpdate;
+                ReferenceContractId = order.ReferenceContractId;
+                PeggedChangeAmount = order.PeggedChangeAmount;
+                ReferenceChangeAmount = order.ReferenceChangeAmount;
+                AdjustableTrailingUnit = order.AdjustableTrailingUnit;
+
                 Action = order.Action;
                 OrderType = order.OrderType;
                 Tif = order.Tif;
@@ -148,6 +165,23 @@ namespace TradingBotCS.IBApi_OverRide
                 _id = new ObjectId();
                 DateTime = DateTime.Now;
                 Contract = new Contract();
+                OrderId = order.OrderId;
+                ClientId = order.ClientId;
+                PermId = order.PermId;
+                TotalQuantity = order.TotalQuantity;
+                OcaType = order.OcaType;
+                ParentId = order.ParentId;
+                DisplaySize = order.DisplaySize;
+                TriggerMethod = order.TriggerMethod;
+                ShortSaleSlot = order.ShortSaleSlot;
+                DiscretionaryAmt = order.DiscretionaryAmt;
+                AuctionStrategy = order.AuctionStrategy;
+                ContinuousUpdate = order.ContinuousUpdate;
+                ReferenceContractId = order.ReferenceContractId;
+                PeggedChangeAmount = order.PeggedChangeAmount;
+                ReferenceChangeAmount = order.ReferenceChangeAmount;
+                AdjustableTrailingUnit = order.AdjustableTrailingUnit;
+
                 Action = order.Action;
                 OrderType = order.OrderType;
                 Tif = order.Tif;
@@ -269,6 +303,23 @@ namespace TradingBotCS.IBApi_OverRide
             {
                 _id = new ObjectId();
                 DateTime = DateTime.Now;
+                OrderId = order.OrderId;
+                ClientId = order.ClientId;
+                PermId = order.PermId;
+                TotalQuantity = order.TotalQuantity;
+                OcaType = order.OcaType;
+                ParentId = order.ParentId;
+                DisplaySize = order.DisplaySize;
+                TriggerMethod = order.TriggerMethod;
+                ShortSaleSlot = order.ShortSaleSlot;
+                DiscretionaryAmt = order.DiscretionaryAmt;
+                AuctionStrategy = order.AuctionStrategy;
+                ContinuousUpdate = order.ContinuousUpdate;
+                ReferenceContractId = order.ReferenceContractId;
+                PeggedChangeAmount = order.PeggedChangeAmount;
+                ReferenceChangeAmount = order.ReferenceChangeAmount;
+                AdjustableTrailingUnit = order.AdjustableTrailingUnit;
+
                 Action = order.Action;
                 OrderType = order.OrderType;
                 Tif = order.Tif;

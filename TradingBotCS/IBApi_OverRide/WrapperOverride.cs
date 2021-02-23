@@ -202,8 +202,6 @@ namespace TradingBotCS.IBApi_OverRide
             //    + ": Position: " + position + ", MarketPrice: " + marketPrice + ", MarketValue: " + marketValue + ", AverageCost: " + averageCost
             //    + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
 
-            // als unrealized > 5% stuur sell order met limit price op die 5%
-
             if (Program.SUseTrailLimitOrders && position > 0 && unrealizedPNL / (averageCost * position) > Program.SMinimumProfit)
             {
                 Logger.Verbose(Name, $"{contract.Symbol} unrealized at ${unrealizedPNL} - {Math.Round(unrealizedPNL / (position * averageCost) * 100, 2)}%");
