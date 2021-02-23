@@ -19,8 +19,7 @@ namespace TradingBotCS.Database
 
         public static async Task InsertReport(CommissionReportOverride commissionReport)
         {
-
-
+            commissionReport.Execution = await ExecutionRepository.GetExecutionById(commissionReport.ExecId);
 
             BsonDocument Doc = commissionReport.ToBsonDocument();
             await Collection.InsertOneAsync(Doc);
@@ -30,24 +29,15 @@ namespace TradingBotCS.Database
         {
             List<CommissionReportOverride> Data = new List<CommissionReportOverride>();
 
-            var Filter = new BsonDocument() { { "Symbol", symbol } };
+            var Filter = new BsonDocument() { { "Execution.Order.Contract.Symbol", symbol } };
             var Sort = Builders<BsonDocument>.Sort.Descending("DateTime");
             dynamic Doc;
             Doc = await Collection.Find(Filter).Limit(amount).Sort(Sort).ToListAsync();
             foreach (BsonDocument d in Doc)
             {
-                //RawData Datapoint = new RawData();
-                //Datapoint.Symbol = d["Symbol"].AsString;
-                //Datapoint.DateTime = d["DateTime"].ToUniversalTime();
-                //Datapoint.Open = d["Open"].AsDouble;
-                //Datapoint.High = d["High"].AsDouble;
-                //Datapoint.Low = d["Low"].AsDouble;
-                //Datapoint.Close = d["Close"].AsDouble;
-
                 CommissionReportOverride Datapoint = BsonSerializer.Deserialize<CommissionReportOverride>(d);
 
                 Data.Add(Datapoint);
-
             }
             return Data;
         }

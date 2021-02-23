@@ -16,6 +16,8 @@ namespace TradingBotCS.IBApi_OverRide
 
         public DateTime DateTime { get; set; }
 
+        public ExecutionOverride Execution { get; set; }
+
         public CommissionReportOverride(CommissionReport commissionReport)
         {
             try

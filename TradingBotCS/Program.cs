@@ -32,6 +32,7 @@ namespace TradingBotCS
         public static float MaxTradeValue;
         public static int MarketHour;
         public static int MarketMinute;
+        public static float CashBalance;
 
         // Messaging
         public static List<string> PhoneNumbers;
@@ -105,7 +106,7 @@ namespace TradingBotCS
 
             //MongoDBtest();
 
-            //test();
+            //Test();
 
             //PaperTrailTest();
 
@@ -126,11 +127,12 @@ namespace TradingBotCS
                         if (!IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
                             ApiConnection.Connect();
+                            OrderRepository.DeleteOrders("*");
                             Thread.Sleep(2000);
                         }
                         else if (IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
-                            Thread.Sleep(5000);
+                            Thread.Sleep(2000);
                             Market.CheckMartketHours();
                             if (MarketState == false && MarketClosedMessage == false)
                             {
@@ -141,12 +143,13 @@ namespace TradingBotCS
 
                         NYtime = Timezones.GetNewYorkTime();
 
-                        if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute-1)
+                        //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute-1)
+                        if (MarketState && NYtime.Hour == 16-6 && NYtime.Minute == 48)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
 
-                            OrderRepository.DeleteOrders("*"); // reset orders, orders that get executed do not get removed from DB yet, this is a temporary solution
+                            //OrderRepository.DeleteOrders("*"); // reset orders, orders that get executed do not get removed from DB yet, this is a temporary solution
 
                             if (!IbClient.ClientSocket.IsConnected())
                             {
@@ -162,6 +165,8 @@ namespace TradingBotCS
 
                                 SymbolObjects = SymbolManager.CreateSymbolObjects(SymbolList);
 
+                                DataManager.ReadRawData(SymbolObjects);
+
                                 ContractManager.RequestSymbolContracts(SymbolObjects);
 
                                 //realtime bars opvragen voor symbollist
@@ -170,7 +175,7 @@ namespace TradingBotCS
                                 //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, duration: "1 M"); // nog niet getest
                                 //checkTime();
                                 //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, duration: "1 W", barSize: "3 mins"); // nog niet getest
-                                Thread.Sleep(60000);
+                                Thread.Sleep(120000);
 
                             }
                         }
@@ -319,7 +324,7 @@ namespace TradingBotCS
         //    }
         //}
 
-        public static async void test()
+        public static async void Test()
         {
             List<double> intList1 = new List<double>() { 54.3, 54.3, 54.3, 54.31, 54.3, 54.29, 54.32, 54.28, 54.27, 54.275, 54.27, 54.27, 54.265, 54.27, 54.275, 54.28, 54.28, 54.265, 54.265, 54.265, 54.265, 54.27, 54.265, 54.27, 54.28, 54.27, 54.27, 54.275, 54.28, 54.295, 54.35, 54.37, 54.36, 54.34, 54.34, 54.32, 54.32, 54.31, 54.35, 54.31, 54.32, 54.3, 54.3, 54.32, 54.31, 54.32, 54.33, 54.31, 54.29, 54.295, 54.3, 54.3, 54.33, 54.34, 54.34, 54.34, 54.335, 54.34, 54.33, 54.34, 54.345, 54.34, 54.35, 54.36, 54.355, 54.33, 54.33, 54.33 };
 

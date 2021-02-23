@@ -17,7 +17,6 @@ namespace TradingBotCS
     public class Symbol
     {
         //Class Variables
-        public static float CashBalance { get; set; }
         private static string Name = "Symbol";
 
         // Market Gap Parameters
@@ -50,7 +49,7 @@ namespace TradingBotCS
             try
             {
                 //if (CashBalance >= Program.TradeCash && buyEnabled == true)
-                if (Program.BuyEnabled == true)
+                if (Program.BuyEnabled == true && Program.CashBalance >= Program.MaxTradeValue)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
                     //bool calculationSucceeded = await CalculateData(HistoricalData);
@@ -169,14 +168,7 @@ namespace TradingBotCS
                 if (StratData.Count < 50) return false;
 
                 List<decimal> RawPriceList = new List<decimal>();
-                if (StratData.Count > 50)
-                {
-                    foreach (RawData R in StratData.GetRange((StratData.Count - 50), 50)) RawPriceList.Add((decimal)R.Close);
-                }
-                else
-                {
-                    foreach (RawData R in StratData) RawPriceList.Add((decimal)R.Close);
-                }
+                foreach (RawData R in StratData.GetRange((StratData.Count - 50), 50)) RawPriceList.Add((decimal)R.Close);
 
                 List<decimal> Rsi = await IndicatorRSI.RSI(RawPriceList, RsiPeriod);
 

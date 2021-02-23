@@ -16,11 +16,8 @@ namespace TradingBotCS.IBApi_OverRide
 
         public DateTime DateTime { get; set; }
 
-        public string Symbol { get; set; }
+        public OrderOverride Order { get; set; }
 
-        public string Action { get; set; }
-
-        public string OrderType { get; set; }
 
         public ExecutionOverride(Execution execution)
         {

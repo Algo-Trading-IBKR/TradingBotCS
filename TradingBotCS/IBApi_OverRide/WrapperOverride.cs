@@ -236,7 +236,7 @@ namespace TradingBotCS.IBApi_OverRide
 
             if (key.ToLower().Equals("cashbalance") && currency.ToLower() == "usd")
             {
-                Symbol.CashBalance = float.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
+                Program.CashBalance = float.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
                 Logger.Info(Name, $"Cash: ${value}");
             }else if (key.ToLower().Equals("unrealizedpnl") && currency.ToLower() == "usd")
             {
