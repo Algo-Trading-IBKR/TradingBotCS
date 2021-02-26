@@ -17,8 +17,8 @@ namespace TradingBotCS.Controllers
         public AccountController() { }
 
         [HttpGet]
-        [Route("{key}/{allItems}")]
-        public async Task<ActionResult> GetAccountInfo(string key, bool allItems = false)
+        //[Route("{key}/{allItems}")]
+        public async Task<ActionResult> GetAccountInfo(string key="cashbalance", bool allItems = false)
         {
             List<AccountInfo> Result = await AccountRepository.ReadAccountUpdate(key, allItems);
             return new OkObjectResult(Result);

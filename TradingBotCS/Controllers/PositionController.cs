@@ -15,29 +15,38 @@ namespace TradingBotCS.Controllers
     {
         public PositionController() { }
 
-        [HttpGet]
-        [Route("all")]
-        public async Task<IActionResult> GetAllPositions()
-        {
-            try
-            {
-                List<Position> Results = await PositionsRepository.ReadPositions(allItems: true);
-                return new OkObjectResult(Results);
-            }
-            catch (Exception)
-            {
-                return new StatusCodeResult(500);
-            }
-        }
+        //[HttpGet]
+        //[Route("all")]
+        //public async Task<IActionResult> GetAllPositions()
+        //{
+        //    try
+        //    {
+        //        List<Position> Results = await PositionsRepository.ReadPositions(allItems: true);
+        //        return new OkObjectResult(Results);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return new StatusCodeResult(500);
+        //    }
+        //}
 
         [HttpGet]
-        [Route("{symbol}")]
-        public async Task<IActionResult> GetPosition(string symbol)
+        //[Route("{symbol}")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+        public async Task<IActionResult> GetPositions(string symbol = "*", bool allItems = false)
         {
             try
             {
                 Console.WriteLine(symbol);
-                List<Position> Results = await PositionsRepository.ReadPositions(symbol);
+                List<Position> Results = new List<Position>();
+                if (allItems == true)
+                {
+                    Results = await PositionsRepository.ReadPositions(allItems: true);
+                }
+                else
+                {
+                    Results = await PositionsRepository.ReadPositions(symbol);
+                }
                 return new OkObjectResult(Results);
             }
             catch (Exception)

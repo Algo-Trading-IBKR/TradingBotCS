@@ -354,7 +354,6 @@ namespace TradingBotCS.IBApi_OverRide
                 ReferenceExchange = order.ReferenceExchange;
                 AdjustedOrderType = order.AdjustedOrderType;
                 Conditions = order.Conditions;
-                Tier = order.Tier;
 
                 Contract = contract;
                 LmtPrice = order.LmtPrice;

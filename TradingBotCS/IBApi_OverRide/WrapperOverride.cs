@@ -214,6 +214,7 @@ namespace TradingBotCS.IBApi_OverRide
                     contract = await ContractManager.CreateContract(contract.Symbol);
 
                     Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, contract, Results.Item2);
+                    Logger.Info(Name, $"Sent {Results.Item2.Action} {Results.Item2.OrderType} for {contract.Symbol}");
                     Thread.Sleep(20);
                 }
             }

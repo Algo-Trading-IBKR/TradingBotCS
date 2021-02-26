@@ -62,7 +62,7 @@ namespace TradingBotCS
                         //Logger.Info(Name, $"{Result}");
                         if (Results.Item1)
                         {
-                            Logger.Info(Name, $"{this.Ticker}: BUY");
+                            //Logger.Info(Name, $"{this.Ticker}: BUY");
 
                             //symbolobject toevoegen aan een nieuwe lijst waarvoor we data moeten ophalen en execute strategy dan blijven uitvoeren
                             //Program.ActiveSymbolList.Add(this);
@@ -72,6 +72,7 @@ namespace TradingBotCS
                             if (Result.Item1 == true)
                             {
                                 Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Result.Item2);
+                                Logger.Info(Name, $"Sent {Result.Item2.Action} {Result.Item2.OrderType} for {this.Ticker}");
                             }
                         }
                     }
@@ -188,7 +189,7 @@ namespace TradingBotCS
                 //Console.WriteLine(MacdHist.Count);
 
                 //StrategyData = new StrategyData(LastRawData.Close, K.Last(), D.Last(), Macd.Last(), MacdHist.Last(), MacdSignal.Last(), LastRawData.DateTime);
-                StrategyData = new StrategyData(Ticker, LastRawData.Close, Rsi.Last(), 0m, 0m, Macd.Last(), MacdHist.Last(), MacdSignal.Last(), LastRawData.DateTime);
+                this.StrategyData = new StrategyData(Ticker, LastRawData.Close, Rsi.Last(), 0m, 0m, Macd.Last(), MacdHist.Last(), MacdSignal.Last(), LastRawData.DateTime);
                 //Console.WriteLine(StrategyData.Price);
                 //Console.WriteLine(StrategyData.StochFRSIK);
                 //Console.WriteLine(StrategyData.StochFRSID);
