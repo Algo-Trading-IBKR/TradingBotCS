@@ -104,6 +104,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [commissionreport]
         public override void commissionReport(CommissionReport commissionReport)
         {
+            if (commissionReport.RealizedPNL >= 1000000) commissionReport.RealizedPNL = 0;
             CommissionReportOverride commissionReportOverride = new CommissionReportOverride(commissionReport);
             CommissionRepository.InsertReport(commissionReportOverride);
             Console.WriteLine("CommissionReport. " + commissionReport.ExecId + " - " + commissionReport.Commission + " " + commissionReport.Currency + " RPNL " + commissionReport.RealizedPNL);
@@ -139,6 +140,10 @@ namespace TradingBotCS.IBApi_OverRide
              //   ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
              //   ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
             OrderOverride Order = new OrderOverride(order, contract);
+
+            Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Contract.Symbol == contract.Symbol);
+            if (Order.Action == "SELL") SymbolObject.SOrder = true;
+            else if(Order.Action == "BUY") SymbolObject.BOrder = true;
             //Console.WriteLine(Order.OrderType);
             OrderRepository.UpsertOrder(Order);
             //await OrderManager.CheckOrder(order);
@@ -202,14 +207,16 @@ namespace TradingBotCS.IBApi_OverRide
             //    + ": Position: " + position + ", MarketPrice: " + marketPrice + ", MarketValue: " + marketValue + ", AverageCost: " + averageCost
             //    + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
 
-            if (Program.SUseTrailLimitOrders && position > 0 && (unrealizedPNL / (averageCost * position)) > Program.SMinimumProfit)
+            Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Contract.Symbol == contract.Symbol);
+
+            if (Program.SUseTrailLimitOrders && position > 0 && (unrealizedPNL / (averageCost * position)) > Program.SMinimumProfit && SymbolObject.SOrder == false)
             {
                 Logger.Verbose(Name, $"{contract.Symbol} unrealized at ${unrealizedPNL} - {Math.Round(unrealizedPNL / (position * averageCost) * 100, 2)}%");
 
                 var Results = await OrderManager.CreateOrder(symbol: contract.Symbol, action: "SELL", type: "TRAIL LIMIT", amount: position, trailStopPrice: marketPrice * (1 - (Program.STrailingPercent / 100)), priceOffset: Program.SPriceOffset, trailingPercent: Program.STrailingPercent);
 
-                if (Results.Item1 == true) { 
-
+                if (Results.Item1 == true) {
+                    SymbolObject.SOrder = true;
                     //OrderOverride Order = await OrderManager.CreateOrder("SELL", "MKT", position);
                     contract = await ContractManager.CreateContract(contract.Symbol);
 
