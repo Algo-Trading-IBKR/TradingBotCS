@@ -31,6 +31,9 @@ namespace TradingBotCS
         private int MacdFastPeriod = 12;
         private int MacdSignalPeriod = 9;
 
+        public bool BOrder { get; set; }
+        public bool SOrder { get; set; }
+
         public string Ticker { get; set; }
         public int Id { get; set; }
         public Contract Contract { get; set; }
@@ -49,7 +52,7 @@ namespace TradingBotCS
             try
             {
                 //if (CashBalance >= Program.TradeCash && buyEnabled == true)
-                if (Program.BuyEnabled == true && Program.CashBalance >= Program.MaxTradeValue*2)
+                if (Program.BuyEnabled == true && Program.CashBalance >= Program.MaxTradeValue*2 && this.BOrder == false)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
                     //bool calculationSucceeded = await CalculateData(HistoricalData);
@@ -74,6 +77,7 @@ namespace TradingBotCS
 
                             if (Result.Item1 == true)
                             {
+                                this.BOrder = true;
                                 Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Result.Item2);
                                 Logger.Info(Name, $"Sent {Result.Item2.Action} {Result.Item2.OrderType} for {this.Ticker}");
                             }
@@ -218,6 +222,8 @@ namespace TradingBotCS
             this.HistoricalData = new List<RawData>();
             this.RawDataList = new List<RawData>();
             this.GapCalculated = false;
+            this.BOrder = false;
+            this.SOrder = false;
         }
 
         public override string ToString()
