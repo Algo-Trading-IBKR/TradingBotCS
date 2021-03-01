@@ -202,7 +202,7 @@ namespace TradingBotCS.IBApi_OverRide
             //    + ": Position: " + position + ", MarketPrice: " + marketPrice + ", MarketValue: " + marketValue + ", AverageCost: " + averageCost
             //    + ", UnrealizedPNL: " + unrealizedPNL + ", RealizedPNL: " + realizedPNL + ", AccountName: " + accountName);
 
-            if (Program.SUseTrailLimitOrders && position > 0 && unrealizedPNL / (averageCost * position) > Program.SMinimumProfit)
+            if (Program.SUseTrailLimitOrders && position > 0 && (unrealizedPNL / (averageCost * position)) > Program.SMinimumProfit)
             {
                 Logger.Verbose(Name, $"{contract.Symbol} unrealized at ${unrealizedPNL} - {Math.Round(unrealizedPNL / (position * averageCost) * 100, 2)}%");
 

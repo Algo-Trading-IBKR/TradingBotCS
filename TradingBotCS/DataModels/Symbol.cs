@@ -49,7 +49,7 @@ namespace TradingBotCS
             try
             {
                 //if (CashBalance >= Program.TradeCash && buyEnabled == true)
-                if (Program.BuyEnabled == true && Program.CashBalance >= Program.MaxTradeValue)
+                if (Program.BuyEnabled == true && Program.CashBalance >= Program.MaxTradeValue*2)
                 {
                     // Strategy Data hier pas berekenen, cpu uitsparen als position 0 is en geld onder minimum
                     //bool calculationSucceeded = await CalculateData(HistoricalData);
@@ -68,7 +68,10 @@ namespace TradingBotCS
                             //Program.ActiveSymbolList.Add(this);
 
                             // market buy order
-                            var Result = await OrderManager.CreateOrder("BUY", "MKT", amount:Results.Item2);
+
+                            //var Result = await OrderManager.CreateOrder("BUY", "MKT", amount:Results.Item2);
+                            var Result = await OrderManager.CreateOrder(symbol: this.Ticker, action: "BUY", type: "TRAIL LIMIT", amount: Results.Item2, trailStopPrice: LastRawData.Close * (1 + (Program.BTrailingPercent / 100)), priceOffset: Program.BPriceOffset, trailingPercent: Program.BTrailingPercent);
+
                             if (Result.Item1 == true)
                             {
                                 Program.IbClient.ClientSocket.placeOrder(Program.IbClient.NextOrderId, this.Contract, Result.Item2);
