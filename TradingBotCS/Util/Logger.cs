@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TradingBotCS.Database;
 using TradingBotCS.Messaging;
@@ -55,6 +56,7 @@ namespace TradingBotCS.Util
             if (Logger.logLevel <= logLevel)
                 //Console.WriteLine($"[{group}/{sLogLevel}] {message}");
                 Console.WriteLine($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} / {sLogLevel}]  {message}");
+            Thread.Sleep(1);
             Console.ResetColor();
         }
 

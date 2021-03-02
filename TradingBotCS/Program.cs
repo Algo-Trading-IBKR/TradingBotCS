@@ -143,7 +143,8 @@ namespace TradingBotCS
 
                         NYtime = Timezones.GetNewYorkTime();
 
-                        if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
+                        //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
+                        if (MarketState && NYtime.Hour == 16-6 && NYtime.Minute == 22)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
@@ -156,10 +157,9 @@ namespace TradingBotCS
                             }
                             else
                             {
-                                ApiConnection.AccountUpdates();
-
                                 //MarketScanner.GapUp();
 
+                                // a lot of this could be moved up
                                 SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
 
                                 SymbolObjects = SymbolManager.CreateSymbolObjects(SymbolList);
@@ -167,6 +167,8 @@ namespace TradingBotCS
                                 DataManager.ReadRawData(SymbolObjects);
 
                                 ContractManager.RequestSymbolContracts(SymbolObjects);
+
+                                ApiConnection.AccountUpdates();
 
                                 //realtime bars opvragen voor symbollist
                                 DataManager.GetRealTimeBars(SymbolObjects);

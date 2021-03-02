@@ -36,7 +36,7 @@ namespace TradingBotCS.IBApi_OverRide
             //Console.WriteLine("Error. Id: " + id + ", Code: " + errorCode + ", Msg: " + errorMsg + "\n");
             if (Program.InfoCodes.Contains(errorCode))
             {
-                Logger.Info(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
+                Logger.Info(Name, $"Code: {errorCode} Msg: {errorMsg} \n");
             }else if (Program.WarningCodes.Contains(errorCode))
             {
                 Logger.Warn(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
@@ -48,9 +48,6 @@ namespace TradingBotCS.IBApi_OverRide
             {
                 Logger.Error(Name, $"Error. Id: {id}, Code: {errorCode} Msg: {errorMsg} \n");
             }
-
-            
-
         }
         //! [error]
 
@@ -104,6 +101,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [commissionreport]
         public override void commissionReport(CommissionReport commissionReport)
         {
+            Logger.Verbose(Name, $"Commission report");
             if (commissionReport.RealizedPNL >= 1000000) commissionReport.RealizedPNL = 0;
             CommissionReportOverride commissionReportOverride = new CommissionReportOverride(commissionReport);
             CommissionRepository.InsertReport(commissionReportOverride);
@@ -119,6 +117,7 @@ namespace TradingBotCS.IBApi_OverRide
         //! [execdetails]
         public override void execDetails(int reqId, Contract contract, Execution execution)
         {
+            Logger.Verbose(Name, $"Execution report for {contract.Symbol}");
             ExecutionOverride executionOverride = new ExecutionOverride(execution);
             ExecutionRepository.InsertReport(contract, executionOverride);
             //Console.WriteLine("ExecDetails. " + reqId + " - " + contract.Symbol + ", " + contract.SecType + ", " + contract.Currency + " - " + execution.ExecId + ", " + execution.OrderId + ", " + execution.Shares + ", " + execution.LastLiquidity);
@@ -140,8 +139,24 @@ namespace TradingBotCS.IBApi_OverRide
              //   ", Symbol: " + contract.Symbol + ", SecType: " + contract.SecType + " , Exchange: " + contract.Exchange + ", Action: " + order.Action + ", OrderType: " + order.OrderType +
              //   ", TotalQty: " + order.TotalQuantity + ", CashQty: " + order.CashQty + ", LmtPrice: " + order.LmtPrice + ", AuxPrice: " + order.AuxPrice + ", Status: " + orderState.Status);
             OrderOverride Order = new OrderOverride(order, contract);
-
-            Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Contract.Symbol == contract.Symbol);
+            Symbol SymbolObject;
+            try
+            {
+                SymbolObject = Program.SymbolObjects.Find(i => i.Contract.Symbol == contract.Symbol);
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    SymbolObject = Program.OwnedSymbols.Find(i => i.Contract.Symbol == contract.Symbol);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+                throw;
+            }
+            
             if (Order.Action == "SELL") SymbolObject.SOrder = true;
             else if(Order.Action == "BUY") SymbolObject.BOrder = true;
             //Console.WriteLine(Order.OrderType);
@@ -164,11 +179,12 @@ namespace TradingBotCS.IBApi_OverRide
             if(pos > 0)
             {
                 Program.OwnedStocks.Add(contract.Symbol);
+                ObjectId Id = new ObjectId();
+                Position Position = new Position(Id, account, DateTime.Now, pos, avgCost, contract);
+                PositionsRepository.UpsertPositions(Position);
             }
-            ObjectId Id = new ObjectId();
-            Position Position = new Position(Id, account, DateTime.Now, pos, avgCost, contract);
-            PositionsRepository.UpsertPositions(Position);
-            if (pos == 0) Logger.Error(Name,$"POSITION 0 {contract.Symbol}");
+            
+            if (pos == 0) Logger.Warn(Name,$"POSITION 0 {contract.Symbol}");
         }
         //! [position]
 

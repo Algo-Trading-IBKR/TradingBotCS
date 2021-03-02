@@ -15,7 +15,8 @@ namespace TradingBotCS.Util
 
         public static async Task ReadRawData(List<Symbol> symbols)
         {
-            foreach (Symbol s in symbols) s.RawDataList = await RawDataRepository.ReadRawData(s.Ticker, 15000);
+            Logger.Verbose(Name, "Reading Data From Database");
+            foreach (Symbol s in symbols) s.RawDataList = await RawDataRepository.ReadRawData(s.Ticker, 20000);
         }
 
         public static async Task GetRealTimeData(List<Symbol> symbolObjects, string generickTickList = "")
