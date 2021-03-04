@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,12 @@ namespace TradingBotCS.IBApi_OverRide
     public class WrapperOverride : EWrapperImpl
     {
         private static readonly string Name = "WrapperOverride";
+
+        // prevent P&L to be logged evert 3 minutes
+        private static DateTime LastPnL;
+        private static readonly int PnLTimeout = 15;
+        
+        
         //! [incrementorderid]
         public void IncrementOrderId()
         {
@@ -102,10 +109,13 @@ namespace TradingBotCS.IBApi_OverRide
         public override void commissionReport(CommissionReport commissionReport)
         {
             Logger.Verbose(Name, $"Commission report");
+
             if (commissionReport.RealizedPNL >= 1000000) commissionReport.RealizedPNL = 0;
+            if (commissionReport.Yield >= 1000000) commissionReport.Yield = 0;
+
             CommissionReportOverride commissionReportOverride = new CommissionReportOverride(commissionReport);
             CommissionRepository.InsertReport(commissionReportOverride);
-            Console.WriteLine("CommissionReport. " + commissionReport.ExecId + " - " + commissionReport.Commission + " " + commissionReport.Currency + " RPNL " + commissionReport.RealizedPNL);
+            //Console.WriteLine("CommissionReport. " + commissionReport.ExecId + " - " + commissionReport.Commission + " " + commissionReport.Currency + " RPNL " + commissionReport.RealizedPNL);
             if (commissionReport.RealizedPNL != 0)
             {
                 Logger.Info(Name, $"Profit: {commissionReportOverride.RealizedPNL}");
@@ -157,10 +167,36 @@ namespace TradingBotCS.IBApi_OverRide
                 throw;
             }
             
-            if (Order.Action == "SELL") SymbolObject.SOrder = true;
-            else if(Order.Action == "BUY") SymbolObject.BOrder = true;
+            if(SymbolObject != null)
+            {
+                if (Order.Action == "SELL") SymbolObject.SOrder = true;
+                else if (Order.Action == "BUY") SymbolObject.BOrder = true;
+
+                foreach (PropertyInfo prop in Order.GetType().GetProperties())
+                {
+                    var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+                    if (type == typeof(DateTime))
+                    {
+                        try
+                        {
+                            if (Convert.ToDouble(prop.GetValue(Order, null)) == (1.7976931348623157 * Math.Pow(10, 308)))
+                            {
+                                Console.WriteLine("test");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                            //throw;
+                        }
+                        
+                    }
+                }
+                Console.WriteLine($"upsert order {contract.Symbol}");
+                OrderRepository.UpsertOrder(Order);
+            }
+            
             //Console.WriteLine(Order.OrderType);
-            OrderRepository.UpsertOrder(Order);
             //await OrderManager.CheckOrder(order);
         }
         //! [openorder]
@@ -267,8 +303,9 @@ namespace TradingBotCS.IBApi_OverRide
             {
                 Program.CashBalance = float.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
                 Logger.Info(Name, $"Cash: ${value}");
-            }else if (key.ToLower().Equals("unrealizedpnl") && currency.ToLower() == "usd")
+            }else if (key.ToLower().Equals("unrealizedpnl") && currency.ToLower() == "usd" && DateTime.Now > LastPnL.AddMinutes(PnLTimeout))
             {
+                LastPnL = DateTime.Now;
                 Logger.Info(Name, $"Unrealized P&L: ${value}");
             }
         }
