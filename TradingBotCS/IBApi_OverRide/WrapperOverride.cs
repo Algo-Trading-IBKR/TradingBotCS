@@ -184,10 +184,9 @@ namespace TradingBotCS.IBApi_OverRide
                                 Console.WriteLine("test");
                             }
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            continue;
-                            //throw;
+                            Logger.Warn(Name, $"{e} in order value fix");
                         }
                         
                     }
