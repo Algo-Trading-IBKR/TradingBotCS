@@ -157,7 +157,7 @@ namespace TradingBotCS
             try
             {
                 if (rawdata.Count < 200) return false;
-                var data = rawdata.OrderBy(R => R.DateTime).ToList<RawData>();
+                List<RawData> data = rawdata.OrderBy(R => R.DateTime).ToList();
 
                 if (LastRawData == null)
                 {
@@ -224,6 +224,7 @@ namespace TradingBotCS
             this.GapCalculated = false;
             this.BOrder = false;
             this.SOrder = false;
+            this.Contract = new Contract();
         }
 
         public override string ToString()

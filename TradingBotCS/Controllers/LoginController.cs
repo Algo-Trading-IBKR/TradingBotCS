@@ -14,10 +14,10 @@ namespace TradingBotCS.Controllers
         public LoginController() { }
 
         [HttpPost]
-        public async Task<ActionResult> Login([FromBody] string content)
+        public async Task<ActionResult> Login()
         {
-            Console.WriteLine(content);
-            return new OkObjectResult(content);
+            //Console.WriteLine(post);
+            return new OkObjectResult("test");
         }
     }
 }
