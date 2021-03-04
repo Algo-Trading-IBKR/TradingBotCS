@@ -80,7 +80,7 @@ namespace TradingBotCS
         // SymbolList for trading
         public static List<string> OwnedStocks = new List<string>();
         public static List<Symbol> OwnedSymbols = new List<Symbol>();
-        public static List<Symbol> SymbolObjects; // ALL symbol object stay in this list
+        public static List<Symbol> SymbolObjects = new List<Symbol>(); // ALL symbol object stay in this list
         public static List<Symbol> CorrectGapList = new List<Symbol>(); // only used for strategy with gap up/down
         public static List<Symbol> ActiveSymbolList = new List<Symbol>(); // list for active trading or realtime data
 
@@ -88,7 +88,7 @@ namespace TradingBotCS
         static async Task Main(string[] args)
         {
             Logger.SetLogLevel(Logger.LogLevel.LogLevelVerbose); // Custom Logger Test
-            Logger.Verbose(Name, "Start");
+            Logger.Verbose(Name, "Startup");
 
             new Thread(() =>
             {
@@ -144,7 +144,7 @@ namespace TradingBotCS
                         NYtime = Timezones.GetNewYorkTime();
 
                         //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
-                        if (MarketState && NYtime.Hour == 16-6 && NYtime.Minute == 22)
+                        if (MarketState && NYtime.Hour == 19-6 && NYtime.Minute == 30)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
