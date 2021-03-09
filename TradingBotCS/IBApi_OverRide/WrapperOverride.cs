@@ -106,12 +106,12 @@ namespace TradingBotCS.IBApi_OverRide
         //! [contractdetailsend]
 
         //! [commissionreport]
-        public override void commissionReport(CommissionReport commissionReport)
+        public override async void commissionReport(CommissionReport commissionReport)
         {
             Logger.Verbose(Name, $"Commission report");
-
-            if (commissionReport.RealizedPNL >= 1000000) commissionReport.RealizedPNL = 0;
-            if (commissionReport.Yield >= 1000000) commissionReport.Yield = 0;
+            commissionReport = await Converter.FixObjectValues(commissionReport);
+            //if (commissionReport.RealizedPNL >= 1000000) commissionReport.RealizedPNL = 0;
+            //if (commissionReport.Yield >= 1000000) commissionReport.Yield = 0;
 
             CommissionReportOverride commissionReportOverride = new CommissionReportOverride(commissionReport);
             Thread.Sleep(1000); // een test om te zien of execution report dan wel al in de DB zit
@@ -126,9 +126,10 @@ namespace TradingBotCS.IBApi_OverRide
         //! [commissionreport]
 
         //! [execdetails]
-        public override void execDetails(int reqId, Contract contract, Execution execution)
+        public override async void execDetails(int reqId, Contract contract, Execution execution)
         {
             Logger.Verbose(Name, $"Execution report for {contract.Symbol}");
+            execution = await Converter.FixObjectValues(execution);
             ExecutionOverride executionOverride = new ExecutionOverride(execution);
             ExecutionRepository.InsertReport(contract, executionOverride);
             //Console.WriteLine("ExecDetails. " + reqId + " - " + contract.Symbol + ", " + contract.SecType + ", " + contract.Currency + " - " + execution.ExecId + ", " + execution.OrderId + ", " + execution.Shares + ", " + execution.LastLiquidity);
@@ -173,27 +174,28 @@ namespace TradingBotCS.IBApi_OverRide
                 if (Order.Action == "SELL") SymbolObject.SOrder = true;
                 else if (Order.Action == "BUY") SymbolObject.BOrder = true;
 
-                foreach (PropertyInfo prop in Order.GetType().GetProperties())
-                {
-                    Logger.Warn("Order stuff", $"{prop.Name} {prop.PropertyType} {prop.GetValue(Order, null)}");
-                    var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                    if (type == typeof(Int32) || type == typeof(Int64) || type == typeof(float) || type == typeof(double) || type == typeof(decimal))
-                    {
-                        try
-                        {
-                            //Logger.Warn("Order stuff", $"{prop.Name} {prop.PropertyType} {prop.GetValue(Order, null)}");
-                            //if (Convert.ToDouble(prop.GetValue(Order, null)) >= (100000000000000000000.0))
-                            //{
-                            //    prop.SetValue(Order, 0);
-                            //}
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Warn(Name, $"{e} in order value fix");
-                        }
+                Order = await Converter.FixObjectValues(Order);
+                //foreach (PropertyInfo prop in Order.GetType().GetProperties())
+                //{                    
+                //    var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+                //    if (type == typeof(double))
+                //    {
+                //        try
+                //        {
+                //            if (Convert.ToDouble(prop.GetValue(Order, null)) >= Math.Pow(1.79,100))
+                //            {
+                                
+                //                prop.SetValue(Order, 0.0);
+                //                //Logger.Warn("Order stuff", $"{prop.Name} {prop.PropertyType} {prop.GetValue(Order, null)}");
+                //            }
+                //        }
+                //        catch (Exception e)
+                //        {
+                //            Logger.Warn(Name, $"{e} in order value fix");
+                //        }
                         
-                    }
-                }
+                //    }
+                //}
                 Console.WriteLine($"upsert order {contract.Symbol}");
                 OrderRepository.UpsertOrder(Order);
             }

@@ -128,7 +128,7 @@ namespace TradingBotCS
                         {
                             ApiConnection.Connect();
                             //OrderRepository.DeleteOrders("*");
-                            Thread.Sleep(2000);
+                            Thread.Sleep(1000);
                         }
                         else if (IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
@@ -144,7 +144,7 @@ namespace TradingBotCS
                         NYtime = Timezones.GetNewYorkTime();
 
                         //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
-                        if (MarketState && NYtime.Hour == 19-6 && NYtime.Minute == 30)
+                        if (MarketState && NYtime.Hour == 18-6 && NYtime.Minute == 10)
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
