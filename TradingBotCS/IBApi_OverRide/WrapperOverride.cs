@@ -175,15 +175,17 @@ namespace TradingBotCS.IBApi_OverRide
 
                 foreach (PropertyInfo prop in Order.GetType().GetProperties())
                 {
+                    Logger.Warn("Order stuff", $"{prop.Name} {prop.PropertyType} {prop.GetValue(Order, null)}");
                     var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                    if (type == typeof(DateTime))
+                    if (type == typeof(Int32) || type == typeof(Int64) || type == typeof(float) || type == typeof(double) || type == typeof(decimal))
                     {
                         try
                         {
-                            if (Convert.ToDouble(prop.GetValue(Order, null)) == (1.7976931348623157 * Math.Pow(10, 308)))
-                            {
-                                Console.WriteLine("test");
-                            }
+                            //Logger.Warn("Order stuff", $"{prop.Name} {prop.PropertyType} {prop.GetValue(Order, null)}");
+                            //if (Convert.ToDouble(prop.GetValue(Order, null)) >= (100000000000000000000.0))
+                            //{
+                            //    prop.SetValue(Order, 0);
+                            //}
                         }
                         catch (Exception e)
                         {
