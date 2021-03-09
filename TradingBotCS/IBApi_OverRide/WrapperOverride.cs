@@ -114,6 +114,7 @@ namespace TradingBotCS.IBApi_OverRide
             if (commissionReport.Yield >= 1000000) commissionReport.Yield = 0;
 
             CommissionReportOverride commissionReportOverride = new CommissionReportOverride(commissionReport);
+            Thread.Sleep(1000); // een test om te zien of execution report dan wel al in de DB zit
             CommissionRepository.InsertReport(commissionReportOverride);
             //Console.WriteLine("CommissionReport. " + commissionReport.ExecId + " - " + commissionReport.Commission + " " + commissionReport.Currency + " RPNL " + commissionReport.RealizedPNL);
             if (commissionReport.RealizedPNL != 0)
