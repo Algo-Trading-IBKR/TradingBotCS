@@ -196,7 +196,7 @@ namespace TradingBotCS.IBApi_OverRide
                         
                 //    }
                 //}
-                Console.WriteLine($"upsert order {contract.Symbol}");
+                //Console.WriteLine($"upsert order {contract.Symbol}");
                 OrderRepository.UpsertOrder(Order);
             }
             
