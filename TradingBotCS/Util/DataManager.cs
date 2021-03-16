@@ -34,6 +34,7 @@ namespace TradingBotCS.Util
             if (symbolObjects.Count > 100) Logger.Warn(Name, $"Maximum allowed data request is 100, length of list is {symbolObjects.Count}"); else Logger.Info(Name, $"Length of Symbol list: {symbolObjects.Count}");
             foreach (Symbol S in symbolObjects)
             {
+                Program.IbClient.ClientSocket.cancelRealTimeBars(S.Id);
                 //IbClient.ClientSocket.reqMktData(S.Id, S.Contract, "", false, false, MktDataOptions);
                 Program.IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, barSize, type, useRTH, null);
             }

@@ -20,21 +20,27 @@ namespace TradingBotCS.Database
 
         public static async Task InsertRawData(int tickerId, long time, double open, double high, double low, double close)
         {
-            Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == tickerId);
+            try
+            {
+                Symbol SymbolObject = Program.SymbolObjects.Find(i => i.Id == tickerId);
 
-            DateTime Time = Converter.UnixTimeStampToDateTime(time);
-            //Console.WriteLine(Time);
-            ObjectId id = new ObjectId();
-            RawData Data = new RawData(id, SymbolObject.Ticker, Time, open, high, low, close);
+                DateTime Time = Converter.UnixTimeStampToDateTime(time);
+                ObjectId id = new ObjectId();
+                RawData Data = new RawData(id, SymbolObject.Ticker, Time, open, high, low, close);
 
-            SymbolObject.RawDataList.Add(Data);
-            SymbolObject.LastRawData = Data;
+                SymbolObject.RawDataList.Add(Data);
+                SymbolObject.LastRawData = Data;
 
-            BsonDocument Doc = Data.ToBsonDocument();
+                BsonDocument Doc = Data.ToBsonDocument();
 
-            await Collection.InsertOneAsync(Doc);
+                await Collection.InsertOneAsync(Doc);
 
-            await SymbolObject.ExecuteStrategy();
+                await SymbolObject.ExecuteStrategy();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(Name, $"{e}");
+            }
         }
 
         public static async Task<List<RawData>> ReadRawData(string symbol, int amount=5000)

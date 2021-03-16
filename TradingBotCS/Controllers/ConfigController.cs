@@ -29,7 +29,7 @@ namespace TradingBotCS.Controllers
         {
             try
             {
-                ConfigRepository.UpsertConfig(config);
+                await ConfigRepository.UpsertConfig(config);
                 Program.UpdateConfigs();
                 return new OkObjectResult(config);
             }
