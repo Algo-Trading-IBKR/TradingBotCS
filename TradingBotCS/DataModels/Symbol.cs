@@ -172,7 +172,7 @@ namespace TradingBotCS
                         StratData.Add(R);
                     }
                 }
-                StratData.Add(LastRawData);
+                StratData.Add(LastRawData); // add check to see if last isn't already in the list
                 if (StratData.Count < 50) return false;
 
                 List<decimal> RawPriceList = new List<decimal>();
