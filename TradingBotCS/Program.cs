@@ -143,8 +143,7 @@ namespace TradingBotCS
 
                         NYtime = Timezones.GetNewYorkTime();
 
-                        //if (MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute)
-                        if (MarketState && NYtime.Hour == 16-6 && NYtime.Minute == 13)
+                        if ((MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute) || (NYtime.Hour == 15-5 && NYtime.Minute == 13))
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
@@ -241,17 +240,17 @@ namespace TradingBotCS
         // api test stuff
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-               return Host.CreateDefaultBuilder(args)
-                    .ConfigureLogging(logging =>
-                    {
-                        logging.ClearProviders();
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
                         
-                        //logging.AddConsole(); // logging uitschakelen van de api
-                    })
-                    .ConfigureWebHostDefaults(webBuilder =>
-                    {
-                        webBuilder.UseStartup<Startup>();
-                    });
+                    //logging.AddConsole(); // logging uitschakelen van de api
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
         }
 
         //static async Task checkTime()

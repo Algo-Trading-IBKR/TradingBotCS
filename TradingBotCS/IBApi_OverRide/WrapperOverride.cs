@@ -19,7 +19,7 @@ namespace TradingBotCS.IBApi_OverRide
 
         // prevent P&L to be logged evert 3 minutes
         private static DateTime LastPnL;
-        private static readonly int PnLTimeout = 15;
+        private static readonly int PnLTimeout = 30;
         
         
         //! [incrementorderid]
@@ -224,7 +224,7 @@ namespace TradingBotCS.IBApi_OverRide
                 PositionsRepository.UpsertPositions(Position);
             }
             
-            if (pos == 0) Logger.Warn(Name,$"POSITION 0 {contract.Symbol}");
+            Logger.Info(Name,$"POSITION 0 {contract.Symbol}");
         }
         //! [position]
 
