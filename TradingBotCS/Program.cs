@@ -110,6 +110,10 @@ namespace TradingBotCS
 
             //PaperTrailTest();
 
+            SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
+
+            SymbolObjects = await SymbolManager.CreateSymbolObjects(SymbolList);
+
             InfiniteStartup();
 
             while (true) Console.ReadKey(); // zorgt er voor dat de console nooit sluit
@@ -143,7 +147,7 @@ namespace TradingBotCS
 
                         NYtime = Timezones.GetNewYorkTime();
 
-                        if ((MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute) || (NYtime.Hour == 15-5 && NYtime.Minute == 13))
+                        if ((MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute) || (NYtime.Hour == 15-5 && NYtime.Minute == 54))
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
@@ -156,13 +160,8 @@ namespace TradingBotCS
                             }
                             else
                             {
-                                //MarketScanner.GapUp();
-
                                 // a lot of this could be moved up
-                                SymbolList = SymbolList.OrderBy(x => Guid.NewGuid()).ToList();
-
-                                SymbolObjects = SymbolManager.CreateSymbolObjects(SymbolList);
-
+                                
                                 DataManager.ReadRawData(SymbolObjects);
 
                                 ContractManager.RequestSymbolContracts(SymbolObjects);
@@ -176,7 +175,6 @@ namespace TradingBotCS
                                 //checkTime();
                                 //DataManager.GetHistoricalBars(SymbolObjects, DateTime.Now, duration: "1 W", barSize: "3 mins"); // nog niet getest
                                 Thread.Sleep(120000);
-
                             }
                         }
                     }

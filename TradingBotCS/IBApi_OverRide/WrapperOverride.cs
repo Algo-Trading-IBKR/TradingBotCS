@@ -252,7 +252,7 @@ namespace TradingBotCS.IBApi_OverRide
                     Logger.Warn(Name, $"Something went wrong when removing a symbol from DB");
                 }
             }
-            Program.OwnedSymbols = SymbolManager.CreateSymbolObjects(Program.OwnedStocks, 100000);
+            Program.OwnedSymbols = await SymbolManager.CreateSymbolObjects(Program.OwnedStocks, 100000);
         }
         //! [positionend]
 

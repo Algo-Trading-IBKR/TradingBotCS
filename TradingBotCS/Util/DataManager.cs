@@ -16,7 +16,11 @@ namespace TradingBotCS.Util
         public static async Task ReadRawData(List<Symbol> symbols)
         {
             Logger.Verbose(Name, "Reading Data From Database");
-            foreach (Symbol s in symbols) s.RawDataList = await RawDataRepository.ReadRawData(s.Ticker, 30000);
+            foreach (Symbol S in symbols)
+            {
+                Program.IbClient.ClientSocket.cancelRealTimeBars(S.Id);
+                S.RawDataList = await RawDataRepository.ReadRawData(S.Ticker, 30000);
+            }
         }
 
         public static async Task GetRealTimeData(List<Symbol> symbolObjects, string generickTickList = "")
@@ -34,8 +38,7 @@ namespace TradingBotCS.Util
             if (symbolObjects.Count > 100) Logger.Warn(Name, $"Maximum allowed data request is 100, length of list is {symbolObjects.Count}"); else Logger.Info(Name, $"Length of Symbol list: {symbolObjects.Count}");
             foreach (Symbol S in symbolObjects)
             {
-                Program.IbClient.ClientSocket.cancelRealTimeBars(S.Id);
-                //IbClient.ClientSocket.reqMktData(S.Id, S.Contract, "", false, false, MktDataOptions);
+                //Program.IbClient.ClientSocket.cancelRealTimeBars(S.Id);
                 Program.IbClient.ClientSocket.reqRealTimeBars(S.Id, S.Contract, barSize, type, useRTH, null);
             }
         }
@@ -53,7 +56,6 @@ namespace TradingBotCS.Util
             {
                 QueryTime = endTime.ToString("yyyyMMdd HH:mm:ss");
             }
-
             if (startingHour != 0 && endingHour != 0 && startingMinute != 0 && endingMinute != 0)
             {
                 CustomTimeFrame = true;

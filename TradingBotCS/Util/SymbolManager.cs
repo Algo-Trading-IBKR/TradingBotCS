@@ -12,7 +12,7 @@ namespace TradingBotCS.Util
     {
         private static string Name = "Symbol Manager";
 
-        public static List<Symbol> CreateSymbolObjects(List<string> symbolList, int startingId = 0) // startingid is used for different lists of symbols to avoid conflicts
+        public async static Task<List<Symbol>> CreateSymbolObjects(List<string> symbolList, int startingId = 0) // startingid is used for different lists of symbols to avoid conflicts
         {
             Logger.Verbose(Name, "Creating Symbol Objects");
 
