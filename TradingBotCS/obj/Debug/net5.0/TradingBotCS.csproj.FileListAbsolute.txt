@@ -97,3 +97,7 @@ C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Swashbuckle.As
 C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\BCrypt.Net-Next.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\Click-A-Tel.dll
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\runtimes\linux\native\libmongocrypt.so
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\runtimes\osx\native\libmongocrypt.dylib
+C:\Users\joren\Desktop\TradingBotCS\TradingBotCS\bin\Debug\net5.0\runtimes\win\native\mongocrypt.dll

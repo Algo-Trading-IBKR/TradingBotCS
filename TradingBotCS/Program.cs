@@ -136,7 +136,7 @@ namespace TradingBotCS
                         }
                         else if (IbClient.ClientSocket.IsConnected() && NYtime.Hour >= StartingHour)
                         {
-                            Thread.Sleep(2000);
+                            Thread.Sleep(1000);
                             Market.CheckMartketHours();
                             if (MarketState == false && MarketClosedMessage == false)
                             {
@@ -147,7 +147,7 @@ namespace TradingBotCS
 
                         NYtime = Timezones.GetNewYorkTime();
 
-                        if ((MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute) || (NYtime.Hour == 15-5 && NYtime.Minute == 54))
+                        if ((MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute) || (MarketState && NYtime.Hour == 16-6 && NYtime.Minute == 40))
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;

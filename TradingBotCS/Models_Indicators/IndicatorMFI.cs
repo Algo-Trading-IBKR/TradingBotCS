@@ -16,8 +16,8 @@ namespace TradingBotCS.Models_Indicators
             List<decimal> NegativeMF = new List<decimal>(); 
 
         for (int i = 1; i <= period; i++) {
-            decimal PrevTypicalPrice = data[i-1];
-            decimal CurrentTypicalPrice = data[i];
+            decimal PrevTypicalPrice = TypicalPrices[i-1];
+            decimal CurrentTypicalPrice = TypicalPrices[i];
 
             if(CurrentTypicalPrice > PrevTypicalPrice){
                 PositiveMF.Add(CurrentTypicalPrice*volume[i]);
@@ -25,14 +25,15 @@ namespace TradingBotCS.Models_Indicators
                 NegativeMF.Add(CurrentTypicalPrice*volume[i]);
             }
         }
-        decimal PositiveSum;
+        decimal PositiveSum = new decimal();
+        decimal NegativeSum = new decimal();
+
         foreach (decimal price in PositiveMF) {PositiveSum += price;}
-        decimal NegativeSum;
         foreach (decimal price in NegativeMF) {NegativeSum += price;}
 
         decimal MoneyRatio = PositiveSum/NegativeSum;
 
-        decimal MoneyFlow = 100 = (100 / (1 + MoneyRatio));
+        decimal MoneyFlow = 100 - (100 / (1 + MoneyRatio));
 
         return MoneyFlow;
         }

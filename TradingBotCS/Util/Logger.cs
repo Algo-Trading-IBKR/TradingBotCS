@@ -26,11 +26,8 @@ namespace TradingBotCS.Util
         {
             try
             {
-
-            
                 string sLogLevel = "";
 
-            
                 switch (logLevel)
                 {
                     case LogLevel.LogLevelVerbose:
@@ -53,7 +50,7 @@ namespace TradingBotCS.Util
                     case LogLevel.LogLevelCritical:
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         sLogLevel = "CRITICAL";
-                        //MobileService.SendTextMsg($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}", Program.PhoneNumbers);
+                        MobileService.SendTextMsg($"[ {group} / {DateTime.Now.ToString("HH:mm:ss")} ]  {message}", Program.PhoneNumbers);
                         await LogRepository.InsertLog(group, message, sLogLevel);
                         break;
                 }

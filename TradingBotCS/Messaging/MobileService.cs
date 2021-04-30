@@ -12,6 +12,10 @@ using System.Threading.Tasks;
 using TradingBotCS.DataModels;
 using TradingBotCS.Util;
 
+using ClickATel;
+using ClickATel.Models;
+using ClickATel.Models.Results;
+
 namespace TradingBotCS.Messaging
 {
     public static class MobileService
@@ -26,54 +30,61 @@ namespace TradingBotCS.Messaging
 
         public static async Task SendTextMsg(List<string> contents, List<string> numbers)
         {
+            Authenticate.ApiKey = "VmGMIQOQRryF3X8Yg-iUZw==";
+            Authenticate.Test_Login(true);
 
-            for (int i = 0; i < contents.Count; i++)
-            {
-                List<TextMessage> Messages = new List<TextMessage>();
-                TextMessage Message = new TextMessage(contents[i], "sms", numbers[i]);
-                Messages.Add(Message);
+            Settings.CountryCode = 32; //Country code prefix
 
-                string RawData = JsonConvert.SerializeObject(new
-                {
-                    messages = Messages
-                });
-                Console.WriteLine(RawData);
+            SendMessageStatus SendStatus = MessagesActions.SendMessage(contents[0], numbers[0]);
 
-                var Data = Encoding.UTF8.GetBytes(RawData.ToString());
+            //for (int i = 0; i < contents.Count; i++)
+            //{
+            //    Console.WriteLine(contents[i]);
+            //    List<TextMessage> Messages = new List<TextMessage>();
+            //    TextMessage Message = new TextMessage(contents[i], "sms", numbers[i]);
+            //    Messages.Add(Message);
 
-                WebRequest request = WebRequest.Create(Url);
+            //    string RawData = JsonConvert.SerializeObject(new
+            //    {
+            //        messages = Messages
+            //    });
+            //    Console.WriteLine(RawData);
 
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                request.Headers.Add("Authorization", ApiKey);
-                request.ContentLength = Data.Length;
+            //    var Data = Encoding.UTF8.GetBytes(RawData.ToString());
 
-                using (Stream stream = request.GetRequestStream())
-                {
-                    stream.Write(Data, 0, Data.Length);
-                }
-                try
-                {
-                    WebResponse response = await request.GetResponseAsync();
-                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                    {
-                        string responseContent = reader.ReadToEnd();
-                        JObject adResponse = JsonConvert.DeserializeObject<JObject>(responseContent);
-                        Logger.Verbose(Name, adResponse.ToString());
-                    }
-                }
-                catch (WebException webException)
-                {
-                    if (webException.Response != null)
-                    {
-                        using (StreamReader reader = new StreamReader(webException.Response.GetResponseStream()))
-                        {
-                            string responseContent = reader.ReadToEnd();
-                            Logger.Error(Name, JsonConvert.DeserializeObject<JObject>(responseContent).ToString());
-                        }
-                    }
-                }
-            }
+            //    WebRequest request = WebRequest.Create(Url);
+
+            //    request.Method = "POST";
+            //    request.ContentType = "application/json";
+            //    request.Headers.Add("Authorization", ApiKey);
+            //    request.ContentLength = Data.Length;
+
+            //    using (Stream stream = request.GetRequestStream())
+            //    {
+            //        stream.Write(Data, 0, Data.Length);
+            //    }
+            //    try
+            //    {
+            //        WebResponse response = await request.GetResponseAsync();
+            //        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            //        {
+            //            string responseContent = reader.ReadToEnd();
+            //            JObject adResponse = JsonConvert.DeserializeObject<JObject>(responseContent);
+            //            Logger.Verbose(Name, adResponse.ToString());
+            //        }
+            //    }
+            //    catch (WebException webException)
+            //    {
+            //        if (webException.Response != null)
+            //        {
+            //            using (StreamReader reader = new StreamReader(webException.Response.GetResponseStream()))
+            //            {
+            //                string responseContent = reader.ReadToEnd();
+            //                Logger.Error(Name, JsonConvert.DeserializeObject<JObject>(responseContent).ToString());
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public static async Task SendTextMsg(string content, string number)
