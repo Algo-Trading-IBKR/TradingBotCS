@@ -147,7 +147,7 @@ namespace TradingBotCS
 
                         NYtime = Timezones.GetNewYorkTime();
 
-                        if ((MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute) || (NYtime.Hour == 15-5 && NYtime.Minute == 54))
+                        if ((MarketState && NYtime.Hour == MarketHour && NYtime.Minute == MarketMinute))
                         {
                             Logger.Info(Name, "Starting...");
                             MarketClosedMessage = false;
